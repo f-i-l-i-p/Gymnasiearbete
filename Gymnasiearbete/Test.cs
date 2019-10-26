@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Office.Interop.Excel;
 using static Gymnasiearbete.Pathfinding.Pathfinder;
 
 namespace Gymnasiearbete
@@ -39,11 +38,14 @@ namespace Gymnasiearbete
         // TODO: save result
         private static void SaveResult(TestResult testResult)
         {
-            var sheet = new ExcelSheet();
+            var excel = new Excel();
+            excel.AddSheet();
+            excel.SetCell(1, 1, 4);
 
-            sheet.Worksheet.Cells[1, 1] = "TEST";
+            excel.AddSheet("tests sheet");
+        
 
-            sheet.Save(GraphManager.saveLocation, "TestFile");
+            excel.Save(GraphManager.saveLocation, "TestFile");
         }
 
         /// <summary>

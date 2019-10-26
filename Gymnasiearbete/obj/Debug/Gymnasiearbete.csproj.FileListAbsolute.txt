@@ -18,3 +18,10 @@ C:\Users\FiJo0302\OneDrive - Stiftelsen Stockholms Stadsmission\3\Gymnasiearbete
 C:\Users\FiJo0302\OneDrive - Stiftelsen Stockholms Stadsmission\3\Gymnasiearbete\Src\Gymnasiearbete\Gymnasiearbete\Gymnasiearbete\bin\Debug\Newtonsoft.Json.xml
 C:\Users\FiJo0302\OneDrive - Stiftelsen Stockholms Stadsmission\3\Gymnasiearbete\Src\Gymnasiearbete\Gymnasiearbete\Gymnasiearbete\obj\Debug\Gymnasiearbete.csproj.ResolveComReference.cache
 C:\Users\FiJo0302\OneDrive - Stiftelsen Stockholms Stadsmission\3\Gymnasiearbete\Src\Gymnasiearbete\Gymnasiearbete\Gymnasiearbete\obj\Debug\Gymnasiearbete.csproj.CopyComplete
+C:\Users\Filip\OneDrive - Stiftelsen Stockholms Stadsmission\3\Gymnasiearbete\Src\Gymnasiearbete\Gymnasiearbete\Gymnasiearbete\obj\Debug\Gymnasiearbete.csproj.ResolveComReference.cache
+C:\Users\Filip\OneDrive - Stiftelsen Stockholms Stadsmission\3\Gymnasiearbete\Src\Gymnasiearbete\Gymnasiearbete\Gymnasiearbete\bin\Debug\ICSharpCode.SharpZipLib.dll
+C:\Users\Filip\OneDrive - Stiftelsen Stockholms Stadsmission\3\Gymnasiearbete\Src\Gymnasiearbete\Gymnasiearbete\Gymnasiearbete\bin\Debug\NPOI.dll
+C:\Users\Filip\OneDrive - Stiftelsen Stockholms Stadsmission\3\Gymnasiearbete\Src\Gymnasiearbete\Gymnasiearbete\Gymnasiearbete\bin\Debug\NPOI.OOXML.dll
+C:\Users\Filip\OneDrive - Stiftelsen Stockholms Stadsmission\3\Gymnasiearbete\Src\Gymnasiearbete\Gymnasiearbete\Gymnasiearbete\bin\Debug\NPOI.OpenXml4Net.dll
+C:\Users\Filip\OneDrive - Stiftelsen Stockholms Stadsmission\3\Gymnasiearbete\Src\Gymnasiearbete\Gymnasiearbete\Gymnasiearbete\bin\Debug\NPOI.OpenXmlFormats.dll
+C:\Users\Filip\OneDrive - Stiftelsen Stockholms Stadsmission\3\Gymnasiearbete\Src\Gymnasiearbete\Gymnasiearbete\Gymnasiearbete\bin\Debug\ICSharpCode.SharpZipLib.xml
