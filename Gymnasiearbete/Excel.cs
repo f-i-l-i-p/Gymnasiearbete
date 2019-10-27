@@ -90,7 +90,18 @@ namespace Gymnasiearbete
         /// <param name="value">New cell value.</param>
         public void SetCell<T>(int x, int y, T value)
         {
-            var cell = SelectedSheet.CreateRow(y).CreateCell(x);
+            // TODO: fix quick fix
+            ICell cell;
+            try
+            {
+                var row = SelectedSheet.GetRow(y);
+                if ((cell = row.GetCell(x)) == null)
+                    cell = row.CreateCell(x);
+            }
+            catch
+            {
+                cell = SelectedSheet.CreateRow(y).CreateCell(x);
+            }
 
             switch (Type.GetTypeCode(value.GetType()))
             {
