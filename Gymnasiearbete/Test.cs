@@ -1,4 +1,5 @@
 ﻿using Gymnasiearbete.Pathfinding;
+using NPOI.SS.UserModel;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -38,13 +39,51 @@ namespace Gymnasiearbete
         // TODO: save result
         private static void SaveResult(TestResult testResult)
         {
+            // Create excel with one empty sheet
             var excel = new Excel();
             excel.AddSheet();
-            excel.SetCell(1, 1, 4);
 
-            excel.AddSheet("tests sheet");
-        
+            int currentRow = 0;
 
+            foreach (var graphResult in testResult.GraphResults)
+            {
+                // set graph size
+                excel.SetCell(0, currentRow, graphResult.GraphSize, new SimpleCellStyle { BorderBottom = BorderStyle.Thick });
+
+                // TODO: set graph count
+
+                foreach (var searchTypeResult in graphResult.SearchTypesResults)
+                {
+                    // set search type
+                    excel.SetCell(2, currentRow, searchTypeResult.SearchType.ToString());
+
+                    var SearchTimes = new List<double>();
+                    var ExplordedNodes = new List<int>();
+                    var ExplordedRatios = new List<double>();
+                    foreach (var item in searchTypeResult.SearchResults)
+                    {
+                        SearchTimes.Add(item.SearchTime);
+                        ExplordedNodes.Add(item.ExplordedNoedes);
+                        ExplordedRatios.Add(item.ExploredRatio);
+                    }
+                    // set search times
+                    excel.SetCell(3, currentRow, "Search time");
+                    excel.SetRow(4, currentRow, SearchTimes);
+                    currentRow++;
+                    // set explored nodes
+                    excel.SetCell(3, currentRow, "Explored nodes");
+                    excel.SetRow(4, currentRow, ExplordedNodes);
+                    currentRow++;
+                    // set explored ratio
+                    excel.SetCell(3, currentRow, "Explored ratio");
+                    excel.SetRow(4, currentRow, ExplordedRatios);
+                    currentRow++;
+                }
+            }
+
+            excel.SelectedSheet.AutoSizeColumn(3);
+
+            // Save
             excel.Save(GraphManager.saveLocation, "TestFile");
         }
 
@@ -53,7 +92,7 @@ namespace Gymnasiearbete
         /// </summary>
         /// <param name="graph">Graph for testing.</param>
         /// <param name="graphName">Name of graph.</param>
-        /// <returns>The test result</returns>
+        /// <returns>The test result.</returns>
         private static GraphResult RunGraphPathfinderTests(Graph graph, string graphName)
         {
             // data to return
@@ -68,7 +107,7 @@ namespace Gymnasiearbete
             foreach (SearchType searchType in Enum.GetValues(typeof(SearchType)))
             {
                 // test path-finding algorithm and save the result 
-                graphResult.SearchTypesResults.Add(TestPathfinder(searchType, graph, 1));
+                graphResult.SearchTypesResults.Add(TestPathfinder(searchType, graph, 3));
             }
 
             return graphResult;
@@ -97,8 +136,11 @@ namespace Gymnasiearbete
             // Run tests
             for (int i = 0; i < repet; i++)
             {
+                // start timer
                 stopwatch.Restart();
+                // run pathfinder
                 var foundPath = pathfinder.FindPath(searchType, out var path);
+                // stop timer
                 stopwatch.Stop();
 
                 // if the path was not found, time will be set to -1

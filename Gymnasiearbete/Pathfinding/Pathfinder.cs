@@ -4,7 +4,7 @@ namespace Gymnasiearbete.Pathfinding
 {
     class Pathfinder
     {
-        public enum SearchType { BFS };
+        public enum SearchType { BFS, TEST };
 
         public Graph Graph { get; }
         public int Source { get; }
@@ -23,12 +23,18 @@ namespace Gymnasiearbete.Pathfinding
             {
                 case SearchType.BFS:
                     return BFS(out path);
+                case SearchType.TEST:
+                    return TEST(out path);
                 default:
                     path = null;
                     return false;
             }
         }
 
+        public bool TEST(out List<int> path)
+        {
+            return BFS(out path);
+        }
 
         public bool BFS(out List<int> path)
         {
