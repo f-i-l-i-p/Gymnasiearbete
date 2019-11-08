@@ -80,7 +80,8 @@ namespace Gymnasiearbete
                     currentRow++;
                 }
             }
-
+            
+            // auto sizes column 3
             excel.SelectedSheet.AutoSizeColumn(3);
 
             // Save

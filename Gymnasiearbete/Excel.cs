@@ -52,7 +52,7 @@ namespace Gymnasiearbete
         }
 
         /// <summary>
-        /// Sets a row of cells in the selceted sheet.
+        /// Sets a row of cells in the selected sheet.
         /// </summary>
         /// <typeparam name="T">The element type of the cells</typeparam>
         /// <param name="startX">Horizontal start coordinate.</param>
