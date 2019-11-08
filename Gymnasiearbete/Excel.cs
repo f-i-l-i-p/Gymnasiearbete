@@ -20,7 +20,7 @@ namespace Gymnasiearbete
         }
 
         /// <summary>
-        /// 
+        /// Sets a sheet as the selected sheet.
         /// </summary>
         /// <param name="name">Sheet name.</param>
         public void SelectSheet(string name)
@@ -52,7 +52,7 @@ namespace Gymnasiearbete
         }
 
         /// <summary>
-        /// Sets a row of cells.
+        /// Sets a row of cells in the selceted sheet.
         /// </summary>
         /// <typeparam name="T">The element type of the cells</typeparam>
         /// <param name="startX">Horizontal start coordinate.</param>
@@ -67,7 +67,7 @@ namespace Gymnasiearbete
         }
 
         /// <summary>
-        /// Sets a column of cells.
+        /// Sets a column of cells in the selected sheet.
         /// </summary>
         /// <typeparam name="T">The element type of the cells.</typeparam>
         /// <param name="startX">Horizontal coordinate.</param>
@@ -82,7 +82,7 @@ namespace Gymnasiearbete
         }
 
         /// <summary>
-        /// Sets a cell value.
+        /// Sets a cell value in the selected sheet
         /// </summary>
         /// <typeparam name="T">The element type of the cell.</typeparam>
         /// <param name="x">Horizontal coordinate.</param>
@@ -123,6 +123,12 @@ namespace Gymnasiearbete
             // set cell style
             if (style != null)
                 cell.CellStyle = CreateStyle(style);
+        }
+
+        // TODO: this
+        public void SetCellStyle(int x, int y, SimpleCellStyle style)
+        {
+
         }
 
         /// <summary>
