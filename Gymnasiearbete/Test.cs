@@ -17,72 +17,40 @@ namespace Gymnasiearbete
         /// </summary>
         public static void Run()
         {
-            // object to save test data
-            var testResult = new TestResult
-            {
-                GraphResults = new List<GraphResult>(),
-            };
+            Console.WriteLine("Running test...");
+
+
+            var testResults = new List<TestResult>();
 
             List<string> graphPaths = GraphManager.GetAllGraphPaths();
 
-            foreach (var path in graphPaths)
+            // TODO: For each map size
+            for (int i = 0; i < 1; i++)
             {
-                // load graph from disk
-                var graph = GraphManager.Load(path);
+                testResults.Add(new TestResult
+                {
+                    GraphResults = new List<GraphResult>(),
+                });
 
-                testResult.GraphResults.Add(RunGraphPathfinderTests(graph, path.Split('\\').Last()));
+
+                foreach (var path in graphPaths)
+                {
+                    // load graph from disk
+                    var graph = GraphManager.Load(path);
+
+                    testResults[i].GraphResults.Add(RunGraphPathfinderTests(graph, path.Split('\\').Last()));
+                }
             }
 
-            SaveResult(testResult);
+            SaveResult(testResults);
         }
 
         // TODO: save result
-        private static void SaveResult(TestResult testResult)
+        private static void SaveResult(List<TestResult> testResults)
         {
-            // Create excel with one empty sheet
-            var excel = new Excel();
-            excel.AddSheet();
+            Console.WriteLine("Creating excel...");
 
-            int currentRow = 0;
-
-            foreach (var graphResult in testResult.GraphResults)
-            {
-                // set graph size
-                excel.SetCell(0, currentRow, graphResult.GraphSize, new SimpleCellStyle { BorderBottom = BorderStyle.Thick });
-
-                // TODO: set graph count
-
-                foreach (var searchTypeResult in graphResult.SearchTypesResults)
-                {
-                    // set search type
-                    excel.SetCell(2, currentRow, searchTypeResult.SearchType.ToString());
-
-                    var SearchTimes = new List<double>();
-                    var ExplordedNodes = new List<int>();
-                    var ExplordedRatios = new List<double>();
-                    foreach (var item in searchTypeResult.SearchResults)
-                    {
-                        SearchTimes.Add(item.SearchTime);
-                        ExplordedNodes.Add(item.ExplordedNoedes);
-                        ExplordedRatios.Add(item.ExploredRatio);
-                    }
-                    // set search times
-                    excel.SetCell(3, currentRow, "Search time");
-                    excel.SetRow(4, currentRow, SearchTimes);
-                    currentRow++;
-                    // set explored nodes
-                    excel.SetCell(3, currentRow, "Explored nodes");
-                    excel.SetRow(4, currentRow, ExplordedNodes);
-                    currentRow++;
-                    // set explored ratio
-                    excel.SetCell(3, currentRow, "Explored ratio");
-                    excel.SetRow(4, currentRow, ExplordedRatios);
-                    currentRow++;
-                }
-            }
-            
-            // auto sizes column 3
-            excel.SelectedSheet.AutoSizeColumn(3);
+            var excel = GenerateExcel.Generate(testResults);
 
             // Save
             excel.Save(GraphManager.saveLocation, "TestFile");
@@ -100,7 +68,6 @@ namespace Gymnasiearbete
             var graphResult = new GraphResult
             {
                 GraphName = graphName,
-                GraphSize = graph.AdjacencyList.Count,
                 SearchTypesResults = new List<SearchTypeResult>(),
             };
 
@@ -159,13 +126,13 @@ namespace Gymnasiearbete
 
     class TestResult
     {
+        public int GraphSize { get; set; }
         public List<GraphResult> GraphResults { get; set; }
     }
 
     class GraphResult
     {
         public string GraphName {get; set;}
-        public int GraphSize { get; set; }
         public List<SearchTypeResult> SearchTypesResults { get; set; }
     }
 

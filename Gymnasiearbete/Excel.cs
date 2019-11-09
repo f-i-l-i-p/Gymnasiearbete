@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NPOI.HSSF.UserModel;
+using NPOI.HSSF.Util;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 
@@ -13,6 +15,7 @@ namespace Gymnasiearbete
     {
         public IWorkbook Workbook{ get; }
         public ISheet SelectedSheet { get; private set; }
+        // TODO: Default style
 
         public Excel()
         {
@@ -58,11 +61,11 @@ namespace Gymnasiearbete
         /// <param name="startX">Horizontal start coordinate.</param>
         /// <param name="y">Vertical coordinate.</param>
         /// <param name="values">Cell values from left to right</param>
-        public void SetRow<T>(int startX, int y, List<T> values)
+        public void SetRow<T>(int startX, int y, List<T> values, SimpleCellStyle style = null)
         {
             foreach (var item in values.Select((value, index) => new { Value = value, Index = index }))
             {
-                SetCell(startX + item.Index, y, item.Value);
+                SetCell(startX + item.Index, y, item.Value, style);
             }
         }
 
@@ -73,11 +76,12 @@ namespace Gymnasiearbete
         /// <param name="startX">Horizontal coordinate.</param>
         /// <param name="y">Vertical start coordinate.</param>
         /// <param name="values">Cell values from top to bottom</param>
-        public void SetColumn<T>(int x, int startY, List<T> values)
+        /// <param name="style">The cells style. If it is set to null, it takes the default style</param>
+        public void SetColumn<T>(int x, int startY, List<T> values, SimpleCellStyle style = null)
         {
             foreach (var item in values.Select((value, index) => new { Value = value, Index = index }))
             {
-                SetCell(x, startY + item.Index, item.Value);
+                SetCell(x, startY + item.Index, item.Value, style);
             }
         }
 
@@ -88,21 +92,10 @@ namespace Gymnasiearbete
         /// <param name="x">Horizontal coordinate.</param>
         /// <param name="y">Vertical coordinate.</param>
         /// <param name="value">New cell value.</param>
-        /// <param name="style">The cell style. If it is set to null, it takes the default value</param>
+        /// <param name="style">The cell style. If it is set to null, it takes the default style</param>
         public void SetCell<T>(int x, int y, T value, SimpleCellStyle style = null)
         {
-            // TODO: fix quick fix
-            ICell cell;
-            try
-            {
-                var row = SelectedSheet.GetRow(y);
-                if ((cell = row.GetCell(x)) == null)
-                    cell = row.CreateCell(x);
-            }
-            catch
-            {
-                cell = SelectedSheet.CreateRow(y).CreateCell(x);
-            }
+            var cell = CreateCell(x, y);
 
             switch (Type.GetTypeCode(value.GetType()))
             {
@@ -125,10 +118,52 @@ namespace Gymnasiearbete
                 cell.CellStyle = CreateStyle(style);
         }
 
-        // TODO: this
-        public void SetCellStyle(int x, int y, SimpleCellStyle style)
-        {
 
+        private ICell CreateCell(int x, int y)
+        {
+            // TODO: fix quick fix
+            ICell cell;
+            try
+            {
+                var row = SelectedSheet.GetRow(y);
+                if ((cell = row.GetCell(x)) == null)
+                    cell = row.CreateCell(x);
+            }
+            catch
+            {
+                cell = SelectedSheet.CreateRow(y).CreateCell(x);
+            }
+
+            return cell;
+        }
+
+        private ICell GetCell(int x, int y)
+        {
+            // TODO: fix quick fix
+            ICell cell;
+            try
+            {
+                var row = SelectedSheet.GetRow(y);
+                if ((cell = row.GetCell(x)) == null)
+                    return null;
+            }
+            catch
+            {
+                return null;
+            }
+
+            return cell;
+        }
+
+        /// <summary>
+        /// Sets a sell style in the selected sheet.
+        /// </summary>
+        /// <param name="x">Horizontal coordinate.</param>
+        /// <param name="y">Vertical coordinate.</param>
+        /// <param name="style">The cell style</param>
+        public void SetStyle(int x, int y, SimpleCellStyle style)
+        {
+            CreateCell(x, y).CellStyle = CreateStyle(style);
         }
 
         /// <summary>

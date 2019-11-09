@@ -63,6 +63,7 @@
   <ItemGroup>
     <Compile Include="Draw.cs" />
     <Compile Include="Excel.cs" />
+    <Compile Include="GenerateExcel.cs" />
     <Compile Include="Graph.cs" />
     <Compile Include="GraphManager.cs" />
     <Compile Include="MazeGeneration\Cell.cs" />
