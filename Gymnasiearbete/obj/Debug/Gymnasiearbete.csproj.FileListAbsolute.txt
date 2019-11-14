@@ -5,7 +5,6 @@ C:\Users\FiJo0302\OneDrive - Stiftelsen Stockholms Stadsmission\3\Gymnasiearbete
 C:\Users\FiJo0302\OneDrive - Stiftelsen Stockholms Stadsmission\3\Gymnasiearbete\Src\Gymnasiearbete\Gymnasiearbete\Gymnasiearbete\obj\Debug\Gymnasiearbete.exe
 C:\Users\FiJo0302\OneDrive - Stiftelsen Stockholms Stadsmission\3\Gymnasiearbete\Src\Gymnasiearbete\Gymnasiearbete\Gymnasiearbete\obj\Debug\Gymnasiearbete.pdb
 C:\Users\Filip\OneDrive - Stiftelsen Stockholms Stadsmission\3\Gymnasiearbete\Src\Gymnasiearbete\Gymnasiearbete\Gymnasiearbete\obj\Debug\Gymnasiearbete.csprojAssemblyReference.cache
-C:\Users\Filip\OneDrive - Stiftelsen Stockholms Stadsmission\3\Gymnasiearbete\Src\Gymnasiearbete\Gymnasiearbete\Gymnasiearbete\obj\Debug\Gymnasiearbete.csproj.CoreCompileInputs.cache
 C:\Users\Filip\OneDrive - Stiftelsen Stockholms Stadsmission\3\Gymnasiearbete\Src\Gymnasiearbete\Gymnasiearbete\Gymnasiearbete\obj\Debug\Gymnasiearbete.exe
 C:\Users\Filip\OneDrive - Stiftelsen Stockholms Stadsmission\3\Gymnasiearbete\Src\Gymnasiearbete\Gymnasiearbete\Gymnasiearbete\obj\Debug\Gymnasiearbete.pdb
 C:\Users\Filip\OneDrive - Stiftelsen Stockholms Stadsmission\3\Gymnasiearbete\Src\Gymnasiearbete\Gymnasiearbete\Gymnasiearbete\bin\Debug\Gymnasiearbete.exe.config

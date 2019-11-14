@@ -11,15 +11,44 @@ using NPOI.XSSF.UserModel;
 
 namespace Gymnasiearbete
 {
+    class RowData
+    {
+        public int Row { get; set; }
+        public List<int> Cells { get; set; } = new List<int>();
+    }
+
+    class SheetData
+    {
+        public string Name { get; }
+        public List<RowData> RowData { get; set; }= new List<RowData>();
+
+        public SheetData(string Name)
+        {
+            this.Name = Name;
+        }
+    }
+
     class Excel
     {
         public IWorkbook Workbook{ get; }
         public ISheet SelectedSheet { get; private set; }
         // TODO: Default style
 
+        private List<SheetData> SheetData { get; }
+        private SheetData SelectedSheetData
+        {
+            get
+            {
+                var sd = SheetData.Find(sheet => sheet.Name == SelectedSheet.SheetName);
+                if (sd == null) throw new Exception($"SheetData can not be found");
+                return sd;
+            }
+        }
+
         public Excel()
         {
             Workbook = new XSSFWorkbook();
+            SheetData = new List<SheetData>();
         }
 
         /// <summary>
@@ -37,18 +66,20 @@ namespace Gymnasiearbete
 
         /// <summary>
         /// Add an empty sheet to the workbook.
-        /// If no sheet name is given, the name will be its index.
         /// The new sheet will be set as selected if select = true.
         /// </summary>
         /// <param name="name">Sheet name.</param>
         /// <param name="select">Select the new sheet.</param>
-        public void AddSheet(string name = null, bool select = true)
+        public void AddSheet(string name, bool select = true)
         {
+            // Test if a sheet whith the same name already exists
             if (Workbook.GetSheet(name) != null)
                 throw new ArgumentException($"A sheet with the name \"{name}\" already exists", "name");
 
             // create sheet
             var newSheet = string.IsNullOrEmpty(name) ? Workbook.CreateSheet() : Workbook.CreateSheet(name);
+            // add sheet data
+            SheetData.Add(new SheetData(name));
 
             if (select)
                 SelectedSheet = newSheet;
@@ -113,6 +144,7 @@ namespace Gymnasiearbete
                     throw new ArgumentException($"{Type.GetTypeCode(value.GetType()).ToString()} is not a supported value type", "value");
             }
 
+            // TODO: This is too slow
             // set cell style
             if (style != null)
                 cell.CellStyle = CreateStyle(style);
@@ -121,17 +153,36 @@ namespace Gymnasiearbete
 
         private ICell CreateCell(int x, int y)
         {
-            // TODO: fix quick fix
             ICell cell;
-            try
+
+            var rowData = SelectedSheetData.RowData.Find(rd => rd.Row == y); ;
+
+            // Test if row data was found
+            if (rowData != null)
             {
                 var row = SelectedSheet.GetRow(y);
-                if ((cell = row.GetCell(x)) == null)
+
+                // test if cell x is registerd in row y
+                if (rowData.Cells != null && rowData.Cells.Contains(x))
+                    cell = row.GetCell(x);
+                else
+                {
+                    // create new cell
                     cell = row.CreateCell(x);
+                    // add to row data
+                    rowData.Cells.Add(x);
+                }
+
             }
-            catch
+            else
             {
                 cell = SelectedSheet.CreateRow(y).CreateCell(x);
+
+                SelectedSheetData.RowData.Add(new RowData
+                {
+                    Row = y,
+                    Cells = new List<int> { x }
+                });
             }
 
             return cell;
