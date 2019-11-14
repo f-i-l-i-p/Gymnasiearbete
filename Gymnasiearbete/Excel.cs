@@ -137,23 +137,6 @@ namespace Gymnasiearbete
             return cell;
         }
 
-        private ICell GetCell(int x, int y)
-        {
-            // TODO: fix quick fix
-            ICell cell;
-            try
-            {
-                var row = SelectedSheet.GetRow(y);
-                if ((cell = row.GetCell(x)) == null)
-                    return null;
-            }
-            catch
-            {
-                return null;
-            }
-
-            return cell;
-        }
 
         /// <summary>
         /// Sets a sell style in the selected sheet.
