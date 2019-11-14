@@ -77,13 +77,6 @@ namespace Gymnasiearbete.Pathfinding
             return false;
         }
 
-        class Vertex
-        {
-            public double DistToSoruce { get; set; }
-            public int Id { get; set; }
-            public int Parent { get; set; }
-        }
-
         public bool Dijkstras(out List<int> path)
         {
             // All unvisited nodes
