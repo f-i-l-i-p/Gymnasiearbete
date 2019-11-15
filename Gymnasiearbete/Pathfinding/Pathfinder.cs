@@ -6,7 +6,7 @@ namespace Gymnasiearbete.Pathfinding
 {
     class Pathfinder
     {
-        public enum SearchType { BFS, TEST };
+        public enum SearchType { BFS, Dijkstras, TEST };
 
         public Graph Graph { get; }
         public int Source { get; }
@@ -25,6 +25,8 @@ namespace Gymnasiearbete.Pathfinding
             {
                 case SearchType.BFS:
                     return BFS(out path);
+                case SearchType.Dijkstras:
+                    return Dijkstras(out path);
                 case SearchType.TEST:
                     return TEST(out path);
                 default:
