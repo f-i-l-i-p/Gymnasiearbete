@@ -22,24 +22,36 @@ namespace Gymnasiearbete
 
             var testResults = new List<TestResult>();
 
-            List<string> graphPaths = GraphManager.GetAllPerfectGraphPaths();
+            var allGraphPaths = GraphManager.GetAllPerfectGraphPaths();
 
-            // TODO: For each map size
-            for (int i = 0; i < 1; i++)
+            // For each graph size
+            foreach (var graphPaths in allGraphPaths)
             {
-                testResults.Add(new TestResult
+                if (graphPaths.Length == 0)
+                    continue;
+
+
+                string sizeString = graphPaths[0].Split('\\').ElementAt(graphPaths[0].Split('\\').Length - 2);
+                if (!int.TryParse(sizeString, out int graphSize))
+                    continue;
+
+                var testResult = new TestResult
                 {
+                    GraphSize = graphSize,
                     GraphResults = new List<GraphResult>(),
-                });
+                };
 
-
+                // For each graph
                 foreach (var path in graphPaths)
                 {
                     // load graph from disk
                     var graph = GraphManager.Load(path);
-
-                    testResults[i].GraphResults.Add(RunGraphPathfinderTests(graph, path.Split('\\').Last()));
+                    
+                    // RunGrapPathfinderTests & save the result to testResult.GraphResults
+                    testResult.GraphResults.Add(RunGraphPathfinderTests(graph, path.Split('\\').Last()));
                 }
+
+                testResults.Add(testResult);
             }
 
             SaveResult(testResults);
