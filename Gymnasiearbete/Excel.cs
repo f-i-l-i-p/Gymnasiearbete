@@ -45,10 +45,14 @@ namespace Gymnasiearbete
             }
         }
 
+        private ICellStyle CellStyle { get; }
+
         public Excel()
         {
             Workbook = new XSSFWorkbook();
             SheetData = new List<SheetData>();
+
+            CellStyle = Workbook.CreateCellStyle();
         }
 
         /// <summary>
@@ -229,37 +233,35 @@ namespace Gymnasiearbete
         /// <returns>The created ICellStyle</returns>
         private ICellStyle CreateStyle(SimpleCellStyle style)
         {
-            var s = Workbook.CreateCellStyle();
+            CellStyle.BorderTop = style.BorderTop;
+            CellStyle.BorderRight = style.BorderRight;
+            CellStyle.BorderBottom = style.BorderBottom;
+            CellStyle.BorderLeft = style.BorderLeft;
+            CellStyle.TopBorderColor = style.TopBorderColor;
+            CellStyle.RightBorderColor = style.RightBorderColor;
+            CellStyle.BottomBorderColor = style.BottomBorderColor;
+            CellStyle.LeftBorderColor = style.LeftBorderColor;
 
-            s.BorderTop = style.BorderTop;
-            s.BorderRight = style.BorderRight;
-            s.BorderBottom = style.BorderBottom;
-            s.BorderLeft = style.BorderLeft;
-            s.TopBorderColor = style.TopBorderColor;
-            s.RightBorderColor = style.RightBorderColor;
-            s.BottomBorderColor = style.BottomBorderColor;
-            s.LeftBorderColor = style.LeftBorderColor;
+            CellStyle.FillForegroundColor = style.FillForegroundColor;
+            CellStyle.FillBackgroundColor = style.FillBackgroundColor;
 
-            s.FillForegroundColor = style.FillForegroundColor;
-            s.FillBackgroundColor = style.FillBackgroundColor;
+            CellStyle.FillPattern = style.FillPattern;
 
-            s.FillPattern = style.FillPattern;
+            CellStyle.Alignment = style.Alignment;
+            CellStyle.VerticalAlignment = style.VerticalAlignment;
 
-            s.Alignment = style.Alignment;
-            s.VerticalAlignment = style.VerticalAlignment;
+            CellStyle.IsHidden = style.IsHidden;
+            CellStyle.IsLocked = style.IsLocked;
+            CellStyle.WrapText = style.WrapText;
+            CellStyle.ShrinkToFit = style.ShrinkToFit;
 
-            s.IsHidden = style.IsHidden;
-            s.IsLocked = style.IsLocked;
-            s.WrapText = style.WrapText;
-            s.ShrinkToFit = style.ShrinkToFit;
+            CellStyle.Rotation = style.Rotation;
+            CellStyle.Indention = style.Indention;
+            CellStyle.DataFormat = style.DataFormat;
 
-            s.Rotation = style.Rotation;
-            s.Indention = style.Indention;
-            s.DataFormat = style.DataFormat;
+            CellStyle.SetFont(style.Font);
 
-            s.SetFont(style.Font);
-
-            return s;
+            return CellStyle;
         }
     }
 
