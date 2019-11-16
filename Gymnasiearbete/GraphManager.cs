@@ -63,18 +63,21 @@ namespace Gymnasiearbete
         }
 
         /// <summary>
-        /// Returns paths to all saved graphs in folders under the "saveLocation" folder
+        /// Returns paths to all saved perfect graphs.
         /// </summary>
-        /// <returns>All graph paths</returns>
-        public static List<string> GetAllGraphPaths()
+        /// <returns>Paths to all perfect graphs.</returns>
+        public static List<string> GetAllPerfectGraphPaths()
         {
-            var directories = Directory.GetDirectories(saveLocation);
+            var directories = Directory.GetDirectories($"{saveLocation}/{MazeType.Perfect.ToString()}");
             var paths = new List<string>();
-            // TODO: change to directories.foreach...
+
+            // For each graph size
             foreach (var directory in directories)
             {
+                // add all paths in directory
                 paths.AddRange(Directory.GetFiles(directory));
             }
+
             return paths;
         }
     }

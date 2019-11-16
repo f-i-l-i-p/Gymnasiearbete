@@ -22,7 +22,7 @@ namespace Gymnasiearbete
 
             var testResults = new List<TestResult>();
 
-            List<string> graphPaths = GraphManager.GetAllGraphPaths();
+            List<string> graphPaths = GraphManager.GetAllPerfectGraphPaths();
 
             // TODO: For each map size
             for (int i = 0; i < 1; i++)
