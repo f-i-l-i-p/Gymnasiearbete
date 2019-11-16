@@ -14,8 +14,8 @@
                         Test.Run();
                         break;
                     case 1: // Regenerate Graphs
-                        GraphManager.RegenrateGraphs(true, 16, 64, 16, 10, "p");
-                        GraphManager.RegenrateGraphs(false, 16, 64, 16, 10, "n");
+                        GraphManager.RegenrateGraphs(GraphManager.MazeType.Perfect, 16, 64, 2, 10);
+                        GraphManager.RegenrateGraphs(GraphManager.MazeType.NonPerfect, 16, 64, 2, 10);
                         break;
                     case 2: // View Graphs
                         var graph = GraphManager.Load(GraphManager.saveLocation + "\\p\\16[0].json");
