@@ -40,41 +40,43 @@ namespace Gymnasiearbete.Pathfinding
             return BFS(out path);
         }
 
+        // https://www.redblobgames.com/pathfinding/a-star/introduction.html
+
         public bool BFS(out List<int> path)
         {
-            var queue = new List<int> { Source };
-            var visited = new bool[Graph.AdjacencyList.Count];
+            var queue = new List<int> { Source }; // TODO: Stack?
             var parent = new int[Graph.AdjacencyList.Count];
 
-            visited[Source] = true;
+            parent[Source] = -1;
 
+            // While there are nodes to check
             while (queue.Count > 0)
             {
                 // Pop first node from queue
-                var n = queue[0];
+                var u = queue[0];
                 queue.RemoveAt(0);
 
                 // Check if it is the destination node
-                if (n == Destination)
+                if (u == Destination)
                 {
                     path = ConstructPathFromParents(parent);
                     return true;
                 }
 
-                // Add all unvisited nodes to the queue & assign their parent
-                foreach (var e in Graph.AdjacencyList[n])
+                // Add all unvisited neighbors to the queue & assign their parent as thr current node (u):
+                // For each neighbor (v) of the current node (u)
+                foreach (var v in Graph.AdjacencyList[u])
                 {
-                    // if adjacent node s not visited
-                    if (!visited[e])
+                    // If v is unvisited (i.e. v has no assigned parent)
+                    if (parent[v] == 0)
                     {
-                        visited[e] = true;
-                        parent[e] = n;
-                        queue.Add(e);
+                        parent[v] = u;
+                        queue.Add(v);
                     }
                 }
             }
 
-            // no solution found
+            // No solution found
             path = null;
             return false;
         }
