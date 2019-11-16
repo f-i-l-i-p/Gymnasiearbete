@@ -9,11 +9,6 @@ namespace Gymnasiearbete
 {
     static class GenerateExcel
     {
-        private static SimpleCellStyle Hair = new SimpleCellStyle { };
-        private static SimpleCellStyle Thin = new SimpleCellStyle { BorderBottom = BorderStyle.Thin };
-        private static SimpleCellStyle Medium = new SimpleCellStyle { BorderBottom = BorderStyle.Medium };
-        private static SimpleCellStyle Thick = new SimpleCellStyle { BorderBottom = BorderStyle.Thick };
-
         public static Excel Generate(List<TestResult> testResults)
         {
             int width = 7;
@@ -21,6 +16,11 @@ namespace Gymnasiearbete
             // Create excel with one empty sheet
             var excel = new Excel();
             excel.AddSheet("Data");
+
+            // Create styles
+            var thinStyle = excel.CreateStyle(new SimpleCellStyle { BorderBottom = BorderStyle.Thin });
+            var mediumStyle = excel.CreateStyle(new SimpleCellStyle { BorderBottom = BorderStyle.Medium });
+            var thickStyle = excel.CreateStyle(new SimpleCellStyle { BorderBottom = BorderStyle.Thick });
 
             int currentRow = 0;
 
@@ -49,32 +49,32 @@ namespace Gymnasiearbete
                             ExplordedRatios.Add(item.ExploredRatio);
                         }
                         // set search times
-                        excel.SetCell(3, currentRow, "Search time", Hair);
-                        excel.SetRow(4, currentRow, SearchTimes, Hair);
+                        excel.SetCell(3, currentRow, "Search time");
+                        excel.SetRow(4, currentRow, SearchTimes);
                         currentRow++;
                         // set explored nodes
-                        excel.SetCell(3, currentRow, "Explored nodes", Hair);
-                        excel.SetRow(4, currentRow, ExplordedNodes, Hair);
+                        excel.SetCell(3, currentRow, "Explored nodes");
+                        excel.SetRow(4, currentRow, ExplordedNodes);
                         currentRow++;
                         // set explored ratio
-                        excel.SetCell(3, currentRow, "Explored ratio", Hair);
-                        excel.SetRow(4, currentRow, ExplordedRatios, Hair);
+                        excel.SetCell(3, currentRow, "Explored ratio");
+                        excel.SetRow(4, currentRow, ExplordedRatios);
                         currentRow++;
 
 
                         for (int i = 2; i < width; i++)
                         {
-                            excel.SetStyle(i, currentRow - 1, Thin);
+                            excel.SetStyle(i, currentRow - 1, thinStyle);
                         }
                     }
                     for (int i = 1; i < width; i++)
                     {
-                        excel.SetStyle(i, currentRow - 1, Medium);
+                        excel.SetStyle(i, currentRow - 1, mediumStyle);
                     }
                 }
                 for (int i = 0; i < width; i++)
                 {
-                    excel.SetStyle(i, currentRow - 1, Thick);
+                    excel.SetStyle(i, currentRow - 1, thickStyle);
                 }
             }
 

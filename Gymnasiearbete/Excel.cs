@@ -45,14 +45,10 @@ namespace Gymnasiearbete
             }
         }
 
-        private ICellStyle CellStyle { get; }
-
         public Excel()
         {
             Workbook = new XSSFWorkbook();
             SheetData = new List<SheetData>();
-
-            CellStyle = Workbook.CreateCellStyle();
         }
 
         /// <summary>
@@ -96,7 +92,7 @@ namespace Gymnasiearbete
         /// <param name="startX">Horizontal start coordinate.</param>
         /// <param name="y">Vertical coordinate.</param>
         /// <param name="values">Cell values from left to right</param>
-        public void SetRow<T>(int startX, int y, List<T> values, SimpleCellStyle style = null)
+        public void SetRow<T>(int startX, int y, List<T> values, ICellStyle style = null)
         {
             foreach (var item in values.Select((value, index) => new { Value = value, Index = index }))
             {
@@ -112,7 +108,7 @@ namespace Gymnasiearbete
         /// <param name="y">Vertical start coordinate.</param>
         /// <param name="values">Cell values from top to bottom</param>
         /// <param name="style">The cells style. If it is set to null, it takes the default style</param>
-        public void SetColumn<T>(int x, int startY, List<T> values, SimpleCellStyle style = null)
+        public void SetColumn<T>(int x, int startY, List<T> values, ICellStyle style = null)
         {
             foreach (var item in values.Select((value, index) => new { Value = value, Index = index }))
             {
@@ -128,7 +124,7 @@ namespace Gymnasiearbete
         /// <param name="y">Vertical coordinate.</param>
         /// <param name="value">New cell value.</param>
         /// <param name="style">The cell style. If it is set to null, it takes the default style</param>
-        public void SetCell<T>(int x, int y, T value, SimpleCellStyle style = null)
+        public void SetCell<T>(int x, int y, T value, ICellStyle style = null)
         {
             var cell = CreateCell(x, y);
 
@@ -151,7 +147,7 @@ namespace Gymnasiearbete
             // TODO: This is too slow
             // set cell style
             if (style != null)
-                cell.CellStyle = CreateStyle(style);
+                cell.CellStyle = style;
         }
 
 
@@ -199,9 +195,9 @@ namespace Gymnasiearbete
         /// <param name="x">Horizontal coordinate.</param>
         /// <param name="y">Vertical coordinate.</param>
         /// <param name="style">The cell style</param>
-        public void SetStyle(int x, int y, SimpleCellStyle style)
+        public void SetStyle(int x, int y, ICellStyle style)
         {
-            CreateCell(x, y).CellStyle = CreateStyle(style);
+            CreateCell(x, y).CellStyle = style;
         }
 
         /// <summary>
@@ -231,37 +227,39 @@ namespace Gymnasiearbete
         /// </summary>
         /// <param name="style">SimpleCellStyle object</param>
         /// <returns>The created ICellStyle</returns>
-        private ICellStyle CreateStyle(SimpleCellStyle style)
+        public ICellStyle CreateStyle(SimpleCellStyle style)
         {
-            CellStyle.BorderTop = style.BorderTop;
-            CellStyle.BorderRight = style.BorderRight;
-            CellStyle.BorderBottom = style.BorderBottom;
-            CellStyle.BorderLeft = style.BorderLeft;
-            CellStyle.TopBorderColor = style.TopBorderColor;
-            CellStyle.RightBorderColor = style.RightBorderColor;
-            CellStyle.BottomBorderColor = style.BottomBorderColor;
-            CellStyle.LeftBorderColor = style.LeftBorderColor;
+            var iCellStyle = Workbook.CreateCellStyle();
 
-            CellStyle.FillForegroundColor = style.FillForegroundColor;
-            CellStyle.FillBackgroundColor = style.FillBackgroundColor;
+            iCellStyle.BorderTop = style.BorderTop;
+            iCellStyle.BorderRight = style.BorderRight;
+            iCellStyle.BorderBottom = style.BorderBottom;
+            iCellStyle.BorderLeft = style.BorderLeft;
+            iCellStyle.TopBorderColor = style.TopBorderColor;
+            iCellStyle.RightBorderColor = style.RightBorderColor;
+            iCellStyle.BottomBorderColor = style.BottomBorderColor;
+            iCellStyle.LeftBorderColor = style.LeftBorderColor;
 
-            CellStyle.FillPattern = style.FillPattern;
+            iCellStyle.FillForegroundColor = style.FillForegroundColor;
+            iCellStyle.FillBackgroundColor = style.FillBackgroundColor;
 
-            CellStyle.Alignment = style.Alignment;
-            CellStyle.VerticalAlignment = style.VerticalAlignment;
+            iCellStyle.FillPattern = style.FillPattern;
 
-            CellStyle.IsHidden = style.IsHidden;
-            CellStyle.IsLocked = style.IsLocked;
-            CellStyle.WrapText = style.WrapText;
-            CellStyle.ShrinkToFit = style.ShrinkToFit;
+            iCellStyle.Alignment = style.Alignment;
+            iCellStyle.VerticalAlignment = style.VerticalAlignment;
 
-            CellStyle.Rotation = style.Rotation;
-            CellStyle.Indention = style.Indention;
-            CellStyle.DataFormat = style.DataFormat;
+            iCellStyle.IsHidden = style.IsHidden;
+            iCellStyle.IsLocked = style.IsLocked;
+            iCellStyle.WrapText = style.WrapText;
+            iCellStyle.ShrinkToFit = style.ShrinkToFit;
 
-            CellStyle.SetFont(style.Font);
+            iCellStyle.Rotation = style.Rotation;
+            iCellStyle.Indention = style.Indention;
+            iCellStyle.DataFormat = style.DataFormat;
 
-            return CellStyle;
+            iCellStyle.SetFont(style.Font);
+
+            return iCellStyle;
         }
     }
 
