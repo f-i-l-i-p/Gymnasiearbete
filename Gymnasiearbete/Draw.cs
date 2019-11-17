@@ -49,7 +49,6 @@ namespace Gymnasiearbete
                     line += "   ";
                 }
 
-
                 // Print line without nodes (line)
                 if (previousLine != null)
                 {
@@ -72,7 +71,6 @@ namespace Gymnasiearbete
                     }
                 }
                 Console.WriteLine();
-
 
                 // Print line with nodes (nextLine)
                 for (int i = 0; i < nextLine.Length; i += 4)
