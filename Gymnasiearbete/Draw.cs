@@ -42,7 +42,7 @@ namespace Gymnasiearbete
                 for (int x = 0; x < w; x++)
                 {
                     // If edge under
-                    if (Id(x, y) + w < graph.AdjacencyList.Count && graph.AdjacencyList[Id(x, y)].Contains(Id(x, y) + w))
+                    if (Id(x, y) - w > 0 && graph.AdjacencyList[Id(x, y)].Contains(Id(x, y) - w))
                         line += "|";
                     else
                         line += " ";
@@ -53,7 +53,7 @@ namespace Gymnasiearbete
                 // Print line without nodes (line)
                 if (previousLine != null)
                 {
-                    for (int i = 0; i < w; i += 4)
+                    for (int i = 0; i < line.Length; i += 4)
                     {
                         if (line[i] == ' ')
                         {
@@ -75,7 +75,7 @@ namespace Gymnasiearbete
 
 
                 // Print line with nodes (nextLine)
-                for (int i = 0; i < w; i += 4)
+                for (int i = 0; i < nextLine.Length; i += 4)
                 {
                     if (nextLine[i] == 'P')
                         Console.ForegroundColor = ConsoleColor.Red;
@@ -86,7 +86,7 @@ namespace Gymnasiearbete
 
                     Console.Write(nextLine[i]);
 
-                    if (i < w - 1 && nextLine[i + 1] == '-')
+                    if (i < nextLine.Length - 1 && nextLine[i + 1] == '-')
                     {
                         if (nextLine[i] == 'P' && nextLine[i] + 4 == 'P')
                             Console.ForegroundColor = ConsoleColor.Red;
