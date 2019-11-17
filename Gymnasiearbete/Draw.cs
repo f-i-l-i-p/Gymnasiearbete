@@ -5,24 +5,26 @@ namespace Gymnasiearbete
 {
     static class Draw
     {
-        public static void GraphMaze(Graph graph, int w, int h, int[] path = null, int[] explored = null)
+        public static void GraphMaze(Graph graph, int[] path = null, int[] explored = null)
         {
+            int sideLength = (int)Math.Sqrt(graph.AdjacencyList.Count);
+
             // Returns the node id at a given coordinate
             int Id(int x, int y)
             {
-                return x + y * w;
+                return x + y * sideLength;
             }
 
             string previousLine = null;
 
-            for (int y = 0; y < h; y++)
+            for (int y = 0; y < sideLength; y++)
             {
                 string line = string.Empty;
                 string nextLine = string.Empty;
 
 
                 // Line with nodes (nextLine)
-                for (int x = 0; x < w; x++)
+                for (int x = 0; x < sideLength; x++)
                 {
                     if (path != null && path.Contains(Id(x, y)))
                         nextLine += "P";
@@ -39,10 +41,10 @@ namespace Gymnasiearbete
                 }
 
                 // Line without nodes (only edges) (line)
-                for (int x = 0; x < w; x++)
+                for (int x = 0; x < sideLength; x++)
                 {
                     // If edge under
-                    if (Id(x, y) - w > 0 && graph.AdjacencyList[Id(x, y)].Contains(Id(x, y) - w))
+                    if (Id(x, y) - sideLength + 1 > 0 && graph.AdjacencyList[Id(x, y)].Contains(Id(x, y) - sideLength))
                         line += "|";
                     else
                         line += " ";

@@ -18,11 +18,11 @@
                         break;
                     case 2: // View Graphs
                         var graph = GraphManager.Load(GraphManager.saveLocation + "\\p\\16[0].json");
-                        Draw.GraphMaze(graph, 16, 16);
+                        Draw.GraphMaze(graph);
                         break;
                     case 3:
-                        var g = MazeGeneration.MazeGenerator.GenerateMaze(25, 0);
-                        Draw.GraphMaze(g, 5, 5);
+                        var g = MazeGeneration.MazeGenerator.GenerateMaze(64, 0);
+                        Draw.GraphMaze(g);
                         break;
                 }
             }
