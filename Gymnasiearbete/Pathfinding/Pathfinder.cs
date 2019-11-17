@@ -7,7 +7,7 @@ namespace Gymnasiearbete.Pathfinding
 {
     class Pathfinder
     {
-        public enum SearchType { BFS, Dijkstras, TEST };
+        public enum SearchType { BFS, Dijkstras, AStar, TEST };
 
         public Graph Graph { get; }
         public int Source { get; }
@@ -28,6 +28,8 @@ namespace Gymnasiearbete.Pathfinding
                     return BFS(out path);
                 case SearchType.Dijkstras:
                     return Dijkstras(out path);
+                case SearchType.AStar:
+                    return AStar(out path);
                 case SearchType.TEST:
                     return TEST(out path);
                 default:
@@ -128,6 +130,67 @@ namespace Gymnasiearbete.Pathfinding
                         parent[v] = u;
                         cost[v] = newCost;
                         Enqueue(v, newCost.Value);
+                    }
+                }
+            }
+
+            // No solution found
+            path = null;
+            return false;
+        }
+
+        public bool AStar(out List<int> path)
+        {
+            var priorityQueue = new FastPriorityQueue<QueueNode>(Graph.AdjacencyList.Count);
+            var parent = new int?[Graph.AdjacencyList.Count];
+            var gScore = new int?[Graph.AdjacencyList.Count];
+            var destinationPos = Graph.NodePossitions[Destination];
+
+            // Adds a node to the priorityQueue
+            void Enqueue(int node, float priority)
+            {
+                priorityQueue.Enqueue(new QueueNode(node), priority);
+            }
+
+            // Returns the distance from the node to the Destinatio node
+            int hScore(int node)
+            {
+                var pos = Graph.NodePossitions[node];
+                return Math.Abs(destinationPos.X = pos.X) + Math.Abs(destinationPos.Y - pos.Y);
+            }
+
+            // Add Source to the queue & set Source parent & set Source gScore
+            Enqueue(Source, 0);
+            parent[Source] = Source;
+            gScore[Source] = 0;
+
+            // While there are nodes in the queue
+            while (priorityQueue.Any())
+            {
+                // dequeue the node with the lowest priority
+                var u = priorityQueue.Dequeue().Value;
+
+                // Check if it is the destination node
+                if (u == Destination)
+                {
+                    path = ConstructPathFromParents(parent);
+                    return true;
+                }
+
+                // Add all unvisited neighbors to the queue & assign their parent as the current node if it is unvisited or will give it a lower cost:
+                // For each neighbor (v) of the current node (u)
+                foreach (var v in Graph.AdjacencyList[u])
+                {
+                    // newCost is the total cost from the source to the neighbor node.
+                    // its value will be the current nodes cost + the edge weight from the current node to the neighbor
+                    var newCost = gScore[u] + 1;
+
+                    // If v is unvisited (i.e. v has no assigned parent) or has a higher cost than newCost
+                    if (gScore[v] == null || gScore[v] > newCost)
+                    {
+                        parent[v] = u;
+                        gScore[v] = newCost;
+                        Enqueue(v, gScore[v].Value + hScore(v));
                     }
                 }
             }
