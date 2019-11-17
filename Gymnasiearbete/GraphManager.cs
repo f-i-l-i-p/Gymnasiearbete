@@ -8,13 +8,11 @@ namespace Gymnasiearbete
     {
         public static string saveLocation = Path.GetFullPath(@"..\..\..\SavedGraphs");
 
-        public enum MazeType { Perfect, NonPerfect }
-
         // Generates and saves Graphs
-        public static void RegenrateGraphs(MazeType mazeType, int sizeStart, int sizeEnd, int sizeIncrease, int sizeCount)
+        public static void RegenrateGraphs(float openness, int sizeStart, int sizeEnd, int sizeIncrease, int sizeCount)
         {
             // path to the folder with {mazeType} graphs
-            string graphFolderPath = $"{saveLocation}/{mazeType.ToString()}";
+            string graphFolderPath = $"{saveLocation}/{openness.ToString()}";
 
             // For each graph size
             for (int size = sizeStart; size <= sizeEnd ; size *= sizeIncrease)
@@ -22,19 +20,12 @@ namespace Gymnasiearbete
                 // Repeat size count
                 for (int i = 0; i < sizeCount; i++)
                 {
-                    Cell[,] maze;
-
                     // Generate maze
-                    if (mazeType == MazeType.Perfect)
-                        maze = MazeGenerator.GeneratePerfectMaze(size, size);
-                    else if (mazeType == MazeType.NonPerfect)
-                        maze = MazeGenerator.GenerateNonPerfectMaze(size, size, 0.9);
-                    else
-                        throw new System.ArgumentException($"{mazeType.ToString()} is not a possible maze type", "mazeType");
+                    var maze = MazeGeneration.MazeGenerator.GenerateMaze(size, openness);
 
-                    // convert to Graph & save
+                    // Save
                     // saves in folder {saveLocaation}/{size} as {sizeCount}.json
-                    Save(MazeGraphConverter.ToGraph(maze), $"{graphFolderPath}/{size.ToString()}", i.ToString());
+                    Save(maze, $"{graphFolderPath}/{size.ToString()}", i.ToString());
                 }
             }
         }
@@ -68,14 +59,19 @@ namespace Gymnasiearbete
         /// <returns>Paths to all perfect graphs.</returns>
         public static List<string[]> GetAllPerfectGraphPaths()
         {
-            var directories = Directory.GetDirectories($"{saveLocation}/{MazeType.Perfect.ToString()}");
+            var typeDirectories = Directory.GetDirectories(saveLocation);
             var paths = new List<string[]>();
 
-            // For each graph size
-            foreach (var directory in directories)
+            // For each graph type
+            foreach (var typeDirecotrie in typeDirectories)
             {
-                // add all paths in directory
-                paths.Add(Directory.GetFiles(directory));
+                var directories = Directory.GetDirectories(typeDirecotrie);
+                // For each graph size
+                foreach (var directory in directories)
+                {
+                    // add all paths in directory
+                    paths.Add(Directory.GetFiles(directory));
+                }
             }
 
             return paths;
