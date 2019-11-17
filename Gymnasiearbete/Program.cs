@@ -4,7 +4,7 @@
     {
         static void Main(string[] args)
         {
-            var opptions = new string[] { "Run Tests", "Regenerate Graphs", "View Graphs", "Test graph generation", "Exit" };
+            var opptions = new string[] { "Run Tests", "Regenerate Graphs", "Test graph generation", "Exit" };
             int selected;
             while ((selected = Menu.Create(opptions)) != opptions.Length - 1)
             {
@@ -15,10 +15,6 @@
                         break;
                     case 1: // Regenerate Graphs
                         GraphManager.RegenrateGraphs(1, 64, 64, 2, 10);
-                        break;
-                    case 2: // View Graphs
-                        var graph = GraphManager.Load(GraphManager.saveLocation + "\\p\\16[0].json");
-                        Draw.GraphMaze(graph);
                         break;
                     case 3:
                         var g = MazeGeneration.MazeGenerator.GenerateMaze(64, 0);
