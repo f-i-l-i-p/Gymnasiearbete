@@ -94,9 +94,16 @@ namespace Gymnasiearbete.MazeGeneration
             //
             //   12  13  14  15
             //
-            for (int i = 0; i < Math.Pow(sideLength, 2); i++)
+            for (int x = 0; x < sideLength; x++)
             {
-                graph.AddNode();
+                for (int y = 0; y < sideLength; y++)
+                {
+                    graph.AddNode(new Possition
+                    {
+                        X = x,
+                        Y = y,
+                    });
+                }
             }
 
 
