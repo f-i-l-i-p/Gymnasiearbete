@@ -6,7 +6,7 @@ namespace Gymnasiearbete
     {
         /// <summary>
         /// Creates graph from Cell[,]
-        /// The node id's will be increasing from left to right:
+        /// The node id's in the graph will be increasing from left to right:
         /// 0 1 2
         /// 3 4 5
         /// 6 7 8
@@ -20,13 +20,22 @@ namespace Gymnasiearbete
             var w = Maze.GetLength(0);
             var h = Maze.GetLength(1);
 
+            // Returns the real node position from the node Id
+            Possition Possition(int nodeId)
+            {
+                return new Possition
+                {
+                    X = nodeId % w,
+                    Y = nodeId / w,
+                };
+            }
+
             // Create one node for each cell
             int val;
             for (val = 0; val < w * h; val++)
             {
-                graph.AddNode();
+                graph.AddNode(Possition(val));
             }
-
 
             // Add edges
             val = 0;

@@ -3,13 +3,27 @@ using System.Linq;
 
 namespace Gymnasiearbete
 {
+    class Possition
+    {
+        /// <summary>
+        /// Horizontal coordinate
+        /// </summary>
+        public int X { get; set; }
+        /// <summary>
+        /// Vertical coordinate
+        /// </summary>
+        public int Y { get; set; }
+    }
+
     class Graph
     {
         public List<List<int>> AdjacencyList { get; }
+        public List<Possition> NodePossitions { get; }
 
-        public Graph(int nodes = 0)
+        public Graph()
         {
-            AdjacencyList = Enumerable.Repeat(new List<int>(), nodes).ToList();
+            AdjacencyList = new List<List<int>>();
+            NodePossitions = new List<Possition>();
         }
 
         // Adds a new edge to the list
@@ -27,7 +41,7 @@ namespace Gymnasiearbete
         }
 
         // Adds a new node and returns the index position
-        public int AddNode()
+        public int AddNode(Possition possition)
         {
             var index = AdjacencyList.FindIndex(e => e == null);
 
@@ -35,11 +49,13 @@ namespace Gymnasiearbete
             if (index == -1)
             {
                 AdjacencyList.Add(new List<int>());
+                NodePossitions.Add(possition);
                 return AdjacencyList.Count - 1;
             }
             else
             {
                 AdjacencyList[index] = new List<int>();
+                NodePossitions[index] = possition;
                 return index;
             }
         }
