@@ -16,7 +16,7 @@
                     case 1: // Regenerate Graphs
                         GraphManager.RegenrateGraphs(1, 64, 64, 2, 10);
                         break;
-                    case 3:
+                    case 2:
                         var g = MazeGeneration.MazeGenerator.GenerateMaze(64, 0);
                         Draw.GraphMaze(g);
                         break;
