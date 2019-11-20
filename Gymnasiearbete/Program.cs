@@ -11,7 +11,7 @@
                 switch (selected)
                 {
                     case 0: // Run Tests
-                        Test.Run();
+                        Test.Test.Run();
                         break;
                     case 1: // Regenerate Graphs
                         GraphManager.RegenrateGraphs(1, 64, 64, 2, 10);

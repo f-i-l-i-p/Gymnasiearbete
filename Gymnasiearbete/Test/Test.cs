@@ -1,5 +1,4 @@
 ﻿using Gymnasiearbete.Pathfinding;
-using NPOI.SS.UserModel;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static Gymnasiearbete.Pathfinding.Pathfinder;
 
-namespace Gymnasiearbete
+namespace Gymnasiearbete.Test
 {
     static class Test
     {
@@ -46,7 +45,7 @@ namespace Gymnasiearbete
                 {
                     // load graph from disk
                     var graph = GraphManager.Load(path);
-                    
+
                     // RunGrapPathfinderTests & save the result to testResult.GraphResults
                     testResult.GraphResults.Add(RunGraphPathfinderTests(graph, path.Split('\\').Last()));
                 }
@@ -134,30 +133,5 @@ namespace Gymnasiearbete
 
             return searchTypeResult;
         }
-    }
-
-    class TestResult
-    {
-        public int GraphSize { get; set; }
-        public List<GraphResult> GraphResults { get; set; }
-    }
-
-    class GraphResult
-    {
-        public string GraphName {get; set;}
-        public List<SearchTypeResult> SearchTypesResults { get; set; }
-    }
-
-    class SearchTypeResult
-    {
-        public SearchType SearchType { get; set; }
-        public List<SearchResult> SearchResults { get; set; }
-    }
-
-    class SearchResult
-    {
-        public double SearchTime { get; set; }
-        public int ExplordedNoedes { get; set; }
-        public double ExploredRatio { get; set; }
     }
 }
