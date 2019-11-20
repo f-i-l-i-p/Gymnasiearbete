@@ -7,7 +7,7 @@ namespace Gymnasiearbete.Pathfinding
 {
     class Pathfinder
     {
-        public enum SearchType { BFS, Dijkstras, AStar, TEST };
+        public enum SearchType { BFS, Dijkstras, AStar };
 
         public Graph Graph { get; }
         public int Source { get; }
@@ -30,17 +30,10 @@ namespace Gymnasiearbete.Pathfinding
                     return Dijkstras(out path);
                 case SearchType.AStar:
                     return AStar(out path);
-                case SearchType.TEST:
-                    return TEST(out path);
                 default:
                     path = null;
                     return false;
             }
-        }
-
-        public bool TEST(out List<int> path)
-        {
-            return BFS(out path);
         }
 
         // BFS, Dijkstras, A*: https://www.redblobgames.com/pathfinding/a-star/introduction.html
