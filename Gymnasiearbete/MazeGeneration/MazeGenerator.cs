@@ -7,6 +7,42 @@ namespace Gymnasiearbete.MazeGeneration
     static class MazeGenerator
     {
         private static Random random = new Random();
+        
+        private static List<int> GetUnvissitedNeighbors(Graph maze, int sideLength, int node, bool includeVissited)
+        {
+            // node coordinates: { x, y }
+            var nodePos = new int[] { node % sideLength, node / sideLength };
+
+            // All possible neighbor positions relative to the node
+            var relPos = new List<int[]>
+                {
+                    new int[] {  0, -1 },
+                    new int[] {  1,  0 },
+                    new int[] {  0,  1 },
+                    new int[] { -1,  0 },
+                };
+
+            var neighbors = new List<int>();
+
+            foreach (var p in relPos)
+            {
+                // calculate neighbor position
+                var np = new int[] { p[0] + nodePos[0], p[1] + nodePos[1] };
+                // neighbor id
+                var id = np[0] + np[1] * sideLength;
+
+                // Check if the position is inside the maze and if it is unvisited if onlyUnvissited=true
+                if (np[0] >= 0 && np[0] < sideLength && np[1] >= 0 && np[1] < sideLength
+                    // if unvissited (as not been conneted to another node)
+                    && (includeVissited || !maze.AdjacencyList[id].Any()))
+                {
+                    // Save the unvisited neighbor
+                    neighbors.Add(id);
+                }
+            }
+
+            return neighbors;
+        }
 
         public static Graph GenerateMaze(int size, float openness)
         {
@@ -14,75 +50,6 @@ namespace Gymnasiearbete.MazeGeneration
 
             int sideLength = (int)Math.Sqrt(size);
 
-            List<int> GetNeighbors(int node)
-            {
-                // nodePos = { x, y }
-                var nodePos = new int[] { node % sideLength, node / sideLength };
-
-                // All possible neighbor positions relative to the node
-                var relPos = new List<int[]>
-                {
-                    new int[] {  0, -1 },
-                    new int[] {  1,  0 },
-                    new int[] {  0,  1 },
-                    new int[] { -1,  0 },
-                };
-
-                var neighbors = new List<int>();
-
-                foreach (var p in relPos)
-                {
-                    // calculate neighbor position
-                    var np = new int[] { p[0] + nodePos[0], p[1] + nodePos[1] };
-                    // neighbor id
-                    var id = np[0] + np[1] * sideLength;
-
-                    // Check if the position is inside the maze
-                    if (np[0] >= 0 && np[0] < sideLength && np[1] >= 0 && np[1] < sideLength)
-                    {
-                        // Save the unvisited neighbor
-                        neighbors.Add(id);
-                    }
-                }
-
-                return neighbors;
-            }
-
-            List<int> GetUnvissitedNeighbors(int node)
-            {
-                // nodePos = { x, y }
-                var nodePos = new int[] { node % sideLength, node / sideLength };
-
-                // All possible neighbor positions relative to the node
-                var relPos = new List<int[]>
-                {
-                    new int[] {  0, -1 },
-                    new int[] {  1,  0 },
-                    new int[] {  0,  1 },
-                    new int[] { -1,  0 },
-                };
-
-                var neighbors = new List<int>();
-
-                foreach (var p in relPos)
-                {
-                    // calculate neighbor position
-                    var np = new int[] { p[0] + nodePos[0], p[1] + nodePos[1] };
-                    // neighbor id
-                    var id = np[0] + np[1] * sideLength;
-
-                    // Check if the position is inside the maze and if it is unvisited
-                    if (np[0] >= 0 && np[0] < sideLength && np[1] >= 0 && np[1] < sideLength
-                        // if unvissited (as not been conneted to another node)
-                        && !graph.AdjacencyList[id].Any())
-                    {
-                        // Save the unvisited neighbor
-                        neighbors.Add(id);
-                    }
-                }
-
-                return neighbors;
-            }
 
             // Add all nodes to the graph:
             //
@@ -127,7 +94,7 @@ namespace Gymnasiearbete.MazeGeneration
                 var currentNode = nodeStack.Peek();
 
                 // get all unvisited neighbors around the current cell
-                var unbs = GetUnvissitedNeighbors(currentNode);
+                var unbs = GetUnvissitedNeighbors(graph, sideLength, currentNode, false);
 
                 // If there are any unvisited neighbors
                 if (unbs.Any())
@@ -153,7 +120,7 @@ namespace Gymnasiearbete.MazeGeneration
                         random.NextDouble() < openness)
                     {
                         // get neighbours
-                        var nbs = GetNeighbors(currentNode);
+                        var nbs = GetUnvissitedNeighbors(graph, sideLength, currentNode, true);
                         // remove the node that the current node is already connected to
                         nbs.Remove(graph.AdjacencyList[currentNode][0]);
                         // chose node
