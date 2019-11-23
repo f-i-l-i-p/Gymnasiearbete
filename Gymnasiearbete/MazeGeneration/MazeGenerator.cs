@@ -110,27 +110,43 @@ namespace Gymnasiearbete.MazeGeneration
                 }
                 else
                 {
-                    // If the current node is only connected to 1 other node (it is a dead-end),
-                    // then there will be a probablity that it connects to one more node.
-                    // The probability for that is (openness)/1.
-                    //
-                    // If the current node is only connected to 1 other node:
-                    if (graph.AdjacencyList[currentNode].Count == 1 &&
-                        // Probability for conecting:
-                        random.NextDouble() < openness)
-                    {
-                        // get neighbours
-                        var nbs = GetUnvissitedNeighbors(graph, sideLength, currentNode, true);
-                        // remove the node that the current node is already connected to
-                        nbs.Remove(graph.AdjacencyList[currentNode][0]);
-                        // chose node
-                        var nodeToConnect = nbs[random.Next(0, nbs.Count)];
-                        // connect the nodes
-                        graph.AddEdge(currentNode, nodeToConnect);
-                    }
-
                     // remove the current node from the stack
                     nodeStack.Pop();
+                }
+            }
+
+
+            // If oppenes == 0, then no extra edges will be added
+            if (openness <= 0)
+                return graph;
+
+            // Add extra edges:
+            //
+            //   0---1---2---3
+            //       |   |   |
+            //   4---5   6---7
+            //   |   |       |
+            //   8---9---10--11
+            //       |   |   
+            //   12--13--14--15
+            //
+            // Loop thorugh all nodes
+            for (int node = 0; node < graph.AdjacencyList.Count; node++)
+            {
+                // get all neighbors around the node
+                var nbs = GetUnvissitedNeighbors(graph, sideLength, node, true);
+
+                // for each neighbor
+                foreach (var nb in nbs)
+                {
+                    // If already connected to node
+                    if (graph.AdjacencyList[node].Contains(nb))
+                        continue;
+
+                    // Probablity that it connects with the node: (openness)/1.
+                    if (random.NextDouble() < openness)
+                        // connect node and neighbor
+                        graph.AddEdge(node, nb);
                 }
             }
 
