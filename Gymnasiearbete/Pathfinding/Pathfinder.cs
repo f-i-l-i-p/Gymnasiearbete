@@ -149,7 +149,7 @@ namespace Gymnasiearbete.Pathfinding
             int hScore(int node)
             {
                 var pos = Graph.NodePossitions[node];
-                return Math.Abs(destinationPos.X = pos.X) + Math.Abs(destinationPos.Y - pos.Y);
+                return Math.Abs(destinationPos.X - pos.X) + Math.Abs(destinationPos.Y - pos.Y);
             }
 
             // Add Source to the queue & set Source parent & set Source gScore
