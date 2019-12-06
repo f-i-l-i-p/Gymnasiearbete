@@ -11,6 +11,9 @@ namespace Gymnasiearbete
         // Generates and saves Graphs
         public static void RegenrateGraphs(float openness, int sizeStart, int sizeEnd, int sizeIncrease, int sizeCount)
         {
+            // remove old graph directory
+            Directory.Delete(saveLocation, true);
+
             // path to the folder with {mazeType} graphs
             string graphFolderPath = $"{saveLocation}/{openness.ToString()}";
 
