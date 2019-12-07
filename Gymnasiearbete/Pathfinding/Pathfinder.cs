@@ -134,22 +134,22 @@ namespace Gymnasiearbete.Pathfinding
 
         public bool AStar(out List<int> path)
         {
-            var priorityQueue = new FastPriorityQueue<QueueNode>(Graph.AdjacencyList.Count);
+            var priorityQueue = new StablePriorityQueue<SQueueNode>(Graph.AdjacencyList.Count);
             var parent = new int?[Graph.AdjacencyList.Count];
-            var gScore = new int?[Graph.AdjacencyList.Count];
+            var gScore = new double?[Graph.AdjacencyList.Count];
             var destinationPos = Graph.NodePossitions[Destination];
 
             // Adds a node to the priorityQueue
             void Enqueue(int node, float priority)
             {
-                priorityQueue.Enqueue(new QueueNode(node), priority);
+                priorityQueue.Enqueue(new SQueueNode(node), priority);
             }
 
             // Returns the distance from the node to the Destinatio node
-            int hScore(int node)
+            float hScore(int node)
             {
                 var pos = Graph.NodePossitions[node];
-                return Math.Abs(destinationPos.X = pos.X) + Math.Abs(destinationPos.Y - pos.Y);
+                return 1.0001f * Math.Abs(destinationPos.X - pos.X) + (destinationPos.Y - pos.Y);
             }
 
             // Add Source to the queue & set Source parent & set Source gScore
@@ -183,7 +183,7 @@ namespace Gymnasiearbete.Pathfinding
                     {
                         parent[v] = u;
                         gScore[v] = newCost;
-                        Enqueue(v, gScore[v].Value + hScore(v));
+                        Enqueue(v, (float)(gScore[v].Value + hScore(v)));
                     }
                 }
             }
@@ -232,6 +232,15 @@ namespace Gymnasiearbete.Pathfinding
     {
         public int Value { get; set; }
         public QueueNode(int value)
+        {
+            Value = value;
+        }
+    }
+
+    class SQueueNode : StablePriorityQueueNode
+    {
+        public int Value { get; set; }
+        public SQueueNode(int value)
         {
             Value = value;
         }
