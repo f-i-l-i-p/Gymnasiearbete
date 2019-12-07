@@ -10,7 +10,7 @@ namespace Gymnasiearbete
 {
     static class GenerateExcel
     {
-        public static Excel Generate(List<TestResult> testResults)
+        public static Excel Generate(TestResults testResults)
         {
             int width = 7;
 
@@ -25,28 +25,28 @@ namespace Gymnasiearbete
 
             int currentRow = 0;
 
-            foreach (var testResult in testResults)
+            foreach (var sizeResults in testResults.OpennesResults[0].SizeResults)
             {
                 // set graph size
-                excel.SetCell(0, currentRow, testResult.GraphSize);
+                excel.SetCell(0, currentRow, sizeResults.GraphSize);
 
-                foreach (var graphResult in testResult.GraphResults.Select((value, index) => new { Value = value, Index = index }))
+                foreach (var sizeRepetResult in sizeResults.SizeRepetResults)
                 {
                     // set size repeat
-                    excel.SetCell(1, currentRow, graphResult.Index);
+                    excel.SetCell(1, currentRow, sizeRepetResult.GraphSizeRepet);
 
-                    foreach (var searchTypeResult in graphResult.Value.SearchTypesResults)
+                    foreach (var searchTypeResults in sizeRepetResult.SearchTypeResults)
                     {
                         // set search type
-                        excel.SetCell(2, currentRow, searchTypeResult.SearchType.ToString());
+                        excel.SetCell(2, currentRow, searchTypeResults.SearchType.ToString());
 
                         var SearchTimes = new List<double>();
                         var ExplordedNodes = new List<int>();
                         var ExplordedRatios = new List<double>();
-                        foreach (var item in searchTypeResult.SearchResults)
+                        foreach (var item in searchTypeResults.SearchResults)
                         {
                             SearchTimes.Add(item.SearchTime);
-                            ExplordedNodes.Add(item.ExplordedNoedes);
+                            ExplordedNodes.Add(item.ExplordedNodes);
                             ExplordedRatios.Add(item.ExploredRatio);
                         }
                         // set search times

@@ -3,19 +3,31 @@ using static Gymnasiearbete.Pathfinding.Pathfinder;
 
 namespace Gymnasiearbete.Test
 {
-    class TestResult
+    class TestResults
+    {
+        // public Date // TODO: add test date
+        public List<OpennessResults> OpennesResults { get; set; }
+    }
+
+    class OpennessResults
+    {
+        public double Openness { get; set; }
+        public List<SizeResults> SizeResults { get; set; }
+    }
+
+    class SizeResults
     {
         public int GraphSize { get; set; }
-        public List<GraphResult> GraphResults { get; set; }
+        public List<SizeRepetResults> SizeRepetResults { get; set;}
     }
 
-    class GraphResult
+    class SizeRepetResults
     {
-        public string GraphName { get; set; }
-        public List<SearchTypeResult> SearchTypesResults { get; set; }
+        public int GraphSizeRepet { get; set; }
+        public List<SearchTypeResults> SearchTypeResults { get; set; }
     }
 
-    class SearchTypeResult
+    class SearchTypeResults
     {
         public SearchType SearchType { get; set; }
         public List<SearchResult> SearchResults { get; set; }
@@ -24,7 +36,7 @@ namespace Gymnasiearbete.Test
     class SearchResult
     {
         public double SearchTime { get; set; }
-        public int ExplordedNoedes { get; set; }
+        public int ExplordedNodes { get; set; }
         public double ExploredRatio { get; set; }
     }
 }
