@@ -136,7 +136,7 @@ namespace Gymnasiearbete.Pathfinding
         {
             var priorityQueue = new StablePriorityQueue<SQueueNode>(Graph.AdjacencyList.Count);
             var parent = new int?[Graph.AdjacencyList.Count];
-            var gScore = new double?[Graph.AdjacencyList.Count];
+            var gScore = new float?[Graph.AdjacencyList.Count];
             var destinationPos = Graph.NodePossitions[Destination];
 
             // Adds a node to the priorityQueue
@@ -183,7 +183,7 @@ namespace Gymnasiearbete.Pathfinding
                     {
                         parent[v] = u;
                         gScore[v] = newCost;
-                        Enqueue(v, (float)(gScore[v].Value + hScore(v)));
+                        Enqueue(v, gScore[v].Value + hScore(v));
                     }
                 }
             }
