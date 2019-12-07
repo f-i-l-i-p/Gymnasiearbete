@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Gymnasiearbete
 {
     static class Draw
     {
-        public static void GraphMaze(Graph graph, int[] path = null, int[] explored = null)
+        public static void GraphMaze(Graph graph, IEnumerable<int> path = null, IEnumerable<int> explored = null)
         {
             int sideLength = (int)Math.Sqrt(graph.AdjacencyList.Count);
 
