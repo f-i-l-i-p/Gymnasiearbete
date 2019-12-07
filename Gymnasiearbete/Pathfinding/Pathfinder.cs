@@ -1,16 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Gymnasiearbete.Pathfinding.QueueNodes;
 using Priority_Queue;
 
 namespace Gymnasiearbete.Pathfinding
 {
     class Pathfinder
     {
+        /// <summary>
+        /// All path-finding algorithms that can be used in this class.
+        /// </summary>
         public enum SearchType { BFS, Dijkstras, AStar };
 
+        /// <summary>
+        /// Graph to search through.
+        /// </summary>
         public Graph Graph { get; }
+        /// <summary>
+        /// The source/start node when searching for the shortest path.
+        /// </summary>
         public int Source { get; }
+        /// <summary>
+        /// The destination/end node when searching for the shortest path.
+        /// </summary>
         public int Destination { get; }
 
         public Pathfinder(Graph graph, int source, int destination)
@@ -20,6 +33,11 @@ namespace Gymnasiearbete.Pathfinding
             Destination = destination;
         }
 
+        /// <summary>
+        /// Searches the graph with the specified searchType algorithm to find the shortest path from the source node to the destination node.
+        /// </summary>
+        /// <param name="path">A list of steps to take to travel from the source node to the destination node.</param>
+        /// <returns>A boolean indicating if the path was found.</returns>
         public bool FindPath(SearchType searchType, out List<int> path)
         {
             switch (searchType)
@@ -39,6 +57,11 @@ namespace Gymnasiearbete.Pathfinding
         // BFS, Dijkstras, A*: https://www.redblobgames.com/pathfinding/a-star/introduction.html
         // Array vs List vs LinkedList: https://i.stack.imgur.com/iBz6V.png
 
+        /// <summary>
+        /// Searches the graph with the Breadth First Search algorithm to find the shortest path from the source node to the destination node.
+        /// </summary>
+        /// <param name="path">A list of steps to take to travel from the source node to the destination node.</param>
+        /// <returns>A boolean indicating if the path was found.</returns>
         public bool BFS(out List<int> path)
         {
             var queue = new Queue<int>(); https://i.stack.imgur.com/iBz6V.png
@@ -51,7 +74,7 @@ namespace Gymnasiearbete.Pathfinding
             // While there are nodes to check
             while (queue.Count > 0)
             {
-                // dequeue the firt node in the queue
+                // dequeue the first node in the queue
                 var u = queue.Dequeue();
 
                 // Check if it is the destination node
@@ -79,16 +102,21 @@ namespace Gymnasiearbete.Pathfinding
             return false;
         }
 
+        /// <summary>
+        /// Searches the graph with Dijkstra's algorithm to find the shortest path from the source node to the destination node.
+        /// </summary>
+        /// <param name="path">A list of steps to take to travel from the source node to the destination node.</param>
+        /// <returns>A boolean indicating if the path was found.</returns>
         public bool Dijkstras(out List<int> path)
         {
-            var priorityQueue = new FastPriorityQueue<QueueNode>(Graph.AdjacencyList.Count);
+            var priorityQueue = new FastPriorityQueue<FastQueueNode>(Graph.AdjacencyList.Count);
             var parent = new int?[Graph.AdjacencyList.Count];
             var cost = new int?[Graph.AdjacencyList.Count];
 
             // Adds a node to the priorityQueue
             void Enqueue(int node, float priority)
             {
-                priorityQueue.Enqueue(new QueueNode(node), priority);
+                priorityQueue.Enqueue(new FastQueueNode(node), priority);
             }
 
             // Add Source to the queue & set Source parent & set Source cost
@@ -132,9 +160,14 @@ namespace Gymnasiearbete.Pathfinding
             return false;
         }
 
+        /// <summary>
+        /// Searches the graph with the A* algorithm to find the shortest path from the source node to the destination node.
+        /// </summary>
+        /// <param name="path">A list of steps to take to travel from the source node to the destination node.</param>
+        /// <returns>A boolean indicating if the path was found.</returns>
         public bool AStar(out List<int> path)
         {
-            var priorityQueue = new StablePriorityQueue<SQueueNode>(Graph.AdjacencyList.Count);
+            var priorityQueue = new StablePriorityQueue<StableQueueNode>(Graph.AdjacencyList.Count);
             var parent = new int?[Graph.AdjacencyList.Count];
             var gScore = new float?[Graph.AdjacencyList.Count];
             var destinationPos = Graph.NodePossitions[Destination];
@@ -142,10 +175,10 @@ namespace Gymnasiearbete.Pathfinding
             // Adds a node to the priorityQueue
             void Enqueue(int node, float priority)
             {
-                priorityQueue.Enqueue(new SQueueNode(node), priority);
+                priorityQueue.Enqueue(new StableQueueNode(node), priority);
             }
 
-            // Returns the distance from the node to the Destinatio node
+            // Returns the distance from the node to the Destination node
             float hScore(int node)
             {
                 var pos = Graph.NodePossitions[node];
@@ -197,7 +230,7 @@ namespace Gymnasiearbete.Pathfinding
         /// Constructs a list on node id's from the destination node to the source node. 
         /// </summary>
         /// <param name="parent">Array that contains all necessary nodes parents</param>
-        /// <returns>A list on node id's from the destinaation node to the source node.</returns>
+        /// <returns>A list on node id's from the destination node to the source node.</returns>
         private List<int> ConstructPathFromParents(int?[] parent)
         {
             var path = new List<int>();
@@ -225,24 +258,6 @@ namespace Gymnasiearbete.Pathfinding
             {
                 arr[i] = value;
             }
-        }
-    }
-
-    class QueueNode : FastPriorityQueueNode
-    {
-        public int Value { get; set; }
-        public QueueNode(int value)
-        {
-            Value = value;
-        }
-    }
-
-    class SQueueNode : StablePriorityQueueNode
-    {
-        public int Value { get; set; }
-        public SQueueNode(int value)
-        {
-            Value = value;
         }
     }
 }
