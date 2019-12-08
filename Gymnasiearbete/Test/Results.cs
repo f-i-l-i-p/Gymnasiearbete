@@ -19,6 +19,7 @@ namespace Gymnasiearbete.Test
     {
         public int GraphSize { get; set; }
         public List<SizeRepeatResults> SizeRepeatResults { get; set;}
+        public List<AverageSearchTypeResult> AverageSearchTypeResults { get; set; }
     }
 
     class SizeRepeatResults
@@ -38,5 +39,12 @@ namespace Gymnasiearbete.Test
         public double SearchTime { get; set; }
         public int ExplordedNodes { get; set; }
         public double ExploredRatio { get; set; }
+    }
+
+    class AverageSearchTypeResult
+    {
+        public SearchType SearchType { get; set; }
+        public SearchResult MeanSearchResult { get; set; }
+        public SearchResult MedianSearchResult { get; set; }
     }
 }
