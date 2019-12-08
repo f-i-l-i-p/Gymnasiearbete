@@ -10,10 +10,16 @@ namespace Gymnasiearbete
 {
     static class GenerateExcel
     {
+        private static void StyleRow(Excel excel, int xStart, int xLength, int y, ICellStyle style)
+        {
+            for (int i = xStart; i < xStart + xLength; i++)
+            {
+                excel.SetStyle(i, y, style);
+            }
+        }
+
         public static Excel Generate(TestResults testResults)
         {
-            int width = 7;
-
             // Create excel with one empty sheet
             var excel = new Excel();
             excel.AddSheet("Data");
@@ -24,63 +30,73 @@ namespace Gymnasiearbete
             var thickStyle = excel.CreateStyle(new SimpleCellStyle { BorderBottom = BorderStyle.Thick });
 
             int currentRow = 0;
+            int currentColums = 0;
 
-            foreach (var sizeResults in testResults.OpennesResults[0].SizeResults)
+            // For each OpennesResults
+            foreach (var opennessResults in testResults.OpennesResults)
             {
-                // set graph size
-                excel.SetCell(0, currentRow, sizeResults.GraphSize);
+                int dataWidth = 0;
 
-                foreach (var sizeRepetResult in sizeResults.SizeRepetResults)
+                // write graph openness
+                excel.SetCell(currentColums, currentRow, opennessResults.Openness);
+                currentRow++;
+
+                // For each SizeResults
+                foreach (var sizeResults in opennessResults.SizeResults)
                 {
-                    // set size repeat
-                    excel.SetCell(1, currentRow, sizeRepetResult.GraphSizeRepet);
+                    // write graph size
+                    excel.SetCell(currentColums + 0, currentRow, sizeResults.GraphSize);
 
-                    foreach (var searchTypeResults in sizeRepetResult.SearchTypeResults)
+                    // For each SizeRepetResults
+                    foreach (var sizeRepeatResults in sizeResults.SizeRepeatResults)
                     {
-                        // set search type
-                        excel.SetCell(2, currentRow, searchTypeResults.SearchType.ToString());
+                        // write graph size repeat
+                        excel.SetCell(currentColums + 1, currentRow, sizeRepeatResults.GraphSizeRepet);
 
-                        var SearchTimes = new List<double>();
-                        var ExplordedNodes = new List<int>();
-                        var ExplordedRatios = new List<double>();
-                        foreach (var item in searchTypeResults.SearchResults)
+                        // For each SearchTypeResults
+                        foreach (var searchTypeResults in sizeRepeatResults.SearchTypeResults)
                         {
-                            SearchTimes.Add(item.SearchTime);
-                            ExplordedNodes.Add(item.ExplordedNodes);
-                            ExplordedRatios.Add(item.ExploredRatio);
+                            // write search type
+                            excel.SetCell(currentColums + 2, currentRow, searchTypeResults.SearchType.ToString());
+
+                            // write result types
+                            excel.SetCell(currentColums + 3, currentRow + 0, "Search Time");
+                            excel.SetCell(currentColums + 3, currentRow + 1, "Explored Nodes");
+                            excel.SetCell(currentColums + 3, currentRow + 2, "Explored Ratio");
+
+                            // For each SearchResult
+                            int index = 0;
+                            foreach (var searchResult in searchTypeResults.SearchResults)
+                            {
+                                // write results
+                                excel.SetCell(currentColums + 4 + index, currentRow + 0, searchResult.SearchTime);
+                                excel.SetCell(currentColums + 4 + index, currentRow + 1, searchResult.ExplordedNodes);
+                                excel.SetCell(currentColums + 4 + index, currentRow + 2, searchResult.ExploredRatio);
+
+                                index++;
+                            }
+                            currentRow += 3;
+
+                            // calculate dataWidth
+                            if (dataWidth == 0)
+                                dataWidth = 4 + index;
+
+                            // thin divider
+                            StyleRow(excel, 2, dataWidth - 2, currentRow - 1, thinStyle);
                         }
-                        // set search times
-                        excel.SetCell(3, currentRow, "Search time");
-                        excel.SetRow(4, currentRow, SearchTimes);
-                        currentRow++;
-                        // set explored nodes
-                        excel.SetCell(3, currentRow, "Explored nodes");
-                        excel.SetRow(4, currentRow, ExplordedNodes);
-                        currentRow++;
-                        // set explored ratio
-                        excel.SetCell(3, currentRow, "Explored ratio");
-                        excel.SetRow(4, currentRow, ExplordedRatios);
-                        currentRow++;
+                        // medium divider
+                        StyleRow(excel, 1, dataWidth - 1, currentRow - 1, mediumStyle);
+                    }
+                    // thick divider
+                    StyleRow(excel, 0, dataWidth - 0, currentRow - 1, thickStyle);
+                }
+                // thick top divider
+                StyleRow(excel, 0, dataWidth, 0, thickStyle);
 
 
-                        for (int i = 2; i < width; i++)
-                        {
-                            excel.SetStyle(i, currentRow - 1, thinStyle);
-                        }
-                    }
-                    for (int i = 1; i < width; i++)
-                    {
-                        excel.SetStyle(i, currentRow - 1, mediumStyle);
-                    }
-                }
-                for (int i = 0; i < width; i++)
-                {
-                    excel.SetStyle(i, currentRow - 1, thickStyle);
-                }
+                currentRow = 0;
+                currentColums += dataWidth + 1;
             }
-
-            // auto sizes column 3
-            excel.SelectedSheet.AutoSizeColumn(3);
 
             return excel;
         }

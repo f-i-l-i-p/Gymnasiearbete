@@ -18,10 +18,10 @@ namespace Gymnasiearbete.Test
     class SizeResults
     {
         public int GraphSize { get; set; }
-        public List<SizeRepetResults> SizeRepetResults { get; set;}
+        public List<SizeRepeatResults> SizeRepeatResults { get; set;}
     }
 
-    class SizeRepetResults
+    class SizeRepeatResults
     {
         public int GraphSizeRepet { get; set; }
         public List<SearchTypeResults> SearchTypeResults { get; set; }

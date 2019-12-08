@@ -69,7 +69,7 @@ namespace Gymnasiearbete.Test
                 sizeResults.Add(new SizeResults
                 {
                     GraphSize = graphSize,
-                    SizeRepetResults = GetSizeRepetResults(sizeDirectory),
+                    SizeRepeatResults = GetSizeRepeatResults(sizeDirectory),
                 });
             }
 
@@ -81,9 +81,9 @@ namespace Gymnasiearbete.Test
         /// </summary>
         /// <param name="pathToDirectoryWithGraphSizeRepetFiles"></param>
         /// <returns></returns>
-        private static List<SizeRepetResults> GetSizeRepetResults(string pathToDirectoryWithGraphSizeRepetFiles)
+        private static List<SizeRepeatResults> GetSizeRepeatResults(string pathToDirectoryWithGraphSizeRepetFiles)
         {
-            var sizeRepetResults = new List<SizeRepetResults>();
+            var sizeRepeatResults = new List<SizeRepeatResults>();
 
             var graphFilesPaths = Directory.GetFiles(pathToDirectoryWithGraphSizeRepetFiles);
 
@@ -94,7 +94,7 @@ namespace Gymnasiearbete.Test
                 // load graph from disk
                 var graph = GraphManager.Load(graphFilePath);
 
-                sizeRepetResults.Add(new SizeRepetResults
+                sizeRepeatResults.Add(new SizeRepeatResults
                 {
                     GraphSizeRepet = index,
                     SearchTypeResults = GetSearchTypeResults(graph),
@@ -103,7 +103,7 @@ namespace Gymnasiearbete.Test
                 index++;
             }
 
-            return sizeRepetResults;
+            return sizeRepeatResults;
         }
 
         /// <summary>
