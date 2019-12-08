@@ -76,6 +76,9 @@ namespace Gymnasiearbete
 
                         currentSubRow += 6;
 
+                        // thin divider
+                        StyleRow(excel, currentColums + 1, 3, currentSubRow - 1, thinStyle);
+                        
                         aIndex++;
                     }
 
@@ -121,7 +124,7 @@ namespace Gymnasiearbete
                         StyleRow(excel, currentColums + 4, dataWidth - 4, currentRow - 1, mediumStyle);
                     }
                     // thick divider
-                    StyleRow(excel, currentColums + 3, dataWidth - 3, currentRow - 1, thickStyle);
+                    StyleRow(excel, currentColums + 1, dataWidth - 3, currentRow - 1, thickStyle);
                 }
                 // thick top divider
                 StyleRow(excel, currentColums, dataWidth, 0, thickStyle);
