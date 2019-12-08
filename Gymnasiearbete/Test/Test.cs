@@ -10,6 +10,8 @@ namespace Gymnasiearbete.Test
 {
     static class Test
     {
+        static int searchRepeat = 3;
+
         /// <summary>
         /// Tests all path-finding algorithms on all graphs and returns the results.
         /// </summary>
@@ -203,7 +205,7 @@ namespace Gymnasiearbete.Test
         {
             var searchResults = new List<SearchResult>();
 
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < searchRepeat; i++)
             {
                 searchResults.Add(GetSearchResult(pathfinder, searchType));
             }
