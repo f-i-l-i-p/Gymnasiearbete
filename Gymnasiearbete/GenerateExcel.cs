@@ -82,16 +82,16 @@ namespace Gymnasiearbete
                                 dataWidth = 4 + index;
 
                             // thin divider
-                            StyleRow(excel, 2, dataWidth - 2, currentRow - 1, thinStyle);
+                            StyleRow(excel, currentColums + 2, dataWidth - 2, currentRow - 1, thinStyle);
                         }
                         // medium divider
-                        StyleRow(excel, 1, dataWidth - 1, currentRow - 1, mediumStyle);
+                        StyleRow(excel, currentColums + 1, dataWidth - 1, currentRow - 1, mediumStyle);
                     }
                     // thick divider
-                    StyleRow(excel, 0, dataWidth - 0, currentRow - 1, thickStyle);
+                    StyleRow(excel, currentColums + 0, dataWidth - 0, currentRow - 1, thickStyle);
                 }
                 // thick top divider
-                StyleRow(excel, 0, dataWidth, 0, thickStyle);
+                StyleRow(excel, currentColums, dataWidth, 0, thickStyle);
 
 
                 currentRow = 0;
