@@ -9,32 +9,6 @@ namespace Gymnasiearbete
     {
         public static readonly string saveLocation = Path.GetFullPath(@"..\..\..\SavedGraphs");
 
-        // Generates and saves Graphs
-        public static void RegenerateGraphs(float openness, int sizeStart, int sizeEnd, int sizeIncrease, int sizeCount)
-        {
-            // remove old graph directory
-            Directory.Delete(saveLocation, true);
-
-            // path to the folder with {mazeType} graphs
-            string graphFolderPath = $"{saveLocation}/{openness.ToString()}";
-
-            // For each graph size
-            for (int size = sizeStart; size <= sizeEnd ; size *= sizeIncrease)
-            {
-                // Repeat size count
-                for (int i = 0; i < sizeCount; i++)
-                {
-                    // Generate maze
-                    var maze = MazeGeneration.MazeGenerator.GenerateMaze(size, openness);
-
-                    // Save
-                    // saves in folder {saveLocaation}/{size} as {sizeCount}.json
-                    Save(maze, $"{graphFolderPath}/{size.ToString()}", i.ToString());
-                }
-            }
-        }
-
-
         public static void RegenerateGraphs()
         {
             // remove old graph directory
