@@ -47,48 +47,81 @@ namespace Gymnasiearbete
                     // write graph size
                     excel.SetCell(currentColums + 0, currentRow, sizeResults.GraphSize);
 
+                    // current row for averageSearchTypeResults
+                    int currentSubRow = currentRow;
+
+                    int aIndex = 0;
+                    foreach (var averageSearchTypeResult in sizeResults.AverageSearchTypeResults)
+                    {
+                        // write search type
+                        excel.SetCell(currentColums + 1, currentSubRow, averageSearchTypeResult.SearchType.ToString());
+
+                        // write mean result types
+                        excel.SetCell(currentColums + 2, currentSubRow + 0, "Mean Search Time");
+                        excel.SetCell(currentColums + 2, currentSubRow + 1, "Mean Explored Nodes");
+                        excel.SetCell(currentColums + 2, currentSubRow + 2, "Mean Explored Ratio");
+                        // write mean results
+                        excel.SetCell(currentColums + 3, currentSubRow + 0, averageSearchTypeResult.MeanSearchResult.SearchTime);
+                        excel.SetCell(currentColums + 3, currentSubRow + 1, averageSearchTypeResult.MeanSearchResult.ExplordedNodes);
+                        excel.SetCell(currentColums + 3, currentSubRow + 2, averageSearchTypeResult.MeanSearchResult.ExploredRatio);
+
+                        // write median result types
+                        excel.SetCell(currentColums + 2, currentSubRow + 3, "Median Search Time");
+                        excel.SetCell(currentColums + 2, currentSubRow + 4, "Median Explored Nodes");
+                        excel.SetCell(currentColums + 2, currentSubRow + 5, "Median Explored Ratio");
+                        // write median results
+                        excel.SetCell(currentColums + 3, currentSubRow + 3, averageSearchTypeResult.MedianSearchResult.SearchTime);
+                        excel.SetCell(currentColums + 3, currentSubRow + 4, averageSearchTypeResult.MedianSearchResult.ExplordedNodes);
+                        excel.SetCell(currentColums + 3, currentSubRow + 5, averageSearchTypeResult.MedianSearchResult.ExploredRatio);
+
+                        currentSubRow += 6;
+
+                        aIndex++;
+                    }
+
+
                     // For each SizeRepetResults
                     foreach (var sizeRepeatResults in sizeResults.SizeRepeatResults)
                     {
                         // write graph size repeat
-                        excel.SetCell(currentColums + 1, currentRow, sizeRepeatResults.GraphSizeRepet);
+                        excel.SetCell(currentColums + 4, currentRow, sizeRepeatResults.GraphSizeRepet);
 
                         // For each SearchTypeResults
                         foreach (var searchTypeResults in sizeRepeatResults.SearchTypeResults)
                         {
                             // write search type
-                            excel.SetCell(currentColums + 2, currentRow, searchTypeResults.SearchType.ToString());
+                            excel.SetCell(currentColums + 5, currentRow, searchTypeResults.SearchType.ToString());
 
                             // write result types
-                            excel.SetCell(currentColums + 3, currentRow + 0, "Search Time");
-                            excel.SetCell(currentColums + 3, currentRow + 1, "Explored Nodes");
-                            excel.SetCell(currentColums + 3, currentRow + 2, "Explored Ratio");
+                            excel.SetCell(currentColums + 6, currentRow + 0, "Search Time");
+                            excel.SetCell(currentColums + 6, currentRow + 1, "Explored Nodes");
+                            excel.SetCell(currentColums + 6, currentRow + 2, "Explored Ratio");
 
                             // For each SearchResult
-                            int index = 0;
+                            int sIndex = 0;
                             foreach (var searchResult in searchTypeResults.SearchResults)
                             {
                                 // write results
-                                excel.SetCell(currentColums + 4 + index, currentRow + 0, searchResult.SearchTime);
-                                excel.SetCell(currentColums + 4 + index, currentRow + 1, searchResult.ExplordedNodes);
-                                excel.SetCell(currentColums + 4 + index, currentRow + 2, searchResult.ExploredRatio);
+                                excel.SetCell(currentColums + 7 + sIndex, currentRow + 0, searchResult.SearchTime);
+                                excel.SetCell(currentColums + 7 + sIndex, currentRow + 1, searchResult.ExplordedNodes);
+                                excel.SetCell(currentColums + 7 + sIndex, currentRow + 2, searchResult.ExploredRatio);
 
-                                index++;
+                                sIndex++;
                             }
                             currentRow += 3;
 
                             // calculate dataWidth
                             if (dataWidth == 0)
-                                dataWidth = 4 + index;
+                                dataWidth = 7 + sIndex;
 
                             // thin divider
-                            StyleRow(excel, currentColums + 2, dataWidth - 2, currentRow - 1, thinStyle);
+                            StyleRow(excel, currentColums + 5, dataWidth - 5, currentRow - 1, thinStyle);
                         }
                         // medium divider
-                        StyleRow(excel, currentColums + 1, dataWidth - 1, currentRow - 1, mediumStyle);
+                        StyleRow(excel, currentColums + 4, dataWidth - 4, currentRow - 1, mediumStyle);
                     }
                     // thick divider
-                    StyleRow(excel, currentColums + 0, dataWidth - 0, currentRow - 1, thickStyle);
+                    StyleRow(excel, currentColums + 3, dataWidth - 3, currentRow - 1, thickStyle);
                 }
                 // thick top divider
                 StyleRow(excel, currentColums, dataWidth, 0, thickStyle);
