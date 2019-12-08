@@ -44,11 +44,19 @@ namespace Gymnasiearbete.MazeGeneration
             return neighbors;
         }
 
-        public static Graph GenerateMaze(int size, float openness)
+        /// <summary>
+        /// Generates a maze with {size} nodes.
+        /// Each side will have the length of ToInt32(Sqrt(size)).
+        /// If the maze size can't be evenly squared, the size will be rounded to Pow(ToInt32(Sqrt(size)), 2).
+        /// </summary>
+        /// <param name="size">The number of nodes in the maze.</param>
+        /// <param name="openness">How open the maze is. When openness == 1, each node will be connected to all its neighbors.</param>
+        /// <returns>The maze as a graph.</returns>
+        public static Graph GenerateMaze(int size, double openness)
         {
             var graph = new Graph();
 
-            int sideLength = (int)Math.Sqrt(size);
+            int sideLength = Convert.ToInt32(Math.Sqrt(size));
 
 
             // Add all nodes to the graph:
