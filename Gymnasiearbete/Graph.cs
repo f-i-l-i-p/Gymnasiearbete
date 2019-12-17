@@ -24,7 +24,7 @@ namespace Gymnasiearbete
         /// <summary>
         /// Cost to travel to the adjacent node
         /// </summary>
-        public double Weight { get; set; }
+        public float Weight { get; set; }
     }
 
     class Graph
@@ -39,7 +39,7 @@ namespace Gymnasiearbete
         }
 
         // Adds a new edge to the list
-        public void AddEdge(int node1, int node2, double weight = 1)
+        public void AddEdge(int node1, int node2, float weight = 1)
         {
             AdjacencyList[node1].Add(new Adjacent { Id = node2, Weight = weight,});
             AdjacencyList[node2].Add(new Adjacent { Id = node1, Weight = weight,});
@@ -87,17 +87,20 @@ namespace Gymnasiearbete
         /// The new cost to travel been the neighbors will be the same as the cost before.
         /// </summary>
         /// <param name="graph">Graph to shrink.</param>
-        public static void ShrinkGraph(Graph graph)
+        /// <param name="avoid">Nodes that will not be removed.</param>
+        public static void ShrinkGraph(Graph graph, List<int> avoid)
         {
             // For each node in the graph, check if it only has two neighbors.
-            // If it has two neighbors, remove the node and connect the neighbors
+            // If it has two neighbors (and is not in {avoid}), remove the node and connect the neighbors
 
-            // Loop trough graph
-            int index = 0;
-            foreach(var adjacents in graph.AdjacencyList)
+            // Loop trough all nodes in graph
+            for(int node = 0; node < graph.AdjacencyList.Count; node++)
             {
+                // node neighbors list
+                var adjacents = graph.AdjacencyList[node];
+
                 // If node has two neighbors
-                if (adjacents.Count == 2)
+                if (adjacents.Count == 2 && !avoid.Contains(node))
                 {
                     // the total weight between the neighbors
                     var weight = adjacents[0].Weight + adjacents[1].Weight;
@@ -105,16 +108,15 @@ namespace Gymnasiearbete
                     // Remove edges from the neighbors to the node
                     foreach (var adjacent in adjacents)
                     {
-                        graph.AdjacencyList[adjacent.Id].RemoveAll(n => n.Id == index);
+                        graph.AdjacencyList[adjacent.Id].RemoveAll(adj => adj.Id == node);
                     }
 
                     // remove node
-                    graph.AdjacencyList[index] = null;
+                    graph.AdjacencyList[node] = null;
 
                     // connect neighbors
                     graph.AddEdge(adjacents[0].Id, adjacents[1].Id, weight);
                 }
-                index++;
             }
         }
     }

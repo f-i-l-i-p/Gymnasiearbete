@@ -111,7 +111,7 @@ namespace Gymnasiearbete.Pathfinding
         {
             var priorityQueue = new FastPriorityQueue<FastQueueNode>(Graph.AdjacencyList.Count);
             var parent = new int?[Graph.AdjacencyList.Count];
-            var cost = new int?[Graph.AdjacencyList.Count];
+            var cost = new float?[Graph.AdjacencyList.Count];
 
             // Adds a node to the priorityQueue
             void Enqueue(int node, float priority)
@@ -143,7 +143,7 @@ namespace Gymnasiearbete.Pathfinding
                 {
                     // newCost is the total cost from the source to the neighbor node.
                     // its value will be the current nodes cost + the edge weight from the current node to the neighbor
-                    var newCost = cost[u] + 1;
+                    var newCost = cost[u] + v.Weight;
 
                     // If v is unvisited (i.e. v has no assigned parent) or has a higher cost than alt
                     if (cost[v.Id] == null || cost[v.Id] > newCost)
@@ -209,7 +209,7 @@ namespace Gymnasiearbete.Pathfinding
                 {
                     // newCost is the total cost from the source to the neighbor node.
                     // its value will be the current nodes cost + the edge weight from the current node to the neighbor
-                    var newCost = gScore[u] + 1;
+                    var newCost = gScore[u] + v.Weight;
 
                     // If v is unvisited (i.e. v has no assigned parent) or has a higher cost than newCost
                     if (gScore[v.Id] == null || gScore[v.Id] > newCost)
