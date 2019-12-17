@@ -39,7 +39,7 @@ namespace Gymnasiearbete
         }
 
         // Adds a new edge to the list
-        public void AddEdge(int node1, int node2, int weight = 1)
+        public void AddEdge(int node1, int node2, double weight = 1)
         {
             AdjacencyList[node1].Add(new Adjacent { Id = node2, Weight = weight,});
             AdjacencyList[node2].Add(new Adjacent { Id = node1, Weight = weight,});
@@ -72,11 +72,50 @@ namespace Gymnasiearbete
             }
         }
 
-        // Removes a node
+        /// <summary>
+        /// Removes a node and all edges to it.
+        /// </summary>
+        /// <param name="node">Node to remove.</param>
         public void RemoveNode(int node)
         {
             AdjacencyList[node] = null;
             AdjacencyList.ForEach(n => n.RemoveAll(adj => adj.Id == node));
+        }
+
+        /// <summary>
+        /// Removes all nodes with two neighbors and instead connects the neighbors.
+        /// The new cost to travel been the neighbors will be the same as the cost before.
+        /// </summary>
+        /// <param name="graph">Graph to shrink.</param>
+        public static void ShrinkGraph(Graph graph)
+        {
+            // For each node in the graph, check if it only has two neighbors.
+            // If it has two neighbors, remove the node and connect the neighbors
+
+            // Loop trough graph
+            int index = 0;
+            foreach(var adjacents in graph.AdjacencyList)
+            {
+                // If node has two neighbors
+                if (adjacents.Count == 2)
+                {
+                    // the total weight between the neighbors
+                    var weight = adjacents[0].Weight + adjacents[1].Weight;
+
+                    // Remove edges from the neighbors to the node
+                    foreach (var adjacent in adjacents)
+                    {
+                        graph.AdjacencyList[adjacent.Id].RemoveAll(n => n.Id == index);
+                    }
+
+                    // remove node
+                    graph.AdjacencyList[index] = null;
+
+                    // connect neighbors
+                    graph.AddEdge(adjacents[0].Id, adjacents[1].Id, weight);
+                }
+                index++;
+            }
         }
     }
 }
