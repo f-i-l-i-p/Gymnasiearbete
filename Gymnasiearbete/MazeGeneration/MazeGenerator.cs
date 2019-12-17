@@ -148,7 +148,7 @@ namespace Gymnasiearbete.MazeGeneration
                 foreach (var nb in nbs)
                 {
                     // If already connected to node
-                    if (graph.AdjacencyList[node].Contains(nb))
+                    if (graph.AdjacencyList[node].Exists(adj => adj.Id == nb))
                         continue;
 
                     // Probablity that it connects with the node: (openness)/1.

@@ -15,29 +15,41 @@ namespace Gymnasiearbete
         public int Y { get; set; }
     }
 
+    class Adjacent
+    {
+        /// <summary>
+        /// Id of the adjacent node
+        /// </summary>
+        public int Id { get; set; }
+        /// <summary>
+        /// Cost to travel to the adjacent node
+        /// </summary>
+        public double Weight { get; set; }
+    }
+
     class Graph
     {
-        public List<List<int>> AdjacencyList { get; }
+        public List<List<Adjacent>> AdjacencyList { get; }
         public List<Possition> NodePossitions { get; }
 
         public Graph()
         {
-            AdjacencyList = new List<List<int>>();
+            AdjacencyList = new List<List<Adjacent>>();
             NodePossitions = new List<Possition>();
         }
 
         // Adds a new edge to the list
-        public void AddEdge(int node1, int node2) //, int weight)
+        public void AddEdge(int node1, int node2, int weight = 1)
         {
-            AdjacencyList[node1].Add(node2);
-            AdjacencyList[node2].Add(node1);
+            AdjacencyList[node1].Add(new Adjacent { Id = node2, Weight = weight,});
+            AdjacencyList[node2].Add(new Adjacent { Id = node1, Weight = weight,});
         }
 
         // Removes an edge
         public void RemoveEdge(int node1, int node2)
         {
-            AdjacencyList[node1].Remove(node2);
-            AdjacencyList[node2].Remove(node1);
+            AdjacencyList[node1].RemoveAll(adj => adj.Id == node2);
+            AdjacencyList[node2].RemoveAll(adj => adj.Id == node1);
         }
 
         // Adds a new node and returns the index position
@@ -48,13 +60,13 @@ namespace Gymnasiearbete
             // If no empty list position exists
             if (index == -1)
             {
-                AdjacencyList.Add(new List<int>());
+                AdjacencyList.Add(new List<Adjacent>());
                 NodePossitions.Add(possition);
                 return AdjacencyList.Count - 1;
             }
             else
             {
-                AdjacencyList[index] = new List<int>();
+                AdjacencyList[index] = new List<Adjacent>();
                 NodePossitions[index] = possition;
                 return index;
             }
@@ -64,7 +76,7 @@ namespace Gymnasiearbete
         public void RemoveNode(int node)
         {
             AdjacencyList[node] = null;
-            AdjacencyList.ForEach(n => n.Remove(node));
+            AdjacencyList.ForEach(n => n.RemoveAll(adj => adj.Id == node));
         }
     }
 }

@@ -64,7 +64,7 @@ namespace Gymnasiearbete.Pathfinding
         /// <returns>A boolean indicating if the path was found.</returns>
         public bool BFS(out List<int> path)
         {
-            var queue = new Queue<int>(); https://i.stack.imgur.com/iBz6V.png
+            var queue = new Queue<int>();
             var parent = new int?[Graph.AdjacencyList.Count];
 
             // Add Source to queue & set Source parent
@@ -89,10 +89,10 @@ namespace Gymnasiearbete.Pathfinding
                 foreach (var v in Graph.AdjacencyList[u])
                 {
                     // If v is unvisited (i.e. v has no assigned parent)
-                    if (parent[v] == null)
+                    if (parent[v.Id] == null)
                     {
-                        parent[v] = u;
-                        queue.Enqueue(v);
+                        parent[v.Id] = u;
+                        queue.Enqueue(v.Id);
                     }
                 }
             }
@@ -146,11 +146,11 @@ namespace Gymnasiearbete.Pathfinding
                     var newCost = cost[u] + 1;
 
                     // If v is unvisited (i.e. v has no assigned parent) or has a higher cost than alt
-                    if (cost[v] == null || cost[v] > newCost)
+                    if (cost[v.Id] == null || cost[v.Id] > newCost)
                     {
-                        parent[v] = u;
-                        cost[v] = newCost;
-                        Enqueue(v, newCost.Value);
+                        parent[v.Id] = u;
+                        cost[v.Id] = newCost;
+                        Enqueue(v.Id, newCost.Value);
                     }
                 }
             }
@@ -212,11 +212,11 @@ namespace Gymnasiearbete.Pathfinding
                     var newCost = gScore[u] + 1;
 
                     // If v is unvisited (i.e. v has no assigned parent) or has a higher cost than newCost
-                    if (gScore[v] == null || gScore[v] > newCost)
+                    if (gScore[v.Id] == null || gScore[v.Id] > newCost)
                     {
-                        parent[v] = u;
-                        gScore[v] = newCost;
-                        Enqueue(v, gScore[v].Value + hScore(v));
+                        parent[v.Id] = u;
+                        gScore[v.Id] = newCost;
+                        Enqueue(v.Id, gScore[v.Id].Value + hScore(v.Id));
                     }
                 }
             }

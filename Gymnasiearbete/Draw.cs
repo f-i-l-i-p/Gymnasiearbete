@@ -35,7 +35,7 @@ namespace Gymnasiearbete
                         nextLine += "O";
 
                     // If edge on right side
-                    if (Id(x, y) + 1 < graph.AdjacencyList.Count && graph.AdjacencyList[Id(x, y)].Contains(Id(x, y) + 1))
+                    if (Id(x, y) + 1 < graph.AdjacencyList.Count && graph.AdjacencyList[Id(x, y)].Exists(adj => adj.Id == Id(x, y) + 1))
                         nextLine += "---";
                     else
                         nextLine += "   ";
@@ -45,7 +45,7 @@ namespace Gymnasiearbete
                 for (int x = 0; x < sideLength; x++)
                 {
                     // If edge under
-                    if (Id(x, y) - sideLength + 1 > 0 && graph.AdjacencyList[Id(x, y)].Contains(Id(x, y) - sideLength))
+                    if (Id(x, y) - sideLength + 1 > 0 && graph.AdjacencyList[Id(x, y)].Exists(adj => adj.Id == Id(x, y) - sideLength))
                         line += "|";
                     else
                         line += " ";
