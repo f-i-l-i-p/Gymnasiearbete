@@ -4,9 +4,25 @@ using static Gymnasiearbete.Pathfinding.Pathfinder;
 namespace Gymnasiearbete.Test
 {
     class TestResults
+    {   
+        public List<GraphOptimizationResults> GraphOptimizationResults { get; set; }
+    }
+
+    public enum OptimizationType { None, Shrinked }
+    class GraphOptimizationResults
     {
-        // public Date // TODO: add test date
-        public List<OpennessResults> OpennesResults { get; set; }
+        public OptimizationType OptimizationType { get; set; }
+
+        public List<SearchTypeResults> SearchTypeResults { get; set; }
+    }
+
+    /// <summary>
+    /// Contains all the results for a SearchType on a set of graphs
+    /// </summary>
+    class SearchTypeResults
+    {
+        public SearchType SearchType { get; set; }
+        public List<OpennessResults> OpennessResults { get; set; }
     }
 
     class OpennessResults
@@ -18,8 +34,8 @@ namespace Gymnasiearbete.Test
     class SizeResults
     {
         public int GraphSize { get; set; }
+        public AverageSearchResult AverageSearchResult { get; set; }
         public List<SizeRepeatResults> SizeRepeatResults { get; set;}
-        public List<AverageSearchTypeResult> AverageSearchTypeResults { get; set; }
     }
 
     class SizeRepeatResults
@@ -28,10 +44,10 @@ namespace Gymnasiearbete.Test
         public List<SearchTypeResults> SearchTypeResults { get; set; }
     }
 
-    class SearchTypeResults
+    class AverageSearchResult
     {
-        public SearchType SearchType { get; set; }
-        public List<SearchResult> SearchResults { get; set; }
+        public SearchResult MeanSearchResult { get; set; }
+        public SearchResult MedianSearchResult { get; set; }
     }
 
     class SearchResult
@@ -39,12 +55,5 @@ namespace Gymnasiearbete.Test
         public double SearchTime { get; set; }
         public int ExplordedNodes { get; set; }
         public double ExploredRatio { get; set; }
-    }
-
-    class AverageSearchTypeResult
-    {
-        public SearchType SearchType { get; set; }
-        public SearchResult MeanSearchResult { get; set; }
-        public SearchResult MedianSearchResult { get; set; }
     }
 }
