@@ -18,7 +18,7 @@ namespace Gymnasiearbete.Test
         /// Saves test results
         /// </summary>
         /// <param name="results">Results to be saved.</param>
-        private static void SaveResult(TestResults results)
+        private static void SaveResult(TestResult results)
         {
             SaveAsJson(results);
             SaveAsExcel(results);
@@ -28,7 +28,7 @@ namespace Gymnasiearbete.Test
         /// Saves test results as an excel file.
         /// </summary>
         /// <param name="results">Test results to be saved.</param>
-        private static void SaveAsExcel(TestResults results)
+        private static void SaveAsExcel(TestResult results)
         {
             var excel = GenerateExcel.Generate(results);
 
@@ -40,7 +40,7 @@ namespace Gymnasiearbete.Test
         /// Saves test results as a json file.
         /// </summary>
         /// <param name="results">Test results to be saved.</param>
-        private static void SaveAsJson(TestResults results)
+        private static void SaveAsJson(TestResult results)
         {
             // convert results to json
             var contents = Newtonsoft.Json.JsonConvert.SerializeObject(results);

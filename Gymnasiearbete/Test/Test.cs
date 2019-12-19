@@ -8,23 +8,173 @@ using static Gymnasiearbete.Pathfinding.Pathfinder;
 
 namespace Gymnasiearbete.Test
 {
+    static class ResultSetup
+    {
+        public static TestResult SetupTestResult()
+        {
+            var testResult = new TestResult
+            {
+                GraphOptimizationResults = SetupGraphOptimizationResults(),
+            };
+
+            return testResult;
+        }
+
+        private static List<GraphOptimizationResult> SetupGraphOptimizationResults()
+        {
+            var graphOptimizationResults = new List<GraphOptimizationResult>();
+
+            foreach (OptimizationType optimizationType in Enum.GetValues(typeof(OptimizationType)))
+            {
+                graphOptimizationResults.Add(new GraphOptimizationResult
+                {
+                    OptimizationType = optimizationType,
+                    SearchTypeResults = SetupSearchTypeResults(),
+                });
+            }
+            return graphOptimizationResults;
+        }
+
+        private static List<SearchTypeResult> SetupSearchTypeResults()
+        {
+            var searchTypeResults = new List<SearchTypeResult>();
+
+            foreach (SearchType searchType in Enum.GetValues(typeof(SearchType)))
+            {
+                searchTypeResults.Add(new SearchTypeResult
+                {
+                    SearchType = searchType,
+                    OpennessResults = new List<OpennessResult>(),
+                });
+            }
+
+            return searchTypeResults;
+        }
+    }
+
     static class Test
     {
         static int searchRepeat = 3;
 
         /// <summary>
-        /// Tests all path-finding algorithms on all graphs and returns the results.
+        /// Tests all path-finding algorithms on all graphs and returns the result.
         /// </summary>
-        /// <returns>Test results.</returns>
-        public static TestResults RunTests()
+        /// <returns>Test result.</returns>
+        public static TestResult RunTests()
         {
             Console.WriteLine("Running test...");
 
-            return new TestResults
+
+            var testResult = ResultSetup.SetupTestResult();
+
+
+            // For each graph openness directory
+            var opennessDirectories = Directory.GetDirectories(GraphManager.saveLocation);
+            foreach (var opennessDirectory in opennessDirectories)
             {
-                OpennesResults = GetOpennessResults(GraphManager.saveLocation)
+                // parse openness
+                double.TryParse(Path.GetFileName(opennessDirectory), out double graphOpenness);
+
+                // For each graph size directory
+                var sizeDirectories = Directory.GetDirectories(opennessDirectory);
+                foreach (var sizeDirectory in sizeDirectories)
+                {
+                    // parse size
+                    int.TryParse(Path.GetFileName(sizeDirectory), out int graphSize);
+
+                    // For each graph file
+                    var graphFiles = Directory.GetFiles(sizeDirectory);
+                    foreach (var graphFile in graphFiles)
+                    {
+                        // parse repeat
+                        int.TryParse(Path.GetFileName(graphFile), out int graphRepeat);
+
+                        // load graph
+                        var graph = GraphManager.Load(graphFile);
+
+                        var pathfinder = new Pathfinder(graph, 0, graph.AdjacencyList.Count - 1);
+
+
+                        foreach (SearchTypeResult searchTypeResult in testResult.GraphOptimizationResults[0].SearchTypeResults)
+                        {
+
+                        }
+                    }
+                }
+            }
+
+
+            return testResult;
+        }
+
+
+        /// <summary>
+        /// Returns the OpennessResult with a specific openness.
+        /// If the SearchTypeResult does not contain an OpennessResult with the matching openness,
+        /// a new OpennessResult with that openness will be added and returned.
+        /// </summary>
+        /// <param name="openness">Openness to match.</param>
+        /// <param name="searchTypeResult">SearchTypeResult containing the OpennessResults.</param>
+        /// <returns>The OpennessResult with matching openness.</returns>
+        private static OpennessResult GetOpennessResult(double openness, SearchTypeResult searchTypeResult)
+        {
+            if (searchTypeResult.OpennessResults == null)
+                searchTypeResult.OpennessResults = new List<OpennessResult>();
+            
+
+            int index = searchTypeResult.OpennessResults.FindIndex(x => x.Openness == openness);
+
+            if (index == -1)
+            {
+                searchTypeResult.OpennessResults.Add(new OpennessResult{ Openness = openness });
+                return searchTypeResult.OpennessResults[0];
+            }
+            else
+                return seachTypeResult.OpennessResults[index];
+        }
+
+
+        private static List<GraphOptimizationResult> GetGraphOptimizationResults()
+        {
+            return new List<GraphOptimizationResult>
+            {
+                new GraphOptimizationResult
+                {
+                    OptimizationType = OptimizationType.None,
+                    SearchTypeResults = GetSearchTypeResults(OptimizationType.None),
+                },
+                new GraphOptimizationResult
+                {
+                    OptimizationType = OptimizationType.Shrinked,
+                    SearchTypeResults = GetSearchTypeResults(OptimizationType.Shrinked),
+                }
             };
         }
+
+        /// <summary>
+        /// Tests all SearchTypes on all graphs with the specified optimizationType
+        /// </summary>
+        /// <param name="optimizationType">OptimizationType to use</param>
+        /// <returns>All SearchTypeResults</returns>
+        private static List<SearchTypeResult> GetSearchTypeResults(OptimizationType optimizationType)
+        {
+            var searchTypeResults = new List<SearchTypeResult>();
+
+            foreach (SearchType searchType in Enum.GetValues(typeof(SearchType)))
+            {
+                searchTypeResults.Add(new SearchTypeResult
+                {
+                    SearchType = searchType,
+                    OpennessResults = GetOpennessResults(searchType)
+                });
+            }
+
+            return searchTypeResults;
+        }
+
+        private static List<OpennessResult> GetOpennessResults(OptimizationType optimizationType)
+
+
 
         /// <summary>
         /// Tests all graphs within a SavedGraphs directory and returns the results.

@@ -18,7 +18,7 @@ namespace Gymnasiearbete
             }
         }
 
-        public static Excel Generate(TestResults testResults)
+        public static Excel Generate(TestResult testResults)
         {
             // Create excel with one empty sheet
             var excel = new Excel();

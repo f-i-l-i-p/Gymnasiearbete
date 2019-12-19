@@ -3,45 +3,45 @@ using static Gymnasiearbete.Pathfinding.Pathfinder;
 
 namespace Gymnasiearbete.Test
 {
-    class TestResults
+    class TestResult
     {   
-        public List<GraphOptimizationResults> GraphOptimizationResults { get; set; }
+        public List<GraphOptimizationResult> GraphOptimizationResults { get; set; }
     }
 
     public enum OptimizationType { None, Shrinked }
-    class GraphOptimizationResults
+    class GraphOptimizationResult
     {
         public OptimizationType OptimizationType { get; set; }
 
-        public List<SearchTypeResults> SearchTypeResults { get; set; }
+        public List<SearchTypeResult> SearchTypeResults { get; set; }
     }
 
     /// <summary>
     /// Contains all the results for a SearchType on a set of graphs
     /// </summary>
-    class SearchTypeResults
+    class SearchTypeResult
     {
         public SearchType SearchType { get; set; }
-        public List<OpennessResults> OpennessResults { get; set; }
+        public List<OpennessResult> OpennessResults { get; set; }
     }
 
-    class OpennessResults
+    class OpennessResult
     {
         public double Openness { get; set; }
-        public List<SizeResults> SizeResults { get; set; }
+        public List<SizeResult> SizeResults { get; set; }
     }
 
-    class SizeResults
+    class SizeResult
     {
         public int GraphSize { get; set; }
         public AverageSearchResult AverageSearchResult { get; set; }
-        public List<SizeRepeatResults> SizeRepeatResults { get; set;}
+        public List<SizeRepeatResult> SizeRepeatResults { get; set;}
     }
 
-    class SizeRepeatResults
+    class SizeRepeatResult
     {
         public int GraphSizeRepet { get; set; }
-        public List<SearchTypeResults> SearchTypeResults { get; set; }
+        public List<SearchResult> SearchResults { get; set; }
     }
 
     class AverageSearchResult
