@@ -59,7 +59,7 @@ namespace Gymnasiearbete.Test
         /// <summary>
         /// Tests all path-finding algorithms on all graphs and returns the result.
         /// </summary>
-        /// <returns>Test result.</returns>
+        /// <returns>The test result.</returns>
         public static TestResult RunTests()
         {
             Console.WriteLine("Running test...");
@@ -94,10 +94,15 @@ namespace Gymnasiearbete.Test
 
                         var pathfinder = new Pathfinder(graph, 0, graph.AdjacencyList.Count - 1);
 
-
+                        // For each SerchTypeResult in current GraphOptimizationResult
                         foreach (SearchTypeResult searchTypeResult in testResult.GraphOptimizationResults[0].SearchTypeResults)
                         {
+                            var or = GetOpennessResult(graphOpenness, searchTypeResult);
+                            var sr = GetSizeResult(graphSize, or);
+                            var srr = GetSizeRepeatResult(graphRepeat, sr);
 
+                            // test pathfinder and save results
+                            srr.SearchResults = GetSearchResults(pathfinder, searchTypeResult.SearchType);
                         }
                     }
                 }
@@ -127,10 +132,65 @@ namespace Gymnasiearbete.Test
             if (index == -1)
             {
                 searchTypeResult.OpennessResults.Add(new OpennessResult{ Openness = openness });
-                return searchTypeResult.OpennessResults[0];
+                return searchTypeResult.OpennessResults.Last();
             }
             else
-                return seachTypeResult.OpennessResults[index];
+                return searchTypeResult.OpennessResults[index];
+        }
+
+        /// <summary>
+        /// Returns the SizeResult with s specific size.
+        /// If the OpennessResult does not contain a SizeResult with the matching size,
+        /// a new SizeReult with that size will be added and returned.
+        /// </summary>
+        /// <param name="size">Size to match.</param>
+        /// <param name="opennessResult">OpennessResult containing the SizeResults.</param>
+        /// <returns>The SizeResult with matching size.</returns>
+        private static SizeResult GetSizeResult(int size, OpennessResult opennessResult)
+        {
+            if (opennessResult.SizeResults == null)
+                opennessResult.SizeResults = new List<SizeResult>();
+
+            int index = opennessResult.SizeResults.FindIndex(x => x.GraphSize == size);
+
+            if (index == -1)
+            {
+                opennessResult.SizeResults.Add(new SizeResult
+                {
+                    GraphSize = size,
+                });
+                return opennessResult.SizeResults.Last();
+            }
+            else
+                return opennessResult.SizeResults[index];
+        }
+
+        /// <summary>
+        /// Returns the SizeRepeatResult with a specific openness.
+        /// If the SizeResult does no contain a SizeRepeatResult with the matching repeat,
+        /// a new SizeRepeatResult will be added and returned.
+        /// </summary>
+        /// <param name="repeat">Repeat to match.</param>
+        /// <param name="sizeResult">SizeResult containing the SizeRepeatResults</param>
+        /// <returns>The SizeResult with matching size.</returns>
+        private static SizeRepeatResult GetSizeRepeatResult(int repeat, SizeResult sizeResult)
+        {
+            if (sizeResult.SizeRepeatResults == null)
+                sizeResult.SizeRepeatResults = new List<SizeRepeatResult>();
+
+            int index = sizeResult.SizeRepeatResults.FindIndex(x => x.GraphSizeRepet == repeat);
+
+            if (index == -1)
+            {
+                sizeResult.SizeRepeatResults.Add(new SizeRepeatResult
+                {
+                    GraphSizeRepet = repeat,
+                    SearchResults = new List<SearchResult>(),
+                });
+                return sizeResult.SizeRepeatResults.Last();
+            }
+            else
+                return sizeResult.SizeRepeatResults[index];
         }
 
 
