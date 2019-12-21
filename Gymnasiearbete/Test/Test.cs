@@ -128,8 +128,6 @@ namespace Gymnasiearbete.Test
         /// <returns>Sorted array.</returns>
         private static string[] SortByGraphSize(string[] graphDirectories)
         {
-            var list = graphDirectories.ToList();
-
             return graphDirectories.OrderBy(x => ParseInt(x.Split(new string[] { "\\" }, StringSplitOptions.None).Last())).ToArray();
         }
 
