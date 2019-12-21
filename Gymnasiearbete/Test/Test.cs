@@ -81,7 +81,7 @@ namespace Gymnasiearbete.Test
                 double.TryParse(Path.GetFileName(opennessDirectory), out double graphOpenness);
 
                 // For each graph size directory
-                var sizeDirectories = Directory.GetDirectories(opennessDirectory);
+                var sizeDirectories = SortByGraphSize(Directory.GetDirectories(opennessDirectory));
                 foreach (var sizeDirectory in sizeDirectories)
                 {
                     // parse size
@@ -119,6 +119,24 @@ namespace Gymnasiearbete.Test
 
 
             return testResult;
+        }
+
+        /// <summary>
+        /// Sorts an array of paths to graph size directories by graph size.
+        /// </summary>
+        /// <param name="graphDirectories">Array to sort.</param>
+        /// <returns>Sorted array.</returns>
+        private static string[] SortByGraphSize(string[] graphDirectories)
+        {
+            var list = graphDirectories.ToList();
+
+            return graphDirectories.OrderBy(x => ParseInt(x.Split(new string[] { "\\" }, StringSplitOptions.None).Last())).ToArray();
+        }
+
+        public static int ParseInt(string s)
+        {
+            int.TryParse(s, out int result);
+            return result;
         }
 
 
