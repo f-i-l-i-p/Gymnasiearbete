@@ -16,9 +16,6 @@ namespace Gymnasiearbete.Test
         public List<SearchTypeResult> SearchTypeResults { get; set; }
     }
 
-    /// <summary>
-    /// Contains all the results for a SearchType on a set of graphs
-    /// </summary>
     class SearchTypeResult
     {
         public SearchType SearchType { get; set; }

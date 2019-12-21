@@ -97,6 +97,7 @@ namespace Gymnasiearbete.Test
                         // For each SerchTypeResult in current GraphOptimizationResult
                         foreach (SearchTypeResult searchTypeResult in testResult.GraphOptimizationResults[0].SearchTypeResults)
                         {
+                            // Find the SizeRepeatResult for the current graph in this searchTypeResult
                             var or = GetOpennessResult(graphOpenness, searchTypeResult);
                             var sr = GetSizeResult(graphSize, or);
                             var srr = GetSizeRepeatResult(graphRepeat, sr);
@@ -193,219 +194,63 @@ namespace Gymnasiearbete.Test
                 return sizeResult.SizeRepeatResults[index];
         }
 
-
-        private static List<GraphOptimizationResult> GetGraphOptimizationResults()
-        {
-            return new List<GraphOptimizationResult>
-            {
-                new GraphOptimizationResult
-                {
-                    OptimizationType = OptimizationType.None,
-                    SearchTypeResults = GetSearchTypeResults(OptimizationType.None),
-                },
-                new GraphOptimizationResult
-                {
-                    OptimizationType = OptimizationType.Shrinked,
-                    SearchTypeResults = GetSearchTypeResults(OptimizationType.Shrinked),
-                }
-            };
-        }
-
-        /// <summary>
-        /// Tests all SearchTypes on all graphs with the specified optimizationType
-        /// </summary>
-        /// <param name="optimizationType">OptimizationType to use</param>
-        /// <returns>All SearchTypeResults</returns>
-        private static List<SearchTypeResult> GetSearchTypeResults(OptimizationType optimizationType)
-        {
-            var searchTypeResults = new List<SearchTypeResult>();
-
-            foreach (SearchType searchType in Enum.GetValues(typeof(SearchType)))
-            {
-                searchTypeResults.Add(new SearchTypeResult
-                {
-                    SearchType = searchType,
-                    OpennessResults = GetOpennessResults(searchType)
-                });
-            }
-
-            return searchTypeResults;
-        }
-
-        private static List<OpennessResult> GetOpennessResults(OptimizationType optimizationType)
-
-
-
-        /// <summary>
-        /// Tests all graphs within a SavedGraphs directory and returns the results.
-        /// </summary>
-        /// <param name="pathToDirectorieWithOpennesDirectories"></param>
-        /// <returns></returns>
-        private static List<OpennessResults> GetOpennessResults(string pathToDirectorieWithOpennesDirectories)
-        {
-            var opennessResults = new List<OpennessResults>();
-
-            var opennessDirectories = Directory.GetDirectories(pathToDirectorieWithOpennesDirectories);
-
-            foreach (var opennessDirectory in opennessDirectories)
-            {
-                // get openness
-                double.TryParse(Path.GetFileName(opennessDirectory), out double graphOpenness);
- 
-                opennessResults.Add(new OpennessResults
-                {
-                    Openness = graphOpenness,
-                    SizeResults = GetSizeResultsList(opennessDirectory),
-                });
-            }
-
-            return opennessResults;
-        }
-
-        /// <summary>
-        /// Tests all graphs within an openness directory and returns the results.
-        /// </summary>
-        /// <param name="pathToDirectorieWithGraphSizeDirectories"></param>
-        /// <returns></returns>
-        private static List<SizeResults> GetSizeResultsList(string pathToDirectorieWithGraphSizeDirectories)
-        {
-            var sizeResultsList = new List<SizeResults>();
-
-            var sizeDirectories = Directory.GetDirectories(pathToDirectorieWithGraphSizeDirectories);
-
-            // For each size directory in openness directory
-            foreach (var sizeDirectory in sizeDirectories)
-            {
-                // get size
-                int.TryParse(Path.GetFileName(sizeDirectory), out int graphSize);
-
-                var sizeResults = new SizeResults
-                {
-                    GraphSize = graphSize,
-                    SizeRepeatResults = GetSizeRepeatResults(sizeDirectory),
-                };
-
-                // set average results, based on SizeRepetResults
-                sizeResults.AverageSearchTypeResults = CalculateAvargeSearchTypeResults(sizeResults.SizeRepeatResults);
-
-                sizeResultsList.Add(sizeResults);
-            }
-
-            return sizeResultsList;
-        }
-
         /// <summary>
         /// Calculates AverageSearchResult for each SearchType from the data in the sizeRepeatResultsList.
         /// </summary>
         /// <param name="sizeRepeatResultsList">SizeRepeatResults</param>
         /// <returns>AverageSearchTypeResult for all SearchTypes</returns>
-        private static List<AverageSearchTypeResult> CalculateAvargeSearchTypeResults(List<SizeRepeatResults> sizeRepeatResultsList)
-        {
-            var avarageSearchTypeResults = new List<AverageSearchTypeResult>();
+        //private static List<AverageSearchTypeResult> CalculateAvargeSearchTypeResults(List<SizeRepeatResults> sizeRepeatResultsList)
+        //{
+        //    var avarageSearchTypeResults = new List<AverageSearchTypeResult>();
 
-            // All SeachTypeResults
-            var allSearchTypeResults = new List<SearchTypeResults>();
-            // Add SearchTypeResults with an empty SearchResults list
-            foreach (SearchType searchType in Enum.GetValues(typeof(SearchType)))
-            {
-                allSearchTypeResults.Add(new SearchTypeResults
-                {
-                    SearchType = searchType,
-                    SearchResults = new List<SearchResult>(),
-                });
-            }
+        //    // All SeachTypeResults
+        //    var allSearchTypeResults = new List<SearchTypeResults>();
+        //    // Add SearchTypeResults with an empty SearchResults list
+        //    foreach (SearchType searchType in Enum.GetValues(typeof(SearchType)))
+        //    {
+        //        allSearchTypeResults.Add(new SearchTypeResults
+        //        {
+        //            SearchType = searchType,
+        //            SearchResults = new List<SearchResult>(),
+        //        });
+        //    }
 
-            // Add all searchResults to allSearchTypeResults
-            // For each sizeRepeatResults
-            foreach (var sizeRepeatResults in sizeRepeatResultsList)
-            {
-                // For each seachTypeResults
-                foreach (var searchTypeResults in sizeRepeatResults.SearchTypeResults)
-                {
-                    // find matching searchType in allSearchTypeResults, and add the results from this searchTypeResults
-                    allSearchTypeResults.Find(x => x.SearchType == searchTypeResults.SearchType).SearchResults.AddRange(searchTypeResults.SearchResults);
-                }
-            }
+        //    // Add all searchResults to allSearchTypeResults
+        //    // For each sizeRepeatResults
+        //    foreach (var sizeRepeatResults in sizeRepeatResultsList)
+        //    {
+        //        // For each seachTypeResults
+        //        foreach (var searchTypeResults in sizeRepeatResults.SearchTypeResults)
+        //        {
+        //            // find matching searchType in allSearchTypeResults, and add the results from this searchTypeResults
+        //            allSearchTypeResults.Find(x => x.SearchType == searchTypeResults.SearchType).SearchResults.AddRange(searchTypeResults.SearchResults);
+        //        }
+        //    }
 
-            // Calculate average
-            foreach (var searchTypeResults in allSearchTypeResults)
-            {
-                var results = searchTypeResults.SearchResults;
+        //    // Calculate average
+        //    foreach (var searchTypeResults in allSearchTypeResults)
+        //    {
+        //        var results = searchTypeResults.SearchResults;
 
-                // sort results based on search time
-                results.Sort((x, y) => x.SearchTime.CompareTo(y.SearchTime));
+        //        // sort results based on search time
+        //        results.Sort((x, y) => x.SearchTime.CompareTo(y.SearchTime));
 
-                // calculate median
-                var median = results.Count % 2 == 0 ? results[results.Count / 2 - 1] : results[results.Count / 2];
-                // calculate mean
-                var meanTime = results.Sum(x => x.SearchTime) / results.Count;
-                var mean = new SearchResult { SearchTime = meanTime, ExplordedNodes = results[0].ExplordedNodes, ExploredRatio = results[0].ExploredRatio };
+        //        // calculate median
+        //        var median = results.Count % 2 == 0 ? results[results.Count / 2 - 1] : results[results.Count / 2];
+        //        // calculate mean
+        //        var meanTime = results.Sum(x => x.SearchTime) / results.Count;
+        //        var mean = new SearchResult { SearchTime = meanTime, ExplordedNodes = results[0].ExplordedNodes, ExploredRatio = results[0].ExploredRatio };
 
-                avarageSearchTypeResults.Add(new AverageSearchTypeResult
-                {
-                    SearchType = searchTypeResults.SearchType,
-                    MedianSearchResult = median,
-                    MeanSearchResult = mean,
-                });
-            }
+        //        avarageSearchTypeResults.Add(new AverageSearchTypeResult
+        //        {
+        //            SearchType = searchTypeResults.SearchType,
+        //            MedianSearchResult = median,
+        //            MeanSearchResult = mean,
+        //        });
+        //    }
 
-            return avarageSearchTypeResults;
-        }
-
-        /// <summary>
-        /// Tests all graphs within a graph size directory and returns the results.
-        /// </summary>
-        /// <param name="pathToDirectoryWithGraphSizeRepetFiles"></param>
-        /// <returns></returns>
-        private static List<SizeRepeatResults> GetSizeRepeatResults(string pathToDirectoryWithGraphSizeRepetFiles)
-        {
-            var sizeRepeatResults = new List<SizeRepeatResults>();
-
-            var graphFilesPaths = Directory.GetFiles(pathToDirectoryWithGraphSizeRepetFiles);
-
-            // For each graph file in size directory
-            int index = 0;
-            foreach (var graphFilePath in graphFilesPaths)
-            {
-                // load graph from disk
-                var graph = GraphManager.Load(graphFilePath);
-
-                sizeRepeatResults.Add(new SizeRepeatResults
-                {
-                    GraphSizeRepet = index,
-                    SearchTypeResults = GetSearchTypeResults(graph),
-                });
-
-                index++;
-            }
-
-            return sizeRepeatResults;
-        }
-
-        /// <summary>
-        /// Tests a graph and returns the results for all searchTypes.
-        /// </summary>
-        /// <param name="graph"></param>
-        /// <returns></returns>
-        private static List<SearchTypeResults> GetSearchTypeResults(Graph graph)
-        {
-            var searchTypeResults = new List<SearchTypeResults>();
-
-            // create new pathfinder with the source node in the top left corner and destination node in the bottom right corner
-            var pathFinder = new Pathfinder(graph, 0, graph.AdjacencyList.Count - 1);
-
-            // Test graph with each searchType
-            foreach (SearchType searchType in Enum.GetValues(typeof(SearchType)))
-            {
-                searchTypeResults.Add(new SearchTypeResults
-                {
-                    SearchType = searchType,
-                    SearchResults = GetSearchResults(pathFinder, searchType)
-                });
-            }
-
-            return searchTypeResults;
-        }
+        //    return avarageSearchTypeResults;
+        //}
 
         /// <summary>
         /// Tests a graph with the given searchType multiple times and returns the results.
