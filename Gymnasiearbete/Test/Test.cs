@@ -70,8 +70,12 @@ namespace Gymnasiearbete.Test
 
             // For each graph openness directory
             var opennessDirectories = Directory.GetDirectories(GraphManager.saveLocation);
+            int ODIndex = 0;
             foreach (var opennessDirectory in opennessDirectories)
             {
+                // Print progress
+                Console.WriteLine($"{ODIndex}/{opennessDirectories.Length}");
+
                 // parse openness
                 double.TryParse(Path.GetFileName(opennessDirectory), out double graphOpenness);
 
@@ -107,6 +111,7 @@ namespace Gymnasiearbete.Test
                         }
                     }
                 }
+                ODIndex++;
             }
 
 
