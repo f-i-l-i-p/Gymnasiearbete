@@ -1,5 +1,6 @@
 ﻿using Gymnasiearbete.Pathfinding;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -73,7 +74,7 @@ namespace Gymnasiearbete.Test
             int ODIndex = 0;
             foreach (var opennessDirectory in opennessDirectories)
             {
-                // Print progress
+                // print progress
                 Console.WriteLine($"{ODIndex}/{opennessDirectories.Length}");
 
                 // parse openness
@@ -102,12 +103,14 @@ namespace Gymnasiearbete.Test
                         foreach (SearchTypeResult searchTypeResult in testResult.GraphOptimizationResults[0].SearchTypeResults)
                         {
                             // Find the SizeRepeatResult for the current graph in this searchTypeResult
-                            var or = GetOpennessResult(graphOpenness, searchTypeResult);
-                            var sr = GetSizeResult(graphSize, or);
-                            var srr = GetSizeRepeatResult(graphRepeat, sr);
+                            var opennessResult = GetOpennessResult(graphOpenness, searchTypeResult);
+                            var sizeResult = GetSizeResult(graphSize, opennessResult);
+                            var sizeRepeatResult = GetSizeRepeatResult(graphRepeat, sizeResult);
 
                             // test pathfinder and save results
-                            srr.SearchResults = GetSearchResults(pathfinder, searchTypeResult.SearchType);
+                            sizeRepeatResult.SearchResults = GetSearchResults(pathfinder, searchTypeResult.SearchType);
+                            // set average result 
+                            sizeResult.AverageSearchResult = CalculateAverageSearchResult(sizeResult.SizeRepeatResults);
                         }
                     }
                 }
@@ -200,62 +203,88 @@ namespace Gymnasiearbete.Test
         }
 
         /// <summary>
-        /// Calculates AverageSearchResult for each SearchType from the data in the sizeRepeatResultsList.
+        /// Returns the AverageSearchResult from a list of SizeRepeatResults.
         /// </summary>
-        /// <param name="sizeRepeatResultsList">SizeRepeatResults</param>
-        /// <returns>AverageSearchTypeResult for all SearchTypes</returns>
-        //private static List<AverageSearchTypeResult> CalculateAvargeSearchTypeResults(List<SizeRepeatResults> sizeRepeatResultsList)
-        //{
-        //    var avarageSearchTypeResults = new List<AverageSearchTypeResult>();
+        /// <param name="sizeRepeatResults">SizeRepeatResults to calculate the AverageSearchResult from.</param>
+        /// <returns>The AverageSearchResult.</returns>
+        private static AverageSearchResult CalculateAverageSearchResult(List<SizeRepeatResult> sizeRepeatResults)
+        {
+            // the sum of all search results
+            var searchResSum = new SearchResult
+            {
+                SearchTime = 0,
+                ExplordedNodes = 0,
+                ExploredRatio = 0,
+            };
+            var allSearchTimes = new List<double>();
+            var allExploredNodes = new List<int>();
+            var allExploredRatios = new List<double>();
 
-        //    // All SeachTypeResults
-        //    var allSearchTypeResults = new List<SearchTypeResults>();
-        //    // Add SearchTypeResults with an empty SearchResults list
-        //    foreach (SearchType searchType in Enum.GetValues(typeof(SearchType)))
-        //    {
-        //        allSearchTypeResults.Add(new SearchTypeResults
-        //        {
-        //            SearchType = searchType,
-        //            SearchResults = new List<SearchResult>(),
-        //        });
-        //    }
+            // the total amount of search results
+            var searchResCount = 0;
+            
+            // Set searchResSum and searchResCount
+            foreach (var sizeRepeatResult in sizeRepeatResults)
+            {
+                foreach (var searchResult in sizeRepeatResult.SearchResults)
+                {
+                    searchResSum.SearchTime += searchResult.SearchTime;
+                    searchResSum.ExplordedNodes += searchResult.ExplordedNodes;
+                    searchResSum.ExploredRatio += searchResult.ExploredRatio;
 
-        //    // Add all searchResults to allSearchTypeResults
-        //    // For each sizeRepeatResults
-        //    foreach (var sizeRepeatResults in sizeRepeatResultsList)
-        //    {
-        //        // For each seachTypeResults
-        //        foreach (var searchTypeResults in sizeRepeatResults.SearchTypeResults)
-        //        {
-        //            // find matching searchType in allSearchTypeResults, and add the results from this searchTypeResults
-        //            allSearchTypeResults.Find(x => x.SearchType == searchTypeResults.SearchType).SearchResults.AddRange(searchTypeResults.SearchResults);
-        //        }
-        //    }
+                    AddSorted(allSearchTimes, searchResult.SearchTime);
+                    AddSorted(allExploredNodes, searchResult.ExplordedNodes);
+                    AddSorted(allExploredRatios, searchResult.ExploredRatio);
+                }
+                searchResCount += sizeRepeatResult.SearchResults.Count;
+            }
 
-        //    // Calculate average
-        //    foreach (var searchTypeResults in allSearchTypeResults)
-        //    {
-        //        var results = searchTypeResults.SearchResults;
+            return new AverageSearchResult
+            {
+                MeanSearchResult = new SearchResult
+                {
+                    SearchTime = searchResSum.SearchTime / searchResCount,
+                    ExplordedNodes = searchResSum.ExplordedNodes / searchResCount,
+                    ExploredRatio = searchResSum.ExploredRatio / searchResCount,
+                },
+                MedianSearchResult = new SearchResult
+                {
+                    SearchTime = GetCenterValue(allSearchTimes),
+                    ExplordedNodes = GetCenterValue(allExploredNodes),
+                    ExploredRatio = GetCenterValue(allExploredRatios),
+                },
+            };
+        }
 
-        //        // sort results based on search time
-        //        results.Sort((x, y) => x.SearchTime.CompareTo(y.SearchTime));
+        /// <summary>
+        /// Inserts a value at its sorted position.
+        /// </summary>
+        /// <param name="list">List to insert value in.</param>
+        /// <param name="value">Value to insert.</param>
+        public static void AddSorted<T>(this List<T> list, T value)
+        {
+            int x = list.BinarySearch(value);
+            list.Insert((x >= 0) ? x : ~x, value);
+        }
 
-        //        // calculate median
-        //        var median = results.Count % 2 == 0 ? results[results.Count / 2 - 1] : results[results.Count / 2];
-        //        // calculate mean
-        //        var meanTime = results.Sum(x => x.SearchTime) / results.Count;
-        //        var mean = new SearchResult { SearchTime = meanTime, ExplordedNodes = results[0].ExplordedNodes, ExploredRatio = results[0].ExploredRatio };
+        /// <summary>
+        /// Returns the value in the center of the list.
+        /// If the list has an uneven length, the average between the two values in the center will be returned.
+        /// </summary>
+        /// <param name="list">List with values.</param>
+        /// <returns>The center value in the list.</returns>
+        public static T GetCenterValue<T>(List<T> list)
+        {
+            if (list == null || list.Count == 0)
+                return default;
+            if (list.Count == 1)
+                return list[0];
+            else
+                return list.Count % 2 == 0
+                    ? (((dynamic)list[list.Count / 2 - 1] + list[list.Count / 2])/2)
+                    : list[list.Count / 2];
+        }
 
-        //        avarageSearchTypeResults.Add(new AverageSearchTypeResult
-        //        {
-        //            SearchType = searchTypeResults.SearchType,
-        //            MedianSearchResult = median,
-        //            MeanSearchResult = mean,
-        //        });
-        //    }
-
-        //    return avarageSearchTypeResults;
-        //}
 
         /// <summary>
         /// Tests a graph with the given searchType multiple times and returns the results.
