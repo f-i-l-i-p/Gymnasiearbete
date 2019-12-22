@@ -32,6 +32,7 @@ namespace Gymnasiearbete.Test
     {
         public int GraphSize { get; set; }
         public AverageSearchResult AverageSearchResult { get; set; }
+        public AverageGraphOpimizationTime AverageGraphOpimizationTime { get; set; }
         public List<SizeRepeatResult> SizeRepeatResults { get; set;}
     }
 
@@ -39,6 +40,7 @@ namespace Gymnasiearbete.Test
     {
         public int GraphSizeRepet { get; set; }
         public List<SearchResult> SearchResults { get; set; }
+        public double GraphOptimizationTime { get; set; }
     }
 
     class AverageSearchResult
@@ -52,5 +54,11 @@ namespace Gymnasiearbete.Test
         public double SearchTime { get; set; }
         public int ExplordedNodes { get; set; }
         public double ExploredRatio { get; set; }
+    }
+
+    class AverageGraphOpimizationTime
+    {
+        public double MeanOptimizationTime { get; set; }
+        public double MedianOpimizatonTime { get; set; }
     }
 }

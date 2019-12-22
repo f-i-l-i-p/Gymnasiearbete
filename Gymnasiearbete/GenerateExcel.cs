@@ -18,7 +18,7 @@ namespace Gymnasiearbete
             }
         }
 
-        private enum ResultType { MeanSearchTime, MedianSearchTime, MeanExploredNodes, MedianExploredNodes, MeanExploredRatio, MedieanExploredRatio }
+        private enum ResultType { MeanSearchTime, MedianSearchTime, MeanExploredNodes, MedianExploredNodes, MeanExploredRatio, MedianExploredRatio, MeanGraphOptimizationTime, MedianGraphOptimizationTime }
 
         /// <summary>
         /// Returns a search result value from a AverageSearchResult.
@@ -26,22 +26,26 @@ namespace Gymnasiearbete
         /// <param name="resultType">Result type to return.</param>
         /// <param name="averageSearchResult">AverageSearchResult to find search result value in.</param>
         /// <returns>The value of the search result with the matching result type.</returns>
-        private static object GetDataFromDataType(ResultType resultType, AverageSearchResult averageSearchResult)
+        private static object GetDataFromDataType(ResultType resultType, SizeResult sizeResult)
         {
             switch (resultType)
             {
                 case ResultType.MeanSearchTime:
-                    return averageSearchResult.MeanSearchResult.SearchTime;
+                    return sizeResult.AverageSearchResult.MeanSearchResult.SearchTime;
                 case ResultType.MedianSearchTime:
-                    return averageSearchResult.MedianSearchResult.SearchTime;
+                    return sizeResult.AverageSearchResult.MedianSearchResult.SearchTime;
                 case ResultType.MeanExploredNodes:
-                    return averageSearchResult.MeanSearchResult.ExplordedNodes;
+                    return sizeResult.AverageSearchResult.MeanSearchResult.ExplordedNodes;
                 case ResultType.MedianExploredNodes:
-                    return averageSearchResult.MedianSearchResult.ExplordedNodes;
+                    return sizeResult.AverageSearchResult.MedianSearchResult.ExplordedNodes;
                 case ResultType.MeanExploredRatio:
-                    return averageSearchResult.MeanSearchResult.ExploredRatio;
-                case ResultType.MedieanExploredRatio:
-                    return averageSearchResult.MedianSearchResult.ExploredRatio;
+                    return sizeResult.AverageSearchResult.MeanSearchResult.ExploredRatio;
+                case ResultType.MedianExploredRatio:
+                    return sizeResult.AverageSearchResult.MedianSearchResult.ExploredRatio;
+                case ResultType.MeanGraphOptimizationTime:
+                    return sizeResult.AverageGraphOpimizationTime.MeanOptimizationTime;
+                case ResultType.MedianGraphOptimizationTime:
+                    return sizeResult.AverageGraphOpimizationTime.MedianOpimizatonTime;
                 default:
                     throw new ArgumentException($"{resultType.ToString()} is not a supported ResultType type", "resultType");
             }
@@ -89,7 +93,7 @@ namespace Gymnasiearbete
                 foreach (var sizeResult in opennessResult.SizeResults)
                 {
                     // write mean search time
-                    excel.SetCell(xStart + column + 1, row, GetDataFromDataType(resultType, sizeResult.AverageSearchResult));
+                    excel.SetCell(xStart + column + 1, row, GetDataFromDataType(resultType, sizeResult));
                     column++;
                 }
                 row++;
@@ -109,27 +113,50 @@ namespace Gymnasiearbete
             excel.AddSheet("Data");
 
             // Create styles
-            var chunkTopBarStyle = excel.CreateStyle(new SimpleCellStyle
+            var PathfindingTopBarStyle = excel.CreateStyle(new SimpleCellStyle
             {
                 BorderBottom = BorderStyle.Thin,
                 BorderTop = BorderStyle.Thick,
                 FillForegroundColor = NPOI.HSSF.Util.HSSFColor.Yellow.Index,
                 FillPattern = FillPattern.SolidForeground,
             });
-            var chunkSideBarStyle = excel.CreateStyle(new SimpleCellStyle
+            var PathfindingSideBarStyle = excel.CreateStyle(new SimpleCellStyle
             {
                 BorderRight = BorderStyle.Thin,
                 BorderLeft = BorderStyle.Medium,
                 FillForegroundColor = NPOI.HSSF.Util.HSSFColor.Yellow.Index,
                 FillPattern = FillPattern.SolidForeground,
             });
-            var chunkTitleStyle = excel.CreateStyle(new SimpleCellStyle
+            var PathfindingTitleStyle = excel.CreateStyle(new SimpleCellStyle
             {
                 BorderBottom = BorderStyle.Thin,
                 BorderTop = BorderStyle.Thick,
                 BorderRight = BorderStyle.Thin,
                 BorderLeft = BorderStyle.Medium,
                 FillForegroundColor = NPOI.HSSF.Util.HSSFColor.Yellow.Index,
+                FillPattern = FillPattern.SolidForeground,
+            });
+            var OptimizeTopBarStyle = excel.CreateStyle(new SimpleCellStyle
+            {
+                BorderBottom = BorderStyle.Thin,
+                BorderTop = BorderStyle.Thick,
+                FillForegroundColor = NPOI.HSSF.Util.HSSFColor.CornflowerBlue.Index,
+                FillPattern = FillPattern.SolidForeground,
+            });
+            var OptimizeSideBarStyle = excel.CreateStyle(new SimpleCellStyle
+            {
+                BorderRight = BorderStyle.Thin,
+                BorderLeft = BorderStyle.Medium,
+                FillForegroundColor = NPOI.HSSF.Util.HSSFColor.CornflowerBlue.Index,
+                FillPattern = FillPattern.SolidForeground,
+            });
+            var OptimizeTitleStyle = excel.CreateStyle(new SimpleCellStyle
+            {
+                BorderBottom = BorderStyle.Thin,
+                BorderTop = BorderStyle.Thick,
+                BorderRight = BorderStyle.Thin,
+                BorderLeft = BorderStyle.Medium,
+                FillForegroundColor = NPOI.HSSF.Util.HSSFColor.CornflowerBlue.Index,
                 FillPattern = FillPattern.SolidForeground,
             });
             var titleStyle = excel.CreateStyle(new SimpleCellStyle
@@ -147,6 +174,15 @@ namespace Gymnasiearbete
             // For each GraphOptimizationResult
             foreach (var graphOptimizationResult in testResult.GraphOptimizationResults)
             {
+                // Optimization time
+                excel.SetCell(currentColumn, currentRow, $"Graph optimization: {graphOptimizationResult.OptimizationType}", titleStyle);
+                currentColumn++;
+                WriteDataChunk(excel, currentColumn            , currentRow, ResultType.MeanGraphOptimizationTime  , graphOptimizationResult.SearchTypeResults[0].OpennessResults, OptimizeTitleStyle, OptimizeTopBarStyle, OptimizeSideBarStyle);
+                WriteDataChunk(excel, currentColumn + dataWidth, currentRow, ResultType.MedianGraphOptimizationTime, graphOptimizationResult.SearchTypeResults[0].OpennessResults, OptimizeTitleStyle, OptimizeTopBarStyle, OptimizeSideBarStyle);
+                currentRow += dataHeight;
+
+                currentColumn = 0;
+
                 // For each SearchTypeResult in current GraphOptimizationResult
                 foreach (var searchTypeResult in graphOptimizationResult.SearchTypeResults)
                 {
@@ -157,13 +193,19 @@ namespace Gymnasiearbete
                     // Write all SearchType data
                     foreach (ResultType resultType in Enum.GetValues(typeof(ResultType)))
                     {
-                        WriteDataChunk(excel, currentColumn, currentRow, resultType, searchTypeResult.OpennessResults, chunkTitleStyle, chunkTopBarStyle, chunkSideBarStyle);
+                        if (resultType == ResultType.MeanGraphOptimizationTime || resultType == ResultType.MedianGraphOptimizationTime)
+                            continue;
+
+                        WriteDataChunk(excel, currentColumn, currentRow, resultType, searchTypeResult.OpennessResults, PathfindingTitleStyle, PathfindingTopBarStyle, PathfindingSideBarStyle);
                         currentColumn += dataWidth;
                     }
 
                     currentRow += dataHeight;
                     currentColumn = 0;
                 }
+
+                // add empty row
+                currentRow++;
             }
 
             return excel;

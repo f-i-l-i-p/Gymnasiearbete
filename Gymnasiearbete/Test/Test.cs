@@ -69,6 +69,8 @@ namespace Gymnasiearbete.Test
 
             var testResult = ResultSetup.SetupTestResult();
 
+            var optimizationTimer = new Stopwatch();
+
 
             // For each graph openness directory
             var opennessDirectories = Directory.GetDirectories(GraphManager.saveLocation);
@@ -105,12 +107,17 @@ namespace Gymnasiearbete.Test
                             var sourceNode = 0;
                             var destinationNode = graph.AdjacencyList.Count - 1;
 
+                            // Optimize graph
                             switch (graphOptimizationResult.OptimizationType)
                             {
                                 case OptimizationType.None:
+                                    optimizationTimer.Restart();
+                                    optimizationTimer.Stop();
                                     break;
                                 case OptimizationType.Shrinked:
+                                    optimizationTimer.Restart();
                                     GraphOptimization.ShrinkGraph(graph, new int[] { sourceNode, destinationNode });
+                                    optimizationTimer.Stop();
                                     break;
                                 default:
                                     throw new Exception($"{graphOptimizationResult.OptimizationType.ToString()} is missing an optimization function");
@@ -128,8 +135,12 @@ namespace Gymnasiearbete.Test
 
                                 // test pathfinder and save results
                                 sizeRepeatResult.SearchResults = GetSearchResults(pathfinder, searchTypeResult.SearchType);
+                                // set optimization time
+                                sizeRepeatResult.GraphOptimizationTime = optimizationTimer.Elapsed.TotalSeconds;
+                                
                                 // set average result 
-                                sizeResult.AverageSearchResult = CalculateAverageSearchResult(sizeResult.SizeRepeatResults);
+                                sizeResult.AverageSearchResult = CalculateAverageSearchResult(sizeResult.SizeRepeatResults, out var agot);
+                                sizeResult.AverageGraphOpimizationTime = agot;
                             }
                         }
                     }
@@ -239,11 +250,12 @@ namespace Gymnasiearbete.Test
         }
 
         /// <summary>
-        /// Returns the AverageSearchResult from a list of SizeRepeatResults.
+        /// Returns the AverageSearchResult from a list of SizeRepeatResults. out AverageGraphOpimizationTime.
         /// </summary>
         /// <param name="sizeRepeatResults">SizeRepeatResults to calculate the AverageSearchResult from.</param>
+        /// <param name="averageGraphOpimizationTime">The AverageGraphOpimizationTime.</param>
         /// <returns>The AverageSearchResult.</returns>
-        private static AverageSearchResult CalculateAverageSearchResult(List<SizeRepeatResult> sizeRepeatResults)
+        private static AverageSearchResult CalculateAverageSearchResult(List<SizeRepeatResult> sizeRepeatResults, out AverageGraphOpimizationTime averageGraphOpimizationTime)
         {
             // the sum of all search results
             var searchResSum = new SearchResult
@@ -252,9 +264,12 @@ namespace Gymnasiearbete.Test
                 ExplordedNodes = 0,
                 ExploredRatio = 0,
             };
+            double graphOptimizationTimeSum = 0;
+
             var allSearchTimes = new List<double>();
             var allExploredNodes = new List<int>();
             var allExploredRatios = new List<double>();
+            var allGraphOpimizationTimes = new List<double>();
 
             // the total amount of search results
             var searchResCount = 0;
@@ -262,6 +277,9 @@ namespace Gymnasiearbete.Test
             // Set searchResSum and searchResCount
             foreach (var sizeRepeatResult in sizeRepeatResults)
             {
+                allGraphOpimizationTimes.Add(sizeRepeatResult.GraphOptimizationTime);
+                graphOptimizationTimeSum += sizeRepeatResult.GraphOptimizationTime;
+
                 foreach (var searchResult in sizeRepeatResult.SearchResults)
                 {
                     searchResSum.SearchTime += searchResult.SearchTime;
@@ -274,6 +292,12 @@ namespace Gymnasiearbete.Test
                 }
                 searchResCount += sizeRepeatResult.SearchResults.Count;
             }
+
+            averageGraphOpimizationTime = new AverageGraphOpimizationTime
+            {
+                MeanOptimizationTime = graphOptimizationTimeSum / sizeRepeatResults.Count,
+                MedianOpimizatonTime = GetCenterValue(allGraphOpimizationTimes),
+            };
 
             return new AverageSearchResult
             {
