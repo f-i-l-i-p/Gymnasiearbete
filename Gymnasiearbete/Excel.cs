@@ -162,7 +162,7 @@ namespace Gymnasiearbete
             {
                 var row = SelectedSheet.GetRow(y);
 
-                // test if cell x is registerd in row y
+                // test if cell x is registered in row y
                 if (rowData.Cells != null && rowData.Cells.Contains(x))
                     cell = row.GetCell(x);
                 else
@@ -260,6 +260,40 @@ namespace Gymnasiearbete
             iCellStyle.SetFont(style.Font);
 
             return iCellStyle;
+        }
+
+        /// <summary>
+        /// Adds an extra style to all style values in the base style that have the default value.
+        /// </summary>
+        /// <param name="baseStyle">Base style.</param>
+        /// <param name="extraStyle">Extra style that will be added to all default values in the base style.</param>
+        public static void AddStyles(ICellStyle baseStyle, ICellStyle extraStyle)
+        {
+            if (baseStyle.BorderTop == BorderStyle.None) baseStyle.BorderTop = extraStyle.BorderTop;
+            if (baseStyle.BorderRight == BorderStyle.None) baseStyle.BorderRight = extraStyle.BorderRight;
+            if (baseStyle.BorderBottom == BorderStyle.None) baseStyle.BorderBottom = extraStyle.BorderBottom;
+            if (baseStyle.BorderLeft == BorderStyle.None) baseStyle.BorderLeft = extraStyle.BorderLeft;
+            if (baseStyle.TopBorderColor == 0) baseStyle.TopBorderColor = extraStyle.TopBorderColor;
+            if (baseStyle.RightBorderColor == 0) baseStyle.RightBorderColor = extraStyle.RightBorderColor;
+            if (baseStyle.BottomBorderColor == 0) baseStyle.BottomBorderColor = extraStyle.BottomBorderColor;
+            if (baseStyle.LeftBorderColor == 0) baseStyle.LeftBorderColor = extraStyle.LeftBorderColor;
+
+            if (baseStyle.FillForegroundColor == 0) baseStyle.FillForegroundColor = extraStyle.FillForegroundColor;
+            if (baseStyle.FillBackgroundColor == 0) baseStyle.FillBackgroundColor = extraStyle.FillBackgroundColor;
+
+            if (baseStyle.FillPattern == FillPattern.NoFill) baseStyle.FillPattern = extraStyle.FillPattern;
+
+            if (baseStyle.Alignment == HorizontalAlignment.General) baseStyle.Alignment = extraStyle.Alignment;
+            if (baseStyle.VerticalAlignment == VerticalAlignment.Top) baseStyle.VerticalAlignment = extraStyle.VerticalAlignment;
+
+            if (baseStyle.IsHidden == false) baseStyle.IsHidden = extraStyle.IsHidden;
+            if (baseStyle.IsLocked == false) baseStyle.IsLocked = extraStyle.IsLocked;
+            if (baseStyle.WrapText == false) baseStyle.WrapText = extraStyle.WrapText;
+            if (baseStyle.ShrinkToFit == false) baseStyle.ShrinkToFit = extraStyle.ShrinkToFit;
+
+            if (baseStyle.Rotation == 0) baseStyle.Rotation = extraStyle.Rotation;
+            if (baseStyle.Indention == 0) baseStyle.Indention = extraStyle.Indention;
+            if (baseStyle.DataFormat == 0) baseStyle.DataFormat = extraStyle.DataFormat;
         }
     }
 

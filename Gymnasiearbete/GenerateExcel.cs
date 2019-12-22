@@ -55,10 +55,10 @@ namespace Gymnasiearbete
         /// <param name="yStart">Ý coordinate to start from.</param>
         /// <param name="resultType">Result type to write.</param>
         /// <param name="opennessResults">Openness results containing all data to be written.</param>
-        private static void WriteDataChunk(Excel excel, int xStart, int yStart, ResultType resultType, List<OpennessResult> opennessResults)
+        private static void WriteDataChunk(Excel excel, int xStart, int yStart, ResultType resultType, List<OpennessResult> opennessResults, ICellStyle titleStyle, ICellStyle topBarStyle, ICellStyle sideBarStyle)
         {
             // write title
-            excel.SetCell(xStart, yStart, resultType.ToString());
+            excel.SetCell(xStart, yStart, resultType.ToString(), titleStyle);
 
             // Return if there are no openness results
             if (opennessResults == null || opennessResults.Count == 0)
@@ -72,7 +72,7 @@ namespace Gymnasiearbete
             foreach (var sizeResult in opennessResults[0].SizeResults)
             {
                 // write data
-                excel.SetCell(column, yStart, sizeResult.GraphSize);
+                excel.SetCell(column, yStart, sizeResult.GraphSize, topBarStyle);
                 column++;
             }
 
@@ -81,7 +81,7 @@ namespace Gymnasiearbete
             foreach (var opennessResult in opennessResults)
             {
                 // write openness
-                excel.SetCell(xStart, row, opennessResult.Openness);
+                excel.SetCell(xStart, row, opennessResult.Openness, sideBarStyle);
 
                 // Write results
                 // For each SizeResult in current OpennesResult
@@ -109,9 +109,33 @@ namespace Gymnasiearbete
             excel.AddSheet("Data");
 
             // Create styles
-            var thinBorder = excel.CreateStyle(new SimpleCellStyle { BorderBottom = BorderStyle.Thin });
-            var mediumBorder = excel.CreateStyle(new SimpleCellStyle { BorderBottom = BorderStyle.Medium });
-            var thickBorder = excel.CreateStyle(new SimpleCellStyle { BorderBottom = BorderStyle.Thick });
+            var chunkTopBarStyle = excel.CreateStyle(new SimpleCellStyle
+            {
+                BorderBottom = BorderStyle.Thin,
+                BorderTop = BorderStyle.Thick,
+                FillForegroundColor = NPOI.HSSF.Util.HSSFColor.Yellow.Index,
+                FillPattern = FillPattern.SolidForeground,
+            });
+            var chunkSideBarStyle = excel.CreateStyle(new SimpleCellStyle
+            {
+                BorderRight = BorderStyle.Thin,
+                BorderLeft = BorderStyle.Medium,
+                FillForegroundColor = NPOI.HSSF.Util.HSSFColor.Yellow.Index,
+                FillPattern = FillPattern.SolidForeground,
+            });
+            var chunkTitleStyle = excel.CreateStyle(new SimpleCellStyle
+            {
+                BorderBottom = BorderStyle.Thin,
+                BorderTop = BorderStyle.Thick,
+                BorderRight = BorderStyle.Thin,
+                BorderLeft = BorderStyle.Medium,
+                FillForegroundColor = NPOI.HSSF.Util.HSSFColor.Yellow.Index,
+                FillPattern = FillPattern.SolidForeground,
+            });
+            var titleStyle = excel.CreateStyle(new SimpleCellStyle
+            {
+                BorderTop = BorderStyle.Thick,
+            });
 
             int currentRow = 0;
             int currentColumn = 0;
@@ -127,13 +151,13 @@ namespace Gymnasiearbete
                 foreach (var searchTypeResult in graphOptimizationResult.SearchTypeResults)
                 {
                     // write SearchType
-                    excel.SetCell(currentColumn, currentRow, $"Path-finding: {searchTypeResult.SearchType.ToString()}, Graph optimization: {graphOptimizationResult.OptimizationType}");
+                    excel.SetCell(currentColumn, currentRow, $"Path-finding: {searchTypeResult.SearchType.ToString()}, Graph optimization: {graphOptimizationResult.OptimizationType}", titleStyle);
                     currentColumn++;
 
                     // Write all SearchType data
                     foreach (ResultType resultType in Enum.GetValues(typeof(ResultType)))
                     {
-                        WriteDataChunk(excel, currentColumn, currentRow, resultType, searchTypeResult.OpennessResults);
+                        WriteDataChunk(excel, currentColumn, currentRow, resultType, searchTypeResult.OpennessResults, chunkTitleStyle, chunkTopBarStyle, chunkSideBarStyle);
                         currentColumn += dataWidth;
                     }
 
