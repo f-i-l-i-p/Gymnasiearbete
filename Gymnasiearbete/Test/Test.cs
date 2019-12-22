@@ -107,17 +107,19 @@ namespace Gymnasiearbete.Test
                             var sourceNode = 0;
                             var destinationNode = graph.AdjacencyList.Count - 1;
 
+                            double optimizationTime;
+
                             // Optimize graph
                             switch (graphOptimizationResult.OptimizationType)
                             {
                                 case OptimizationType.None:
-                                    optimizationTimer.Restart();
-                                    optimizationTimer.Stop();
+                                    optimizationTime = 0;
                                     break;
                                 case OptimizationType.Shrinked:
                                     optimizationTimer.Restart();
                                     GraphOptimization.ShrinkGraph(graph, new int[] { sourceNode, destinationNode });
                                     optimizationTimer.Stop();
+                                    optimizationTime = optimizationTimer.Elapsed.TotalSeconds;
                                     break;
                                 default:
                                     throw new Exception($"{graphOptimizationResult.OptimizationType.ToString()} is missing an optimization function");
@@ -136,7 +138,7 @@ namespace Gymnasiearbete.Test
                                 // test pathfinder and save results
                                 sizeRepeatResult.SearchResults = GetSearchResults(pathfinder, searchTypeResult.SearchType);
                                 // set optimization time
-                                sizeRepeatResult.GraphOptimizationTime = optimizationTimer.Elapsed.TotalSeconds;
+                                sizeRepeatResult.GraphOptimizationTime = optimizationTime;
                                 
                                 // set average result 
                                 sizeResult.AverageSearchResult = CalculateAverageSearchResult(sizeResult.SizeRepeatResults, out var agot);
