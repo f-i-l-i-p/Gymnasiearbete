@@ -120,22 +120,26 @@ namespace Gymnasiearbete
             int dataWidth = 16;
             int dataHeight = 12;
 
-            // For each SearchTypeResult in current GraphOptimizationResult
-            foreach (var searchTypeResult in testResult.GraphOptimizationResults[0].SearchTypeResults)
+            // For each GraphOptimizationResult
+            foreach (var graphOptimizationResult in testResult.GraphOptimizationResults)
             {
-                // write SearchType
-                excel.SetCell(currentColumn, currentRow, searchTypeResult.SearchType.ToString());
-                currentColumn++;
-
-                // Write all SearchType data
-                foreach (ResultType resultType in Enum.GetValues(typeof(ResultType)))
+                // For each SearchTypeResult in current GraphOptimizationResult
+                foreach (var searchTypeResult in graphOptimizationResult.SearchTypeResults)
                 {
-                    WriteDataChunk(excel, currentColumn, currentRow, resultType, searchTypeResult.OpennessResults);
-                    currentColumn += dataWidth;
-                }
+                    // write SearchType
+                    excel.SetCell(currentColumn, currentRow, $"Path-finding: {searchTypeResult.SearchType.ToString()}, Graph optimization: {graphOptimizationResult.OptimizationType}");
+                    currentColumn++;
 
-                currentRow += dataHeight;
-                currentColumn = 0;
+                    // Write all SearchType data
+                    foreach (ResultType resultType in Enum.GetValues(typeof(ResultType)))
+                    {
+                        WriteDataChunk(excel, currentColumn, currentRow, resultType, searchTypeResult.OpennessResults);
+                        currentColumn += dataWidth;
+                    }
+
+                    currentRow += dataHeight;
+                    currentColumn = 0;
+                }
             }
 
             return excel;
