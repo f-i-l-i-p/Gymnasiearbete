@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using static Gymnasiearbete.Pathfinding.GraphOptimization;
 using static Gymnasiearbete.Pathfinding.Pathfinder;
 
 namespace Gymnasiearbete.Test
@@ -75,7 +76,7 @@ namespace Gymnasiearbete.Test
             foreach (var opennessDirectory in opennessDirectories)
             {
                 // print progress
-                Console.WriteLine($"{ODIndex}/{opennessDirectories.Length}");
+                Console.WriteLine($"{ODIndex + 1}/{opennessDirectories.Length}");
 
                 // parse openness
                 double.TryParse(Path.GetFileName(opennessDirectory), out double graphOpenness);
@@ -94,23 +95,42 @@ namespace Gymnasiearbete.Test
                         // parse repeat
                         int.TryParse(Path.GetFileName(graphFile), out int graphRepeat);
 
-                        // load graph
-                        var graph = GraphManager.Load(graphFile);
 
-                        var pathfinder = new Pathfinder(graph, 0, graph.AdjacencyList.Count - 1);
-
-                        // For each SerchTypeResult in current GraphOptimizationResult
-                        foreach (SearchTypeResult searchTypeResult in testResult.GraphOptimizationResults[0].SearchTypeResults)
+                        // For each GraphOptimizationResult
+                        foreach (var graphOptimizationResult in testResult.GraphOptimizationResults)
                         {
-                            // Find the SizeRepeatResult for the current graph in this searchTypeResult
-                            var opennessResult = GetOpennessResult(graphOpenness, searchTypeResult);
-                            var sizeResult = GetSizeResult(graphSize, opennessResult);
-                            var sizeRepeatResult = GetSizeRepeatResult(graphRepeat, sizeResult);
+                            // load graph
+                            var graph = GraphManager.Load(graphFile);
 
-                            // test pathfinder and save results
-                            sizeRepeatResult.SearchResults = GetSearchResults(pathfinder, searchTypeResult.SearchType);
-                            // set average result 
-                            sizeResult.AverageSearchResult = CalculateAverageSearchResult(sizeResult.SizeRepeatResults);
+                            var sourceNode = 0;
+                            var destinationNode = graph.AdjacencyList.Count - 1;
+
+                            switch (graphOptimizationResult.OptimizationType)
+                            {
+                                case OptimizationType.None:
+                                    break;
+                                case OptimizationType.Shrinked:
+                                    GraphOptimization.ShrinkGraph(graph, new int[] { sourceNode, destinationNode });
+                                    break;
+                                default:
+                                    throw new Exception($"{graphOptimizationResult.OptimizationType.ToString()} is missing an optimization function");
+                            }
+
+                            var pathfinder = new Pathfinder(graph, sourceNode, destinationNode);
+
+                            // For each SerchTypeResult in current GraphOptimizationResult
+                            foreach (SearchTypeResult searchTypeResult in graphOptimizationResult.SearchTypeResults)
+                            {
+                                // Find the SizeRepeatResult for the current graph in this searchTypeResult
+                                var opennessResult = GetOpennessResult(graphOpenness, searchTypeResult);
+                                var sizeResult = GetSizeResult(graphSize, opennessResult);
+                                var sizeRepeatResult = GetSizeRepeatResult(graphRepeat, sizeResult);
+
+                                // test pathfinder and save results
+                                sizeRepeatResult.SearchResults = GetSearchResults(pathfinder, searchTypeResult.SearchType);
+                                // set average result 
+                                sizeResult.AverageSearchResult = CalculateAverageSearchResult(sizeResult.SizeRepeatResults);
+                            }
                         }
                     }
                 }

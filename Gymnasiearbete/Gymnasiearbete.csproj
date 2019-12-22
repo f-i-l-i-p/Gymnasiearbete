@@ -71,6 +71,7 @@
     <Compile Include="GraphManager.cs" />
     <Compile Include="MazeGeneration\MazeGenerator.cs" />
     <Compile Include="Menu.cs" />
+    <Compile Include="Pathfinding\GraphOptimization.cs" />
     <Compile Include="Pathfinding\Pathfinder.cs" />
     <Compile Include="Pathfinding\QueueNodes\FastQueueNode.cs" />
     <Compile Include="Pathfinding\QueueNodes\StableQueueNode.cs" />

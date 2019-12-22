@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using static Gymnasiearbete.Pathfinding.GraphOptimization;
 using static Gymnasiearbete.Pathfinding.Pathfinder;
 
 namespace Gymnasiearbete.Test
@@ -8,7 +9,6 @@ namespace Gymnasiearbete.Test
         public List<GraphOptimizationResult> GraphOptimizationResults { get; set; }
     }
 
-    public enum OptimizationType { None, Shrinked }
     class GraphOptimizationResult
     {
         public OptimizationType OptimizationType { get; set; }
