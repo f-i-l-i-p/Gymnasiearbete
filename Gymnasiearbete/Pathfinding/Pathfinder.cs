@@ -36,20 +36,22 @@ namespace Gymnasiearbete.Pathfinding
         /// <summary>
         /// Searches the graph with the specified searchType algorithm to find the shortest path from the source node to the destination node.
         /// </summary>
+        /// <param name="searchType">Search algorithm to use.</param>
         /// <param name="path">A list of steps to take to travel from the source node to the destination node.</param>
         /// <returns>A boolean indicating if the path was found.</returns>
-        public bool FindPath(SearchType searchType, out List<int> path)
+        public bool FindPath(SearchType searchType, out List<int> path, out int visitedNodes)
         {
             switch (searchType)
             {
                 case SearchType.BFS:
-                    return BFS(out path);
+                    return BFS(out path, out visitedNodes);
                 case SearchType.Dijkstras:
-                    return Dijkstras(out path);
+                    return Dijkstras(out path, out visitedNodes);
                 case SearchType.AStar:
-                    return AStar(out path);
+                    return AStar(out path, out visitedNodes);
                 default:
                     path = null;
+                    visitedNodes = 0;
                     return false;
             }
         }
@@ -60,10 +62,13 @@ namespace Gymnasiearbete.Pathfinding
         /// <summary>
         /// Searches the graph with the Breadth First Search algorithm to find the shortest path from the source node to the destination node.
         /// </summary>
+        /// <param name="visitedNodes">The total number of nodes visited.</param>
         /// <param name="path">A list of steps to take to travel from the source node to the destination node.</param>
         /// <returns>A boolean indicating if the path was found.</returns>
-        public bool BFS(out List<int> path)
+        public bool BFS(out List<int> path, out int visitedNodes)
         {
+            visitedNodes = 0;
+
             var queue = new Queue<int>();
             var parent = new int?[Graph.AdjacencyList.Count];
 
@@ -76,6 +81,7 @@ namespace Gymnasiearbete.Pathfinding
             {
                 // dequeue the first node in the queue
                 var u = queue.Dequeue();
+                visitedNodes++;
 
                 // Check if it is the destination node
                 if (u == Destination)
@@ -105,10 +111,13 @@ namespace Gymnasiearbete.Pathfinding
         /// <summary>
         /// Searches the graph with Dijkstra's algorithm to find the shortest path from the source node to the destination node.
         /// </summary>
+        /// <param name="visitedNodes">The total number of nodes visited.</param>
         /// <param name="path">A list of steps to take to travel from the source node to the destination node.</param>
         /// <returns>A boolean indicating if the path was found.</returns>
-        public bool Dijkstras(out List<int> path)
+        public bool Dijkstras(out List<int> path, out int visitedNodes)
         {
+            visitedNodes = 0;
+
             var priorityQueue = new FastPriorityQueue<FastQueueNode>(Graph.AdjacencyList.Count);
             var parent = new int?[Graph.AdjacencyList.Count];
             var cost = new float?[Graph.AdjacencyList.Count];
@@ -129,6 +138,7 @@ namespace Gymnasiearbete.Pathfinding
             {
                 // dequeue the node with the lowest priority
                 var u = priorityQueue.Dequeue().Value;
+                visitedNodes++;
 
                 // Check if it is the destination node
                 if (u == Destination)
@@ -163,10 +173,13 @@ namespace Gymnasiearbete.Pathfinding
         /// <summary>
         /// Searches the graph with the A* algorithm to find the shortest path from the source node to the destination node.
         /// </summary>
+        /// <param name="visitedNodes">The total number of nodes visited.</param>
         /// <param name="path">A list of steps to take to travel from the source node to the destination node.</param>
         /// <returns>A boolean indicating if the path was found.</returns>
-        public bool AStar(out List<int> path)
+        public bool AStar(out List<int> path, out int visitedNodes)
         {
+            visitedNodes = 0;
+
             var priorityQueue = new StablePriorityQueue<StableQueueNode>(Graph.AdjacencyList.Count);
             var parent = new int?[Graph.AdjacencyList.Count];
             var gScore = new float?[Graph.AdjacencyList.Count];
@@ -195,6 +208,7 @@ namespace Gymnasiearbete.Pathfinding
             {
                 // dequeue the node with the lowest priority
                 var u = priorityQueue.Dequeue().Value;
+                visitedNodes++;
 
                 // Check if it is the destination node
                 if (u == Destination)

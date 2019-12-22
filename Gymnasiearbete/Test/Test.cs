@@ -377,7 +377,7 @@ namespace Gymnasiearbete.Test
             // start timer
             stopwatch.Restart();
             // run pathfinder
-            bool foundPath = pathfinder.FindPath(searchType, out var path);
+            bool foundPath = pathfinder.FindPath(searchType, out var path, out var visitedNodes);
             // stop timer
             stopwatch.Stop();
 
@@ -387,6 +387,8 @@ namespace Gymnasiearbete.Test
             return new SearchResult
             {
                 SearchTime = elapsedTime,
+                ExplordedNodes = visitedNodes,
+                ExploredRatio = (double)visitedNodes / pathfinder.Graph.AdjacencyList.Count,
             };
         }
     }
