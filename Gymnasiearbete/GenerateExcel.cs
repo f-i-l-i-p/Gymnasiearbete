@@ -20,6 +20,12 @@ namespace Gymnasiearbete
 
         private enum ResultType { MeanSearchTime, MedianSearchTime, MeanExploredNodes, MedianExploredNodes, MeanExploredRatio, MedieanExploredRatio }
 
+        /// <summary>
+        /// Returns a search result value from a AverageSearchResult.
+        /// </summary>
+        /// <param name="resultType">Result type to return.</param>
+        /// <param name="averageSearchResult">AverageSearchResult to find search result value in.</param>
+        /// <returns>The value of the search result with the matching result type.</returns>
         private static object GetDataFromDataType(ResultType resultType, AverageSearchResult averageSearchResult)
         {
             switch (resultType)
@@ -36,14 +42,23 @@ namespace Gymnasiearbete
                     return averageSearchResult.MeanSearchResult.ExploredRatio;
                 case ResultType.MedieanExploredRatio:
                     return averageSearchResult.MedianSearchResult.ExploredRatio;
+                default:
+                    throw new ArgumentException($"{resultType.ToString()} is not a supported ResultType type", "resultType");
             }
-            return null;
         }
 
-        private static void WriteDataChunk(Excel excel, int xStart, int yStart, ResultType dataType, List<OpennessResult> opennessResults)
+        /// <summary>
+        /// Writes data to a excel from openness results.
+        /// </summary>
+        /// <param name="excel">Excel to write data to.</param>
+        /// <param name="xStart">X coordinate to start from.</param>
+        /// <param name="yStart">Ý coordinate to start from.</param>
+        /// <param name="resultType">Result type to write.</param>
+        /// <param name="opennessResults">Openness results containing all data to be written.</param>
+        private static void WriteDataChunk(Excel excel, int xStart, int yStart, ResultType resultType, List<OpennessResult> opennessResults)
         {
             // write title
-            excel.SetCell(xStart, yStart, dataType.ToString());
+            excel.SetCell(xStart, yStart, resultType.ToString());
 
             // Return if there are no openness results
             if (opennessResults == null || opennessResults.Count == 0)
@@ -74,7 +89,7 @@ namespace Gymnasiearbete
                 foreach (var sizeResult in opennessResult.SizeResults)
                 {
                     // write mean search time
-                    excel.SetCell(xStart + column + 1, row, GetDataFromDataType(dataType, sizeResult.AverageSearchResult));
+                    excel.SetCell(xStart + column + 1, row, GetDataFromDataType(resultType, sizeResult.AverageSearchResult));
                     column++;
                 }
                 row++;
@@ -82,6 +97,11 @@ namespace Gymnasiearbete
 
         }
 
+        /// <summary>
+        /// Generates a excel containing data from the test result.
+        /// </summary>
+        /// <param name="testResult">TestResult to create excel from.</param>
+        /// <returns>The excel object.</returns>
         public static Excel Generate(TestResult testResult)
         {
             // Create excel with one empty sheet
@@ -96,6 +116,7 @@ namespace Gymnasiearbete
             int currentRow = 0;
             int currentColumn = 0;
 
+            // TODO: not constants
             int dataWidth = 16;
             int dataHeight = 12;
 
@@ -103,9 +124,9 @@ namespace Gymnasiearbete
             foreach (var searchTypeResult in testResult.GraphOptimizationResults[0].SearchTypeResults)
             {
                 // write SearchType
-                excel.SetCell(0, currentRow, searchTypeResult.SearchType.ToString());
+                excel.SetCell(currentColumn, currentRow, searchTypeResult.SearchType.ToString());
+                currentColumn++;
 
-                currentColumn = 1;
                 // Write all SearchType data
                 foreach (ResultType resultType in Enum.GetValues(typeof(ResultType)))
                 {
@@ -114,6 +135,7 @@ namespace Gymnasiearbete
                 }
 
                 currentRow += dataHeight;
+                currentColumn = 0;
             }
 
             return excel;
