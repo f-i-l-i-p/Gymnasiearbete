@@ -19,12 +19,12 @@ namespace Gymnasiearbete.Test
     class SearchTypeResult
     {
         public SearchType SearchType { get; set; }
-        public List<OpennessResult> OpennessResults { get; set; }
+        public List<ComplexityResult> ComplexityResults { get; set; }
     }
 
-    class OpennessResult
+    class ComplexityResult
     {
-        public double Openness { get; set; }
+        public double Complexity { get; set; }
         public List<SizeResult> SizeResults { get; set; }
     }
 

@@ -52,45 +52,45 @@ namespace Gymnasiearbete
         }
 
         /// <summary>
-        /// Writes data to a excel from openness results.
+        /// Writes data to a excel from complexity results.
         /// </summary>
         /// <param name="excel">Excel to write data to.</param>
         /// <param name="xStart">X coordinate to start from.</param>
         /// <param name="yStart">Ý coordinate to start from.</param>
         /// <param name="resultType">Result type to write.</param>
-        /// <param name="opennessResults">Openness results containing all data to be written.</param>
-        private static void WriteDataChunk(Excel excel, int xStart, int yStart, ResultType resultType, List<OpennessResult> opennessResults, ICellStyle titleStyle, ICellStyle topBarStyle, ICellStyle sideBarStyle)
+        /// <param name="complexityResults">Complexity results containing all data to be written.</param>
+        private static void WriteDataChunk(Excel excel, int xStart, int yStart, ResultType resultType, List<ComplexityResult> complexityResults, ICellStyle titleStyle, ICellStyle topBarStyle, ICellStyle sideBarStyle)
         {
             // write title
             excel.SetCell(xStart, yStart, resultType.ToString(), titleStyle);
 
-            // Return if there are no openness results
-            if (opennessResults == null || opennessResults.Count == 0)
+            // Return if there are no complexity results
+            if (complexityResults == null || complexityResults.Count == 0)
                 return;
             // Return if there are no size results
-            if (opennessResults[0].SizeResults == null || opennessResults[0].SizeResults.Count == 0)
+            if (complexityResults[0].SizeResults == null || complexityResults[0].SizeResults.Count == 0)
                 return;
             
             // Write sizes
             int column = xStart + 1;
-            foreach (var sizeResult in opennessResults[0].SizeResults)
+            foreach (var sizeResult in complexityResults[0].SizeResults)
             {
                 // write data
                 excel.SetCell(column, yStart, sizeResult.GraphSize, topBarStyle);
                 column++;
             }
 
-            // Write openness & results
+            // Write complexity & results
             int row = yStart + 1;
-            foreach (var opennessResult in opennessResults)
+            foreach (var complexityResult in complexityResults)
             {
-                // write openness
-                excel.SetCell(xStart, row, opennessResult.Openness, sideBarStyle);
+                // write complexity
+                excel.SetCell(xStart, row, complexityResult.Complexity, sideBarStyle);
 
                 // Write results
-                // For each SizeResult in current OpennesResult
+                // For each SizeResult in current ComplexityResult
                 column = 0;
-                foreach (var sizeResult in opennessResult.SizeResults)
+                foreach (var sizeResult in complexityResult.SizeResults)
                 {
                     // write mean search time
                     excel.SetCell(xStart + column + 1, row, GetDataFromDataType(resultType, sizeResult));
@@ -177,8 +177,8 @@ namespace Gymnasiearbete
                 // Optimization time
                 excel.SetCell(currentColumn, currentRow, $"Graph optimization: {graphOptimizationResult.OptimizationType}", titleStyle);
                 currentColumn++;
-                WriteDataChunk(excel, currentColumn            , currentRow, ResultType.MeanGraphOptimizationTime  , graphOptimizationResult.SearchTypeResults[0].OpennessResults, OptimizeTitleStyle, OptimizeTopBarStyle, OptimizeSideBarStyle);
-                WriteDataChunk(excel, currentColumn + dataWidth, currentRow, ResultType.MedianGraphOptimizationTime, graphOptimizationResult.SearchTypeResults[0].OpennessResults, OptimizeTitleStyle, OptimizeTopBarStyle, OptimizeSideBarStyle);
+                WriteDataChunk(excel, currentColumn            , currentRow, ResultType.MeanGraphOptimizationTime  , graphOptimizationResult.SearchTypeResults[0].ComplexityResults, OptimizeTitleStyle, OptimizeTopBarStyle, OptimizeSideBarStyle);
+                WriteDataChunk(excel, currentColumn + dataWidth, currentRow, ResultType.MedianGraphOptimizationTime, graphOptimizationResult.SearchTypeResults[0].ComplexityResults, OptimizeTitleStyle, OptimizeTopBarStyle, OptimizeSideBarStyle);
                 currentRow += dataHeight;
 
                 currentColumn = 0;
@@ -196,7 +196,7 @@ namespace Gymnasiearbete
                         if (resultType == ResultType.MeanGraphOptimizationTime || resultType == ResultType.MedianGraphOptimizationTime)
                             continue;
 
-                        WriteDataChunk(excel, currentColumn, currentRow, resultType, searchTypeResult.OpennessResults, PathfindingTitleStyle, PathfindingTopBarStyle, PathfindingSideBarStyle);
+                        WriteDataChunk(excel, currentColumn, currentRow, resultType, searchTypeResult.ComplexityResults, PathfindingTitleStyle, PathfindingTopBarStyle, PathfindingSideBarStyle);
                         currentColumn += dataWidth;
                     }
 

@@ -11,25 +11,27 @@ namespace Gymnasiearbete
 
         public static void RegenerateGraphs()
         {
-            // remove old graph directory
-            Directory.Delete(saveLocation, true);
+            // Remove old graph directory
+            if (Directory.Exists(saveLocation))
+                Directory.Delete(saveLocation, true);
 
-            // For each graph openness
-            for (double openness = 0; openness <= 1; openness += 0.1d)
+            // For each graph complexity
+            for (double complexity = 0; complexity <= 1; complexity += 0.1d)
             {
-                // For each graph size
-                // sizes: 64, 144, 256, 400, 576, 784, 1024, 1296, 1600, 1936, 2304, 2704, 3136, 3600, 4096.
-                for (int size = 64; size <= 4096; size = (int)Math.Pow(Math.Sqrt(size) + 4, 2))
+                // For each graph side size
+                // graph sizes: 64, 144, 256, 400, 576, 784, 1024, 1296, 1600, 1936, 2304, 2704, 3136, 3600, 4096.
+                for (int side = 8; side <= 64; side += 4)
                 {
                     // For each graph size repeat
                     for (int repeat = 0; repeat < 5; repeat++)
                     {
                         // generate maze
-                        var maze = MazeGenerator.GenerateMaze(size, openness);
+                        var maze = MazeGenerator.GenerateMaze(side, complexity);
 
-                        // Save
-                        string folderPath = $"{saveLocation}/{openness}/{size}";
-                        // saves as {saveLocaation}/{openness}/{size}/{repeat}.json
+                        // folder path to save graph
+                        string folderPath = $"{saveLocation}/{complexity}/{side}";
+
+                        // saves as {saveLocaation}/{complexity}/{size}/{repeat}.json
                         Save(maze, folderPath, repeat.ToString());
                     }
                 }
@@ -56,6 +58,7 @@ namespace Gymnasiearbete
 
             var obj = File.ReadAllText(path);
 
+            // TODO: error handling
             return Newtonsoft.Json.JsonConvert.DeserializeObject<Graph>(obj);
         }
     }

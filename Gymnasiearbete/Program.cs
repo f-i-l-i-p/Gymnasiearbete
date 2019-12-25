@@ -17,8 +17,12 @@
                         GraphManager.RegenerateGraphs();
                         break;
                     case 2:
-                        var g = MazeGeneration.MazeGenerator.GenerateMaze(64, 0);
-                        Draw.GraphMaze(g);
+                        System.Console.WriteLine(0);
+                        Draw.GraphMaze(MazeGeneration.MazeGenerator.GenerateMaze(8, 0));
+                        System.Console.WriteLine(0.5);
+                        Draw.GraphMaze(MazeGeneration.MazeGenerator.GenerateMaze(8, 0.5));
+                        System.Console.WriteLine(1);
+                        Draw.GraphMaze(MazeGeneration.MazeGenerator.GenerateMaze(8, 1));
                         break;
                 }
             }

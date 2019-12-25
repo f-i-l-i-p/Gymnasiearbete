@@ -8,6 +8,12 @@ namespace Gymnasiearbete
     {
         public static void GraphMaze(Graph graph, IEnumerable<int> path = null, IEnumerable<int> explored = null)
         {
+            foreach (var node in graph.AdjacencyList)
+            {
+                if (node == null)
+                    return;
+            }
+
             int sideLength = (int)Math.Sqrt(graph.AdjacencyList.Count);
 
             // Returns the node id at a given coordinate

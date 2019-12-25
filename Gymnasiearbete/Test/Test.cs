@@ -46,7 +46,7 @@ namespace Gymnasiearbete.Test
                 searchTypeResults.Add(new SearchTypeResult
                 {
                     SearchType = searchType,
-                    OpennessResults = new List<OpennessResult>(),
+                    ComplexityResults = new List<ComplexityResult>(),
                 });
             }
 
@@ -72,19 +72,19 @@ namespace Gymnasiearbete.Test
             var optimizationTimer = new Stopwatch();
 
 
-            // For each graph openness directory
-            var opennessDirectories = Directory.GetDirectories(GraphManager.saveLocation);
+            // For each graph complexity directory
+            var complexityDirectories = Directory.GetDirectories(GraphManager.saveLocation);
             int ODIndex = 0;
-            foreach (var opennessDirectory in opennessDirectories)
+            foreach (var complexityDirectory in complexityDirectories)
             {
                 // print progress
-                Console.WriteLine($"{ODIndex + 1}/{opennessDirectories.Length}");
+                Console.WriteLine($"{ODIndex + 1}/{complexityDirectories.Length}");
 
-                // parse openness
-                double.TryParse(Path.GetFileName(opennessDirectory), out double graphOpenness);
+                // parse complexity
+                double.TryParse(Path.GetFileName(complexityDirectory), out double graphComplexity);
 
                 // For each graph size directory
-                var sizeDirectories = SortByGraphSize(Directory.GetDirectories(opennessDirectory));
+                var sizeDirectories = SortByGraphSize(Directory.GetDirectories(complexityDirectory));
                 foreach (var sizeDirectory in sizeDirectories)
                 {
                     // parse size
@@ -131,8 +131,8 @@ namespace Gymnasiearbete.Test
                             foreach (SearchTypeResult searchTypeResult in graphOptimizationResult.SearchTypeResults)
                             {
                                 // Find the SizeRepeatResult for the current graph in this searchTypeResult
-                                var opennessResult = GetOpennessResult(graphOpenness, searchTypeResult);
-                                var sizeResult = GetSizeResult(graphSize, opennessResult);
+                                var complexityResult = GeComplexityResult(graphComplexity, searchTypeResult);
+                                var sizeResult = GetSizeResult(graphSize, complexityResult);
                                 var sizeRepeatResult = GetSizeRepeatResult(graphRepeat, sizeResult);
 
                                 // test pathfinder and save results
@@ -172,59 +172,59 @@ namespace Gymnasiearbete.Test
 
 
         /// <summary>
-        /// Returns the OpennessResult with a specific openness.
-        /// If the SearchTypeResult does not contain an OpennessResult with the matching openness,
-        /// a new OpennessResult with that openness will be added and returned.
+        /// Returns the ComplexityResult with a specific complexity.
+        /// If the SearchTypeResult does not contain a ComplexityResult with the matching complexity,
+        /// a new ComplexityResult with that complexity will be added and returned.
         /// </summary>
-        /// <param name="openness">Openness to match.</param>
-        /// <param name="searchTypeResult">SearchTypeResult containing the OpennessResults.</param>
-        /// <returns>The OpennessResult with matching openness.</returns>
-        private static OpennessResult GetOpennessResult(double openness, SearchTypeResult searchTypeResult)
+        /// <param name="complexity">Complexity to match.</param>
+        /// <param name="searchTypeResult">SearchTypeResult containing the ComplexityResults.</param>
+        /// <returns>The ComplexityResult with matching complexity.</returns>
+        private static ComplexityResult GeComplexityResult(double complexity, SearchTypeResult searchTypeResult)
         {
-            if (searchTypeResult.OpennessResults == null)
-                searchTypeResult.OpennessResults = new List<OpennessResult>();
+            if (searchTypeResult.ComplexityResults == null)
+                searchTypeResult.ComplexityResults = new List<ComplexityResult>();
             
 
-            int index = searchTypeResult.OpennessResults.FindIndex(x => x.Openness == openness);
+            int index = searchTypeResult.ComplexityResults.FindIndex(x => x.Complexity == complexity);
 
             if (index == -1)
             {
-                searchTypeResult.OpennessResults.Add(new OpennessResult{ Openness = openness });
-                return searchTypeResult.OpennessResults.Last();
+                searchTypeResult.ComplexityResults.Add(new ComplexityResult{ Complexity = complexity });
+                return searchTypeResult.ComplexityResults.Last();
             }
             else
-                return searchTypeResult.OpennessResults[index];
+                return searchTypeResult.ComplexityResults[index];
         }
 
         /// <summary>
         /// Returns the SizeResult with s specific size.
-        /// If the OpennessResult does not contain a SizeResult with the matching size,
+        /// If the ComplexityResult does not contain a SizeResult with the matching size,
         /// a new SizeReult with that size will be added and returned.
         /// </summary>
         /// <param name="size">Size to match.</param>
-        /// <param name="opennessResult">OpennessResult containing the SizeResults.</param>
+        /// <param name="complexityResult">ComplexityResult containing the SizeResults.</param>
         /// <returns>The SizeResult with matching size.</returns>
-        private static SizeResult GetSizeResult(int size, OpennessResult opennessResult)
+        private static SizeResult GetSizeResult(int size, ComplexityResult complexityResult)
         {
-            if (opennessResult.SizeResults == null)
-                opennessResult.SizeResults = new List<SizeResult>();
+            if (complexityResult.SizeResults == null)
+                complexityResult.SizeResults = new List<SizeResult>();
 
-            int index = opennessResult.SizeResults.FindIndex(x => x.GraphSize == size);
+            int index = complexityResult.SizeResults.FindIndex(x => x.GraphSize == size);
 
             if (index == -1)
             {
-                opennessResult.SizeResults.Add(new SizeResult
+                complexityResult.SizeResults.Add(new SizeResult
                 {
                     GraphSize = size,
                 });
-                return opennessResult.SizeResults.Last();
+                return complexityResult.SizeResults.Last();
             }
             else
-                return opennessResult.SizeResults[index];
+                return complexityResult.SizeResults[index];
         }
 
         /// <summary>
-        /// Returns the SizeRepeatResult with a specific openness.
+        /// Returns the SizeRepeatResult with a specific complexity.
         /// If the SizeResult does no contain a SizeRepeatResult with the matching repeat,
         /// a new SizeRepeatResult will be added and returned.
         /// </summary>

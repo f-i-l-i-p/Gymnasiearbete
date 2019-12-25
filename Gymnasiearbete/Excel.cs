@@ -207,6 +207,8 @@ namespace Gymnasiearbete
         /// <param name="fileName">File name.</param>
         public void Save(string fileLocation, string fileName)
         {
+            // TODO: Om excel filen är öppen så blir de inge bra: System.IO.IOException: 'Processen kan inte komma åt filen C:\Users\FiJo0302\Projects\Gymnasiearbete\SavedGraphs\results.xlsx eftersom den används i en annan process.'
+
             // create file stream
             using (var fs = File.Create($"{fileLocation}\\{fileName}.xlsx"))
             {
