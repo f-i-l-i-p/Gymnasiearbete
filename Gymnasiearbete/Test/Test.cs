@@ -1,4 +1,5 @@
-﻿using Gymnasiearbete.Pathfinding;
+﻿using Gymnasiearbete.Graphs;
+using Gymnasiearbete.Pathfinding;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -103,8 +104,8 @@ namespace Gymnasiearbete.Test
                             // load graph
                             var graph = GraphManager.Load(graphFile);
 
-                            var sourceNode = 0;
-                            var destinationNode = graph.AdjacencyList.Count - 1;
+                            var sourceNode = graph.Nodes[0];
+                            var destinationNode = graph.Nodes[graph.Nodes.Count - 1];
 
                             double optimizationTime;
 
@@ -116,7 +117,7 @@ namespace Gymnasiearbete.Test
                                     break;
                                 case OptimizationType.Shrinked:
                                     optimizationTimer.Restart();
-                                    GraphOptimization.ShrinkGraph(graph, new int[] { sourceNode, destinationNode });
+                                    GraphOptimization.ShrinkGraph(graph, new Node[] { sourceNode, destinationNode });
                                     optimizationTimer.Stop();
                                     optimizationTime = optimizationTimer.Elapsed.TotalSeconds;
                                     break;
@@ -387,7 +388,7 @@ namespace Gymnasiearbete.Test
             {
                 SearchTime = elapsedTime,
                 ExplordedNodes = visitedNodes,
-                ExploredRatio = (double)visitedNodes / pathfinder.Graph.AdjacencyList.Count,
+                ExploredRatio = (double)visitedNodes / pathfinder.Graph.Nodes.Count,
             };
         }
     }

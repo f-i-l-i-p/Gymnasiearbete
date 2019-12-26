@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Gymnasiearbete.Graphs;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Gymnasiearbete.Pathfinding
@@ -13,34 +14,35 @@ namespace Gymnasiearbete.Pathfinding
         /// </summary>
         /// <param name="graph">Graph to shrink.</param>
         /// <param name="avoid">Nodes that will not be removed.</param>
-        public static void ShrinkGraph(Graph graph, IEnumerable<int> avoid)
+        public static void ShrinkGraph(Graph graph, IEnumerable<Node> avoid)
         {
             // For each node in the graph, check if it only has two neighbors.
             // If it has two neighbors (and is not in {avoid}), remove the node and connect the neighbors
 
             // Loop trough all nodes in graph
-            for (int node = 0; node < graph.AdjacencyList.Count; node++)
+            for (int nodeId = 0; nodeId < graph.Nodes.Count; nodeId++)
             {
-                // node neighbors list
-                var adjacents = graph.AdjacencyList[node];
+                var node = graph.Nodes[nodeId];
+                if (node == null)
+                    continue;
 
                 // If node has two neighbors
-                if (adjacents.Count == 2 && !avoid.Contains(node))
+                if (node.Adjacents.Count == 2 && !avoid.Contains(node))
                 {
                     // the total weight between the neighbors
-                    var weight = adjacents[0].Weight + adjacents[1].Weight;
+                    var weight = node.Adjacents[0].Weight + node.Adjacents[1].Weight;
 
                     // Remove edges from the neighbors to the node
-                    foreach (var adjacent in adjacents)
+                    foreach (var adjacent in node.Adjacents)
                     {
-                        graph.AdjacencyList[adjacent.Id].RemoveAll(adj => adj.Id == node);
+                        graph.Nodes[adjacent.Id].Adjacents.RemoveAll(x => x.Id == node.Id);
                     }
 
                     // remove node
-                    graph.AdjacencyList[node] = null;
+                    graph.Nodes[node.Id] = null;
 
                     // connect neighbors
-                    graph.AddEdge(adjacents[0].Id, adjacents[1].Id, weight);
+                    graph.AddEdge(graph.Nodes[node.Adjacents[0].Id], graph.Nodes[node.Adjacents[1].Id], weight);
                 }
             }
         }

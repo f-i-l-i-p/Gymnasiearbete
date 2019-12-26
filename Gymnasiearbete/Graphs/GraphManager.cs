@@ -1,7 +1,7 @@
 ﻿using Gymnasiearbete.MazeGeneration;
 using System.IO;
 
-namespace Gymnasiearbete
+namespace Gymnasiearbete.Graphs
 {
     static class GraphManager
     {

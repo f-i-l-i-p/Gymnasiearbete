@@ -1,11 +1,12 @@
-﻿using Priority_Queue;
+﻿using Gymnasiearbete.Graphs;
+using Priority_Queue;
 
 namespace Gymnasiearbete.Pathfinding.QueueNodes
 {
     class FastQueueNode : FastPriorityQueueNode
     {
-        public int Value { get; set; }
-        public FastQueueNode(int value)
+        public Node Value { get; set; }
+        public FastQueueNode(Node value)
         {
             Value = value;
         }

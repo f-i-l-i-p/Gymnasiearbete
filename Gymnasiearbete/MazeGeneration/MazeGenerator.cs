@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gymnasiearbete.Graphs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -48,22 +49,22 @@ namespace Gymnasiearbete.MazeGeneration
             //   12--13--14--15
             //
             // Loop through all nodes
-            for (int node = 0; node < maze.AdjacencyList.Count; node++)
+            foreach (var node in maze.Nodes)
             {
                 // get all neighbors around the node
                 var nbs = GetNeighbors(maze, node);
 
                 // for each neighbor
-                foreach (var nb in nbs)
+                foreach (var neighbor in nbs)
                 {
                     // If already connected to node
-                    if (maze.AdjacencyList[node].Exists(adj => adj.Id == nb))
+                    if (node.Adjacents.Exists(x => x.Id == neighbor.Id))
                         continue;
 
                     // Probability that it connects with the node: (1 - complexity).
                     if (random.NextDouble() >= complexity)
                         // connect node and neighbor
-                        maze.AddEdge(node, nb);
+                        maze.AddEdge(node, neighbor);
                 }
             }
         }
@@ -76,7 +77,7 @@ namespace Gymnasiearbete.MazeGeneration
         /// <returns>The maze as a Graph object.</returns>
         private static Graph GeneratePerfectMaze(int side)
         {
-            var graph = new Graph();
+            var maze = new Graph();
 
             // Add all nodes to the graph:
             //
@@ -92,7 +93,7 @@ namespace Gymnasiearbete.MazeGeneration
             {
                 for (int y = 0; y < side; y++)
                 {
-                    graph.AddNode(new Position
+                    maze.AddNode(new Position
                     {
                         X = x,
                         Y = y,
@@ -100,9 +101,6 @@ namespace Gymnasiearbete.MazeGeneration
                 }
             }
 
-            var nodeStack = new Stack<int>();
-            // add a start node
-            nodeStack.Push(0);
 
             // Connect nodes with recursive backtracker:
             //
@@ -114,13 +112,17 @@ namespace Gymnasiearbete.MazeGeneration
             //           |    
             //   12--13--14--15
             //
+            var nodeStack = new Stack<Node>();
+            // add a start node
+            nodeStack.Push(maze.Nodes[0]);
+
             while (nodeStack.Any())
             {
                 // get current node from stack
                 var currentNode = nodeStack.Peek();
 
-                // get all unvisited neighbors around the current cell
-                var unbs = GetUnconecctedNeigbors(graph, currentNode);
+                // get all unvisited neighbors around the current node
+                var unbs = GetUnconecctedNeigbors(maze, currentNode);
 
                 // If there are any unvisited neighbors
                 if (unbs.Any())
@@ -129,7 +131,7 @@ namespace Gymnasiearbete.MazeGeneration
                     var nextNode = unbs[random.Next(0, unbs.Count)];
 
                     // connect the nodes
-                    graph.AddEdge(currentNode, nextNode);
+                    maze.AddEdge(currentNode, nextNode);
 
                     // add the new node to the stack
                     nodeStack.Push(nextNode);
@@ -141,7 +143,7 @@ namespace Gymnasiearbete.MazeGeneration
                 }
             }
 
-            return graph;
+            return maze;
         }
 
         /// <summary>
@@ -151,38 +153,33 @@ namespace Gymnasiearbete.MazeGeneration
         /// <param name="maze">Graph with all the nodes.</param>
         /// <param name="node">Node to find neighbors for.</param>
         /// <returns>A list with all neighbors.</returns>
-        private static List<int> GetNeighbors(Graph maze, int node)
+        private static List<Node> GetNeighbors(Graph maze, Node node)
         {
-            int side = (int)Math.Sqrt(maze.AdjacencyList.Count);
+            // side length of the maze
+            int side = (int)Math.Sqrt(maze.Nodes.Count);
 
-            // calculate node coordinates: { x, y }
-            var nodePos = new int[] { node % side, node / side };
-
-            // all possible neighbor positions relative to the node
-            var relPos = new List<int[]>
+            // list of all possible neighbor positions
+            var possitions = new List<Position>
             {
-                new int[] {  0, -1 },
-                new int[] {  1,  0 },
-                new int[] {  0,  1 },
-                new int[] { -1,  0 },
+                new Position { X = node.Position.X    , Y = node.Position.Y - 1},
+                new Position { X = node.Position.X + 1, Y = node.Position.Y    },
+                new Position { X = node.Position.X    , Y = node.Position.Y + 1},
+                new Position { X = node.Position.X - 1, Y = node.Position.Y    },
             };
 
-            var neighbors = new List<int>();
+            var neighbors = new List<Node>();
 
-            // for each relative neighbor position
-            foreach (var p in relPos)
+            // for each possible neighbor position
+            foreach (var position in possitions)
             {
-                // calculate neighbor position: { x, y }
-                var np = new int[] { p[0] + nodePos[0], p[1] + nodePos[1] };
-
                 // If neighbor is outside graph
-                if (np[0] < 0 || np[0] >= side || np[1] < 0 || np[1] >= side)
+                if (position.X < 0 || position.X >= side || position.Y < 0 || position.Y >= side)
                     continue;
 
-                // neighbor id
-                var id = np[0] + np[1] * side;
+                // find neighbor
+                var neigbor = maze.Nodes[position.X + position.Y * side];
 
-                neighbors.Add(id);
+                neighbors.Add(neigbor);
             }
 
             return neighbors;
@@ -195,13 +192,13 @@ namespace Gymnasiearbete.MazeGeneration
         /// <param name="maze">Graph with all the nodes.</param>
         /// <param name="node">Node to find unconnected neighbors for.</param>
         /// <returns>A list with all unconnected neighbors.</returns>
-        private static List<int> GetUnconecctedNeigbors(Graph maze, int node)
+        private static List<Node> GetUnconecctedNeigbors(Graph maze, Node node)
         {
             // get all neighbors
             var neigbors = GetNeighbors(maze, node);
 
             // remove neighbors that is not connected to any other node
-            neigbors.RemoveAll(x => maze.AdjacencyList[x].Count > 0);
+            neigbors.RemoveAll(x => x.Adjacents.Count > 0);
 
             return neigbors;
         }

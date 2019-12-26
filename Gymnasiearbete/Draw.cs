@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gymnasiearbete.Graphs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,13 +9,13 @@ namespace Gymnasiearbete
     {
         public static void GraphMaze(Graph graph, IEnumerable<int> path = null, IEnumerable<int> explored = null)
         {
-            foreach (var node in graph.AdjacencyList)
+            foreach (var node in graph.Nodes)
             {
                 if (node == null)
                     return;
             }
 
-            int sideLength = (int)Math.Sqrt(graph.AdjacencyList.Count);
+            int sideLength = (int)Math.Sqrt(graph.Nodes.Count);
 
             // Returns the node id at a given coordinate
             int Id(int x, int y)
@@ -41,7 +42,7 @@ namespace Gymnasiearbete
                         nextLine += "O";
 
                     // If edge on right side
-                    if (Id(x, y) + 1 < graph.AdjacencyList.Count && graph.AdjacencyList[Id(x, y)].Exists(adj => adj.Id == Id(x, y) + 1))
+                    if (Id(x, y) + 1 < graph.Nodes.Count && graph.Nodes[Id(x, y)].Adjacents.Exists(adj => adj.Id == Id(x, y) + 1))
                         nextLine += "---";
                     else
                         nextLine += "   ";
@@ -51,7 +52,7 @@ namespace Gymnasiearbete
                 for (int x = 0; x < sideLength; x++)
                 {
                     // If edge under
-                    if (Id(x, y) - sideLength + 1 > 0 && graph.AdjacencyList[Id(x, y)].Exists(adj => adj.Id == Id(x, y) - sideLength))
+                    if (Id(x, y) - sideLength + 1 > 0 && graph.Nodes[Id(x, y)].Adjacents.Exists(adj => adj.Id == Id(x, y) - sideLength))
                         line += "|";
                     else
                         line += " ";

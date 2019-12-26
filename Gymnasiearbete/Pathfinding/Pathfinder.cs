@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Gymnasiearbete.Graphs;
 using Gymnasiearbete.Pathfinding.QueueNodes;
 using Priority_Queue;
 
@@ -20,13 +21,13 @@ namespace Gymnasiearbete.Pathfinding
         /// <summary>
         /// The source/start node when searching for the shortest path.
         /// </summary>
-        public int Source { get; }
+        public Node Source { get; }
         /// <summary>
         /// The destination/end node when searching for the shortest path.
         /// </summary>
-        public int Destination { get; }
+        public Node Destination { get; }
 
-        public Pathfinder(Graph graph, int source, int destination)
+        public Pathfinder(Graph graph, Node source, Node destination)
         {
             Graph = graph;
             Source = source;
@@ -39,7 +40,7 @@ namespace Gymnasiearbete.Pathfinding
         /// <param name="searchType">Search algorithm to use.</param>
         /// <param name="path">A list of steps to take to travel from the source node to the destination node.</param>
         /// <returns>A boolean indicating if the path was found.</returns>
-        public bool FindPath(SearchType searchType, out List<int> path, out int visitedNodes)
+        public bool FindPath(SearchType searchType, out List<Node> path, out int visitedNodes)
         {
             switch (searchType)
             {
@@ -65,16 +66,16 @@ namespace Gymnasiearbete.Pathfinding
         /// <param name="visitedNodes">The total number of nodes visited.</param>
         /// <param name="path">A list of steps to take to travel from the source node to the destination node.</param>
         /// <returns>A boolean indicating if the path was found.</returns>
-        public bool BFS(out List<int> path, out int visitedNodes)
+        public bool BFS(out List<Node> path, out int visitedNodes)
         {
             visitedNodes = 0;
 
-            var queue = new Queue<int>();
-            var parent = new int?[Graph.AdjacencyList.Count];
+            var queue = new Queue<Node>();
+            var parent = new Node[Graph.Nodes.Count];
 
             // Add Source to queue & set Source parent
             queue.Enqueue(Source);
-            parent[Source] = Source;
+            parent[Source.Id] = Source;
 
             // While there are nodes to check
             while (queue.Count > 0)
@@ -84,7 +85,7 @@ namespace Gymnasiearbete.Pathfinding
                 visitedNodes++;
 
                 // Check if it is the destination node
-                if (u == Destination)
+                if (u.Id == Destination.Id)
                 {
                     path = ConstructPathFromParents(parent);
                     return true;
@@ -92,13 +93,13 @@ namespace Gymnasiearbete.Pathfinding
 
                 // Add all unvisited neighbors to the queue & assign their parent as the current node:
                 // For each neighbor (v) of the current node (u)
-                foreach (var v in Graph.AdjacencyList[u])
+                foreach (var v in u.Adjacents)
                 {
                     // If v is unvisited (i.e. v has no assigned parent)
                     if (parent[v.Id] == null)
                     {
                         parent[v.Id] = u;
-                        queue.Enqueue(v.Id);
+                        queue.Enqueue(Graph.Nodes[v.Id]);
                     }
                 }
             }
@@ -114,24 +115,24 @@ namespace Gymnasiearbete.Pathfinding
         /// <param name="visitedNodes">The total number of nodes visited.</param>
         /// <param name="path">A list of steps to take to travel from the source node to the destination node.</param>
         /// <returns>A boolean indicating if the path was found.</returns>
-        public bool Dijkstras(out List<int> path, out int visitedNodes)
+        public bool Dijkstras(out List<Node> path, out int visitedNodes)
         {
             visitedNodes = 0;
 
-            var priorityQueue = new FastPriorityQueue<FastQueueNode>(Graph.AdjacencyList.Count);
-            var parent = new int?[Graph.AdjacencyList.Count];
-            var cost = new float?[Graph.AdjacencyList.Count];
+            var priorityQueue = new FastPriorityQueue<FastQueueNode>(Graph.Nodes.Count);
+            var parent = new Node[Graph.Nodes.Count];
+            var cost = new float?[Graph.Nodes.Count];
 
             // Adds a node to the priorityQueue
-            void Enqueue(int node, float priority)
+            void Enqueue(Node node, float priority)
             {
                 priorityQueue.Enqueue(new FastQueueNode(node), priority);
             }
 
             // Add Source to the queue & set Source parent & set Source cost
             Enqueue(Source, 0);
-            parent[Source] = Source;
-            cost[Source] = 0;
+            parent[Source.Id] = Source;
+            cost[Source.Id] = 0;
 
             // While there are nodes in the queue
             while (priorityQueue.Any())
@@ -149,18 +150,19 @@ namespace Gymnasiearbete.Pathfinding
 
                 // Add all unvisited neighbors to the queue & assign their parent as the current node if it is unvisited or will give it a lower cost:
                 // For each neighbor (v) of the current node (u)
-                foreach (var v in Graph.AdjacencyList[u])
+                foreach (var v in u.Adjacents)
                 {
                     // newCost is the total cost from the source to the neighbor node.
                     // its value will be the current nodes cost + the edge weight from the current node to the neighbor
-                    var newCost = cost[u] + v.Weight;
+                    var newCost = cost[u.Id] + v.Weight;
 
-                    // If v is unvisited (i.e. v has no assigned parent) or has a higher cost than alt
-                    if (cost[v.Id] == null || cost[v.Id] > newCost)
+                    var neighborCost = cost[v.Id];
+                    // If v is unvisited (i.e. v has no assigned cost) or has a higher cost than alt
+                    if (neighborCost == null || neighborCost > newCost)
                     {
                         parent[v.Id] = u;
                         cost[v.Id] = newCost;
-                        Enqueue(v.Id, newCost.Value);
+                        Enqueue(Graph.Nodes[v.Id], newCost.Value);
                     }
                 }
             }
@@ -176,32 +178,30 @@ namespace Gymnasiearbete.Pathfinding
         /// <param name="visitedNodes">The total number of nodes visited.</param>
         /// <param name="path">A list of steps to take to travel from the source node to the destination node.</param>
         /// <returns>A boolean indicating if the path was found.</returns>
-        public bool AStar(out List<int> path, out int visitedNodes)
+        public bool AStar(out List<Node> path, out int visitedNodes)
         {
             visitedNodes = 0;
 
-            var priorityQueue = new FastPriorityQueue<FastQueueNode>(Graph.AdjacencyList.Count);
-            var parent = new int?[Graph.AdjacencyList.Count];
-            var gScore = new float?[Graph.AdjacencyList.Count];
-            var destinationPos = Graph.NodePositions[Destination];
+            var priorityQueue = new FastPriorityQueue<FastQueueNode>(Graph.Nodes.Count);
+            var parent = new Node[Graph.Nodes.Count];
+            var gScore = new float?[Graph.Nodes.Count];
 
             // Adds a node to the priorityQueue
-            void Enqueue(int node, float priority)
+            void Enqueue(Node node, float priority)
             {
                 priorityQueue.Enqueue(new FastQueueNode(node), priority);
             }
 
             // Returns the distance from the node to the Destination node
-            float hScore(int node)
+            float hScore(Node node)
             {
-                var pos = Graph.NodePositions[node];
-                return 1.0001f * Math.Abs(destinationPos.X - pos.X) + (destinationPos.Y - pos.Y);
+                return 1.0001f * Math.Abs(Destination.Position.X - node.Position.X) + (Destination.Position.Y - node.Position.Y);
             }
 
             // Add Source to the queue & set Source parent & set Source gScore
             Enqueue(Source, 0);
-            parent[Source] = Source;
-            gScore[Source] = 0;
+            parent[Source.Id] = Source;
+            gScore[Source.Id] = 0;
 
             // While there are nodes in the queue
             while (priorityQueue.Any())
@@ -211,7 +211,7 @@ namespace Gymnasiearbete.Pathfinding
                 visitedNodes++;
 
                 // Check if it is the destination node
-                if (u == Destination)
+                if (u.Id == Destination.Id)
                 {
                     path = ConstructPathFromParents(parent);
                     return true;
@@ -219,18 +219,19 @@ namespace Gymnasiearbete.Pathfinding
 
                 // Add all unvisited neighbors to the queue & assign their parent as the current node if it is unvisited or will give it a lower cost:
                 // For each neighbor (v) of the current node (u)
-                foreach (var v in Graph.AdjacencyList[u])
+                foreach (var v in u.Adjacents)
                 {
                     // newCost is the total cost from the source to the neighbor node.
                     // its value will be the current nodes cost + the edge weight from the current node to the neighbor
-                    var newCost = gScore[u] + v.Weight;
+                    var newCost = gScore[u.Id] + v.Weight;
 
+                    var VGScore = gScore[v.Id];
                     // If v is unvisited (i.e. v has no assigned parent) or has a higher cost than newCost
-                    if (gScore[v.Id] == null || gScore[v.Id] > newCost)
+                    if (VGScore == null || VGScore > newCost)
                     {
                         parent[v.Id] = u;
                         gScore[v.Id] = newCost;
-                        Enqueue(v.Id, gScore[v.Id].Value + hScore(v.Id));
+                        Enqueue(Graph.Nodes[v.Id], gScore[v.Id].Value + hScore(Graph.Nodes[v.Id]));
                     }
                 }
             }
@@ -245,18 +246,20 @@ namespace Gymnasiearbete.Pathfinding
         /// </summary>
         /// <param name="parent">Array that contains all necessary nodes parents</param>
         /// <returns>A list on node id's from the destination node to the source node.</returns>
-        private List<int> ConstructPathFromParents(int?[] parent)
+        private List<Node> ConstructPathFromParents(Node[] parent)
         {
-            var path = new List<int>();
-            var currentNode = Destination;
-            do
-            {
-                if (parent[currentNode] == null)
-                    break;
+            var path = new List<Node>();
 
+            var currentNode = Destination;
+            var nextNode = parent[Destination.Id];
+
+            while(currentNode.Id != nextNode.Id)
+            {
                 path.Add(currentNode);
-                currentNode = parent[currentNode].Value;
-            } while (currentNode != Source);
+
+                currentNode = nextNode;
+                nextNode = parent[currentNode.Id];
+            }
             return path;
         }
 
