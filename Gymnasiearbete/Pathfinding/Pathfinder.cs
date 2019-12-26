@@ -180,7 +180,7 @@ namespace Gymnasiearbete.Pathfinding
         {
             visitedNodes = 0;
 
-            var priorityQueue = new StablePriorityQueue<StableQueueNode>(Graph.AdjacencyList.Count);
+            var priorityQueue = new FastPriorityQueue<FastQueueNode>(Graph.AdjacencyList.Count);
             var parent = new int?[Graph.AdjacencyList.Count];
             var gScore = new float?[Graph.AdjacencyList.Count];
             var destinationPos = Graph.NodePositions[Destination];
@@ -188,7 +188,7 @@ namespace Gymnasiearbete.Pathfinding
             // Adds a node to the priorityQueue
             void Enqueue(int node, float priority)
             {
-                priorityQueue.Enqueue(new StableQueueNode(node), priority);
+                priorityQueue.Enqueue(new FastQueueNode(node), priority);
             }
 
             // Returns the distance from the node to the Destination node
