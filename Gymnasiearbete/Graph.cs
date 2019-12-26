@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace Gymnasiearbete
 {
-    class Possition
+    class Position
     {
         /// <summary>
         /// Horizontal coordinate
@@ -30,12 +29,12 @@ namespace Gymnasiearbete
     class Graph
     {
         public List<List<Adjacent>> AdjacencyList { get; }
-        public List<Possition> NodePossitions { get; }
+        public List<Position> NodePositions { get; }
 
         public Graph()
         {
             AdjacencyList = new List<List<Adjacent>>();
-            NodePossitions = new List<Possition>();
+            NodePositions = new List<Position>();
         }
 
         // Adds a new edge to the list
@@ -53,7 +52,7 @@ namespace Gymnasiearbete
         }
 
         // Adds a new node and returns the index position
-        public int AddNode(Possition possition)
+        public int AddNode(Position position)
         {
             var index = AdjacencyList.FindIndex(e => e == null);
 
@@ -61,13 +60,13 @@ namespace Gymnasiearbete
             if (index == -1)
             {
                 AdjacencyList.Add(new List<Adjacent>());
-                NodePossitions.Add(possition);
+                NodePositions.Add(position);
                 return AdjacencyList.Count - 1;
             }
             else
             {
                 AdjacencyList[index] = new List<Adjacent>();
-                NodePossitions[index] = possition;
+                NodePositions[index] = position;
                 return index;
             }
         }

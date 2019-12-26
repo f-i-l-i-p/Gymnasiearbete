@@ -1,6 +1,4 @@
 ﻿using Gymnasiearbete.MazeGeneration;
-using System;
-using System.Collections.Generic;
 using System.IO;
 
 namespace Gymnasiearbete

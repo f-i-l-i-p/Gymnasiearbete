@@ -183,7 +183,7 @@ namespace Gymnasiearbete.Pathfinding
             var priorityQueue = new StablePriorityQueue<StableQueueNode>(Graph.AdjacencyList.Count);
             var parent = new int?[Graph.AdjacencyList.Count];
             var gScore = new float?[Graph.AdjacencyList.Count];
-            var destinationPos = Graph.NodePossitions[Destination];
+            var destinationPos = Graph.NodePositions[Destination];
 
             // Adds a node to the priorityQueue
             void Enqueue(int node, float priority)
@@ -194,7 +194,7 @@ namespace Gymnasiearbete.Pathfinding
             // Returns the distance from the node to the Destination node
             float hScore(int node)
             {
-                var pos = Graph.NodePossitions[node];
+                var pos = Graph.NodePositions[node];
                 return 1.0001f * Math.Abs(destinationPos.X - pos.X) + (destinationPos.Y - pos.Y);
             }
 

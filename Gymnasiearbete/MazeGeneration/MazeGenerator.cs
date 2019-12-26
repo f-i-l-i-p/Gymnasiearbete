@@ -25,20 +25,12 @@ namespace Gymnasiearbete.MazeGeneration
 
             ReduceComplexity(graph, complexity);
 
-
-            // TODO: Remove
-            foreach (var _node in graph.AdjacencyList)
-            {
-                if (_node == null)
-                    throw new Exception();
-            }
-
             return graph;
         }
 
         /// <summary>
         /// Reduces the complexity of a maze by adding random edges between nodes.
-        /// If complexity == 0, then all nodes will be conneted.
+        /// If complexity == 0, then all nodes will be connected.
         /// If complexity == 1, then no extra nodes will be connected.
         /// </summary>
         /// <param name="maze">Maze to reduce complexity in.</param>
@@ -55,7 +47,7 @@ namespace Gymnasiearbete.MazeGeneration
             //       |   |   
             //   12--13--14--15
             //
-            // Loop thorugh all nodes
+            // Loop through all nodes
             for (int node = 0; node < maze.AdjacencyList.Count; node++)
             {
                 // get all neighbors around the node
@@ -68,7 +60,7 @@ namespace Gymnasiearbete.MazeGeneration
                     if (maze.AdjacencyList[node].Exists(adj => adj.Id == nb))
                         continue;
 
-                    // Probablity that it connects with the node: (1 - complexity).
+                    // Probability that it connects with the node: (1 - complexity).
                     if (random.NextDouble() >= complexity)
                         // connect node and neighbor
                         maze.AddEdge(node, nb);
@@ -100,7 +92,7 @@ namespace Gymnasiearbete.MazeGeneration
             {
                 for (int y = 0; y < side; y++)
                 {
-                    graph.AddNode(new Possition
+                    graph.AddNode(new Position
                     {
                         X = x,
                         Y = y,
@@ -153,8 +145,8 @@ namespace Gymnasiearbete.MazeGeneration
         }
 
         /// <summary>
-        /// Retruns a list of all nodes that are neighbors to the specified node
-        /// (beside the specifed node if the graph is an even square) in the given graph.
+        /// Returns a list of all nodes that are neighbors to the specified node
+        /// (beside the specified node if the graph is an even square) in the given graph.
         /// </summary>
         /// <param name="maze">Graph with all the nodes.</param>
         /// <param name="node">Node to find neighbors for.</param>
@@ -177,7 +169,7 @@ namespace Gymnasiearbete.MazeGeneration
 
             var neighbors = new List<int>();
 
-            // for each relative neighbor possition
+            // for each relative neighbor position
             foreach (var p in relPos)
             {
                 // calculate neighbor position: { x, y }
@@ -197,18 +189,18 @@ namespace Gymnasiearbete.MazeGeneration
         }
 
         /// <summary>
-        /// Retruns a list of all nodes that are neighbors to the specified node
+        /// Returns a list of all nodes that are neighbors to the specified node
         /// and also not connected to any node in the given graph.
         /// </summary>
         /// <param name="maze">Graph with all the nodes.</param>
-        /// <param name="node">Node to find unconeccted neighbors for.</param>
-        /// <returns>A list with all unconeccted neighbors.</returns>
+        /// <param name="node">Node to find unconnected neighbors for.</param>
+        /// <returns>A list with all unconnected neighbors.</returns>
         private static List<int> GetUnconecctedNeigbors(Graph maze, int node)
         {
-            // get all negibors
+            // get all neighbors
             var neigbors = GetNeighbors(maze, node);
 
-            // remove neigbors that is not connected to any other node
+            // remove neighbors that is not connected to any other node
             neigbors.RemoveAll(x => maze.AdjacencyList[x].Count > 0);
 
             return neigbors;

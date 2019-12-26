@@ -1,6 +1,5 @@
 ﻿using Gymnasiearbete.Pathfinding;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -56,7 +55,7 @@ namespace Gymnasiearbete.Test
 
     static class Test
     {
-        static int searchRepeat = 3;
+        private static readonly int searchRepeat = 3;
 
         /// <summary>
         /// Tests all path-finding algorithms on all graphs and returns the result.

@@ -2,10 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NPOI.HSSF.UserModel;
-using NPOI.HSSF.Util;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 
@@ -32,7 +28,6 @@ namespace Gymnasiearbete
     {
         public IWorkbook Workbook{ get; }
         public ISheet SelectedSheet { get; private set; }
-        // TODO: Default style
 
         private List<SheetData> SheetData { get; }
         private SheetData SelectedSheetData

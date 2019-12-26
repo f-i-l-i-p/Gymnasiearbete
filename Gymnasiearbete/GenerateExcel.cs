@@ -2,22 +2,11 @@
 using NPOI.SS.UserModel;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Gymnasiearbete
 {
     static class GenerateExcel
     {
-        private static void StyleRow(Excel excel, int xStart, int xLength, int y, ICellStyle style)
-        {
-            for (int i = xStart; i < xStart + xLength; i++)
-            {
-                excel.SetStyle(i, y, style);
-            }
-        }
-
         private enum ResultType { MeanSearchTime, MedianSearchTime, MeanExploredNodes, MedianExploredNodes, MeanExploredRatio, MedianExploredRatio, MeanGraphOptimizationTime, MedianGraphOptimizationTime }
 
         /// <summary>
@@ -167,9 +156,8 @@ namespace Gymnasiearbete
             int currentRow = 0;
             int currentColumn = 0;
 
-            // TODO: not constants
-            int dataWidth = 16;
-            int dataHeight = 12;
+            int dataHeight = testResult.GraphOptimizationResults[0].SearchTypeResults[0].ComplexityResults.Count;
+            int dataWidth = testResult.GraphOptimizationResults[0].SearchTypeResults[0].ComplexityResults[0].SizeResults.Count;
 
             // For each GraphOptimizationResult
             foreach (var graphOptimizationResult in testResult.GraphOptimizationResults)
