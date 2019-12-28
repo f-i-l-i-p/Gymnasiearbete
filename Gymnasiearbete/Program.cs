@@ -1,4 +1,6 @@
-﻿namespace Gymnasiearbete
+﻿using Gymnasiearbete.Graphs;
+
+namespace Gymnasiearbete
 {
     class Program
     {

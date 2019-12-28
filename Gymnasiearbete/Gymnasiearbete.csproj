@@ -67,9 +67,9 @@
     <Compile Include="Draw.cs" />
     <Compile Include="Excel.cs" />
     <Compile Include="GenerateExcel.cs" />
-    <Compile Include="GraphManager.cs" />
     <Compile Include="Graphs\Adjacent.cs" />
     <Compile Include="Graphs\Graph.cs" />
+    <Compile Include="Graphs\GraphManager.cs" />
     <Compile Include="Graphs\Node.cs" />
     <Compile Include="Graphs\Position.cs" />
     <Compile Include="MazeGeneration\MazeGenerator.cs" />

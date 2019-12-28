@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using Gymnasiearbete.Graphs;
+using System.IO;
 
 namespace Gymnasiearbete.Test
 {
