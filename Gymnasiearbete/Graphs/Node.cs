@@ -5,7 +5,7 @@ namespace Gymnasiearbete.Graphs
     class Node
     {
         /// <summary>
-        /// This node's id.
+        /// This node's id (Its index in the Nodes list in the Graph class).
         /// </summary>
         public int Id { get; set; }
         /// <summary>

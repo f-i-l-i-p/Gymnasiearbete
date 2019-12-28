@@ -6,15 +6,15 @@ namespace Gymnasiearbete.Pathfinding
 {
     static class GraphOptimization
     {
-        public enum OptimizationType { None, Shrinked }
+        public enum OptimizationType { None, JumpPoints }
 
         /// <summary>
         /// Removes all nodes with two neighbors and instead connects the neighbors.
         /// The new cost to travel been the neighbors will be the same as the cost before.
         /// </summary>
-        /// <param name="graph">Graph to shrink.</param>
+        /// <param name="graph">Graph to add jump points to.</param>
         /// <param name="avoid">Nodes that will not be removed.</param>
-        public static void ShrinkGraph(Graph graph, IEnumerable<Node> avoid)
+        public static void JumpPoints(Graph graph, IEnumerable<Node> avoid)
         {
             // For each node in the graph, check if it only has two neighbors.
             // If it has two neighbors (and is not in {avoid}), remove the node and connect the neighbors

@@ -7,7 +7,7 @@ namespace Gymnasiearbete.Graphs
         /// <summary>
         /// All nodes in the graph.
         /// </summary>
-        public List<Node> Nodes { get; }
+        public List<Node> Nodes { get; set; }
 
         public Graph()
         {

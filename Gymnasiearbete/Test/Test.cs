@@ -115,9 +115,9 @@ namespace Gymnasiearbete.Test
                                 case OptimizationType.None:
                                     optimizationTime = 0;
                                     break;
-                                case OptimizationType.Shrinked:
+                                case OptimizationType.JumpPoints:
                                     optimizationTimer.Restart();
-                                    GraphOptimization.ShrinkGraph(graph, new Node[] { sourceNode, destinationNode });
+                                    GraphOptimization.JumpPoints(graph, new Node[] { sourceNode, destinationNode });
                                     optimizationTimer.Stop();
                                     optimizationTime = optimizationTimer.Elapsed.TotalSeconds;
                                     break;
