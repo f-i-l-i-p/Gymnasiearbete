@@ -156,8 +156,8 @@ namespace Gymnasiearbete
             int currentRow = 0;
             int currentColumn = 0;
 
-            int dataHeight = testResult.GraphOptimizationResults[0].SearchTypeResults[0].ComplexityResults.Count;
-            int dataWidth = testResult.GraphOptimizationResults[0].SearchTypeResults[0].ComplexityResults[0].SizeResults.Count;
+            int dataHeight = testResult.GraphOptimizationResults[0].SearchTypeResults[0].ComplexityResults.Count + 1;
+            int dataWidth = testResult.GraphOptimizationResults[0].SearchTypeResults[0].ComplexityResults[0].SizeResults.Count + 1;
 
             // For each GraphOptimizationResult
             foreach (var graphOptimizationResult in testResult.GraphOptimizationResults)
