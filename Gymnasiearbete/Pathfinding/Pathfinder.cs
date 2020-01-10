@@ -182,10 +182,10 @@ namespace Gymnasiearbete.Pathfinding
                 priorityQueue.Enqueue(new FastQueueNode(node), priority);
             }
 
-            // Returns the distance from the node to the Destination node
+            // Returns the distance from a node to the Destination node
             float hScore(Node node)
             {
-                return 1.0001f * Math.Abs(Destination.Position.X - node.Position.X) + (Destination.Position.Y - node.Position.Y);
+                return 1.0001f * (Math.Abs(Destination.Position.X - node.Position.X) + Math.Abs(Destination.Position.Y - node.Position.Y));
             }
 
             // Add Source to the queue & set Source parent & set Source gScore
