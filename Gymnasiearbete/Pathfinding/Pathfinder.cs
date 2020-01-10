@@ -38,22 +38,20 @@ namespace Gymnasiearbete.Pathfinding
         /// Searches the graph with the specified searchType algorithm to find the shortest path from the source node to the destination node.
         /// </summary>
         /// <param name="searchType">Search algorithm to use.</param>
-        /// <param name="path">A list of steps to take to travel from the source node to the destination node.</param>
-        /// <returns>A boolean indicating if the path was found.</returns>
-        public bool FindPath(SearchType searchType, out List<Node> path, out int visitedNodes)
+        /// <returns>A list of steps to take to travel from the source node to the destination node.
+        ///          If no path is found, null is returned.</returns>
+        public List<Node> FindPath(SearchType searchType, out int visitedNodes)
         {
             switch (searchType)
             {
                 case SearchType.BFS:
-                    return BFS(out path, out visitedNodes);
+                    return BFS(out visitedNodes);
                 case SearchType.Dijkstras:
-                    return Dijkstras(out path, out visitedNodes);
+                    return Dijkstras(out visitedNodes);
                 case SearchType.AStar:
-                    return AStar(out path, out visitedNodes);
+                    return AStar(out visitedNodes);
                 default:
-                    path = null;
-                    visitedNodes = 0;
-                    return false;
+                    throw new NotImplementedException($"{searchType.ToString()} is not implemented");
             }
         }
 
@@ -64,9 +62,9 @@ namespace Gymnasiearbete.Pathfinding
         /// Searches the graph with the Breadth First Search algorithm to find the shortest path from the source node to the destination node.
         /// </summary>
         /// <param name="visitedNodes">The total number of nodes visited.</param>
-        /// <param name="path">A list of steps to take to travel from the source node to the destination node.</param>
-        /// <returns>A boolean indicating if the path was found.</returns>
-        public bool BFS(out List<Node> path, out int visitedNodes)
+        /// <returns>A list of steps to take to travel from the source node to the destination node.
+        ///          If no path is found, null is returned.</returns>
+        public List<Node> BFS(out int visitedNodes)
         {
             visitedNodes = 0;
 
@@ -86,10 +84,7 @@ namespace Gymnasiearbete.Pathfinding
 
                 // Check if it is the destination node
                 if (u.Id == Destination.Id)
-                {
-                    path = ConstructPathFromParents(parent);
-                    return true;
-                }
+                    return ConstructPathFromParents(parent);
 
                 // Add all unvisited neighbors to the queue & assign their parent as the current node:
                 // For each neighbor (v) of the current node (u)
@@ -105,17 +100,16 @@ namespace Gymnasiearbete.Pathfinding
             }
 
             // No solution found
-            path = null;
-            return false;
+            return null;
         }
 
         /// <summary>
         /// Searches the graph with Dijkstra's algorithm to find the shortest path from the source node to the destination node.
         /// </summary>
         /// <param name="visitedNodes">The total number of nodes visited.</param>
-        /// <param name="path">A list of steps to take to travel from the source node to the destination node.</param>
-        /// <returns>A boolean indicating if the path was found.</returns>
-        public bool Dijkstras(out List<Node> path, out int visitedNodes)
+        /// <returns>A list of steps to take to travel from the source node to the destination node.
+        ///          If no path is found, null is returned.</returns>
+        public List<Node> Dijkstras(out int visitedNodes)
         {
             visitedNodes = 0;
 
@@ -143,10 +137,7 @@ namespace Gymnasiearbete.Pathfinding
 
                 // Check if it is the destination node
                 if (u == Destination)
-                {
-                    path = ConstructPathFromParents(parent);
-                    return true;
-                }
+                    return ConstructPathFromParents(parent);
 
                 // Add all unvisited neighbors to the queue & assign their parent as the current node if it is unvisited or will give it a lower cost:
                 // For each neighbor (v) of the current node (u)
@@ -168,17 +159,16 @@ namespace Gymnasiearbete.Pathfinding
             }
 
             // No solution found
-            path = null;
-            return false;
+            return null;
         }
 
         /// <summary>
         /// Searches the graph with the A* algorithm to find the shortest path from the source node to the destination node.
         /// </summary>
         /// <param name="visitedNodes">The total number of nodes visited.</param>
-        /// <param name="path">A list of steps to take to travel from the source node to the destination node.</param>
-        /// <returns>A boolean indicating if the path was found.</returns>
-        public bool AStar(out List<Node> path, out int visitedNodes)
+        /// <returns>A list of steps to take to travel from the source node to the destination node.
+        ///          If no path is found, null is returned.</returns>
+        public List<Node> AStar(out int visitedNodes)
         {
             visitedNodes = 0;
 
@@ -212,10 +202,7 @@ namespace Gymnasiearbete.Pathfinding
 
                 // Check if it is the destination node
                 if (u.Id == Destination.Id)
-                {
-                    path = ConstructPathFromParents(parent);
-                    return true;
-                }
+                    return ConstructPathFromParents(parent);
 
                 // Add all unvisited neighbors to the queue & assign their parent as the current node if it is unvisited or will give it a lower cost:
                 // For each neighbor (v) of the current node (u)
@@ -237,8 +224,7 @@ namespace Gymnasiearbete.Pathfinding
             }
 
             // No solution found
-            path = null;
-            return false;
+            return null;
         }
 
         /// <summary>

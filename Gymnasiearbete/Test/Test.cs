@@ -377,12 +377,12 @@ namespace Gymnasiearbete.Test
             // start timer
             stopwatch.Restart();
             // run pathfinder
-            bool foundPath = pathfinder.FindPath(searchType, out var path, out var visitedNodes);
+            var path = pathfinder.FindPath(searchType, out var visitedNodes);
             // stop timer
             stopwatch.Stop();
 
             // if the path was not found, time will be set to -1
-            var elapsedTime = foundPath ? stopwatch.Elapsed.TotalSeconds : -1;
+            var elapsedTime = path == null ? -1 : stopwatch.Elapsed.TotalSeconds;
 
             return new SearchResult
             {
