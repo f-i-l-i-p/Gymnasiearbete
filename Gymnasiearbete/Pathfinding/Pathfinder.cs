@@ -148,7 +148,7 @@ namespace Gymnasiearbete.Pathfinding
                     var newCost = cost[u.Id] + v.Weight;
 
                     var neighborCost = cost[v.Id];
-                    // If v is unvisited (i.e. v has no assigned cost) or has a higher cost than alt
+                    // If v is unvisited (i.e. v has no assigned cost) or has a higher cost than newCost
                     if (neighborCost == null || neighborCost > newCost)
                     {
                         parent[v.Id] = u;
