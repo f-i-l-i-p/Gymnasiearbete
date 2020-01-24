@@ -16,6 +16,8 @@ namespace Gymnasiearbete.Graphs
             // For each graph complexity
             for (double complexity = 0; complexity <= 1; complexity += 0.1d)
             {
+                System.Console.WriteLine($"{complexity}");
+
                 // For each graph side size
                 // graph sizes: 64, 144, 256, 400, 576, 784, 1024, 1296, 1600, 1936, 2304, 2704, 3136, 3600, 4096.
                 for (int side = 8; side <= 64; side += 4)
