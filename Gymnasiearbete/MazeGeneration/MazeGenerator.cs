@@ -30,47 +30,7 @@ namespace Gymnasiearbete.MazeGeneration
         }
 
         /// <summary>
-        /// Reduces the complexity of a maze by adding random edges between nodes.
-        /// If complexity == 0, then all nodes will be connected.
-        /// If complexity == 1, then no extra nodes will be connected.
-        /// </summary>
-        /// <param name="maze">Maze to reduce complexity in.</param>
-        /// <param name="complexity">Target complexity. Value between: 0 and 1.</param>
-        private static void ReduceComplexity(Graph maze, double complexity)
-        {
-            // Add extra edges:
-            //
-            //   0---1---2---3
-            //       |   |   |
-            //   4---5   6---7
-            //   |   |       |
-            //   8---9---10--11
-            //       |   |   
-            //   12--13--14--15
-            //
-            // Loop through all nodes
-            foreach (var node in maze.Nodes)
-            {
-                // get all neighbors around the node
-                var nbs = GetNeighbors(maze, node);
-
-                // for each neighbor
-                foreach (var neighbor in nbs)
-                {
-                    // If already connected to node
-                    if (node.Adjacents.Exists(x => x.Id == neighbor.Id))
-                        continue;
-
-                    // Probability that it connects with the node: (1 - complexity).
-                    if (random.NextDouble() >= complexity)
-                        // connect node and neighbor
-                        maze.AddEdge(node, neighbor);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Uses a recursive backtracker to generate a perfect maze
+        /// Uses a backtracker to generate a perfect maze
         /// as a graph with {side*side} nodes.
         /// </summary>
         /// <param name="side">The length of each side in the maze.</param>
@@ -101,17 +61,17 @@ namespace Gymnasiearbete.MazeGeneration
                 }
             }
 
-
-            // Connect nodes with recursive backtracker:
+            // Connect nodes with backtracker:
             //
-            //   0---1---2---3
-            //       |        
-            //   4   5   6---7
-            //   |   |       |
-            //   8---9---10--11
-            //           |    
+            //   0---1   2---3
+            //       |       |
+            //   4   5---6---7
+            //   |           |
+            //   8---9   10--11
+            //   |       |
             //   12--13--14--15
             //
+
             var nodeStack = new Stack<Node>();
             // add a start node
             nodeStack.Push(maze.Nodes[0]);
@@ -144,6 +104,55 @@ namespace Gymnasiearbete.MazeGeneration
             }
 
             return maze;
+        }
+
+        /// <summary>
+        /// Reduces the complexity of a maze by adding random edges between nodes.
+        /// If complexity == 0, then all nodes will be connected.
+        /// If complexity == 1, then no extra nodes will be connected.
+        /// </summary>
+        /// <param name="maze">Maze to reduce complexity in.</param>
+        /// <param name="complexity">Target complexity. Value between: 0 and 1.</param>
+        private static void ReduceComplexity(Graph maze, double complexity)
+        {
+            if (maze?.Nodes?.Count < 1)
+                throw new ArgumentException("Maze does not contain any nodes.", "maze");
+
+            // Return if no edges will be added
+            if (complexity == 1)
+                return;
+
+            // Add extra edges:
+            //
+            //   0---1   2---3
+            //       |   |   |
+            //   4   5---6---7
+            //   |   |       |
+            //   8---9---10--11
+            //   |       |
+            //   12--13--14--15
+            //
+
+            // Loop through every second node (Every second node needs to be skipped to not
+            // double the change of creating an edge between two neighbors.)
+            for (var node = maze.Nodes[0]; node.Id < maze.Nodes.Count - 2; node = maze.Nodes[node.Id + 2])
+            {
+                // get all neighbors around the node
+                var nbs = GetNeighbors(maze, node);
+
+                // for each neighbor
+                foreach (var neighbor in nbs)
+                {
+                    // If already connected to node, do nothing
+                    if (node.Adjacents.Exists(x => x.Id == neighbor.Id))
+                        continue;
+
+                    // Probability that it connects with the node: (1 - complexity)
+                    if (random.NextDouble() >= complexity)
+                        // connect node and neighbor
+                        maze.AddEdge(node, neighbor);
+                }
+            }
         }
 
         /// <summary>
