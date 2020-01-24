@@ -95,8 +95,7 @@ namespace Gymnasiearbete.Test
                     foreach (var graphFile in graphFiles)
                     {
                         // parse repeat
-                        int.TryParse(Path.GetFileName(graphFile), out int graphRepeat);
-
+                        int.TryParse(Path.GetFileNameWithoutExtension(graphFile), out int graphRepeat);
 
                         // For each GraphOptimizationResult
                         foreach (var graphOptimizationResult in testResult.GraphOptimizationResults)
@@ -122,7 +121,7 @@ namespace Gymnasiearbete.Test
                                     optimizationTime = optimizationTimer.Elapsed.TotalSeconds;
                                     break;
                                 default:
-                                    throw new Exception($"{graphOptimizationResult.OptimizationType.ToString()} is missing an optimization function");
+                                    throw new NotImplementedException($"{graphOptimizationResult.OptimizationType.ToString()} is not implemented");
                             }
 
                             var pathfinder = new Pathfinder(graph, sourceNode, destinationNode);
@@ -131,7 +130,7 @@ namespace Gymnasiearbete.Test
                             foreach (SearchTypeResult searchTypeResult in graphOptimizationResult.SearchTypeResults)
                             {
                                 // Find the SizeRepeatResult for the current graph in this searchTypeResult
-                                var complexityResult = GeComplexityResult(graphComplexity, searchTypeResult);
+                                var complexityResult = GetComplexityResult(graphComplexity, searchTypeResult);
                                 var sizeResult = GetSizeResult(graphSize, complexityResult);
                                 var sizeRepeatResult = GetSizeRepeatResult(graphRepeat, sizeResult);
 
@@ -179,7 +178,7 @@ namespace Gymnasiearbete.Test
         /// <param name="complexity">Complexity to match.</param>
         /// <param name="searchTypeResult">SearchTypeResult containing the ComplexityResults.</param>
         /// <returns>The ComplexityResult with matching complexity.</returns>
-        private static ComplexityResult GeComplexityResult(double complexity, SearchTypeResult searchTypeResult)
+        private static ComplexityResult GetComplexityResult(double complexity, SearchTypeResult searchTypeResult)
         {
             if (searchTypeResult.ComplexityResults == null)
                 searchTypeResult.ComplexityResults = new List<ComplexityResult>();
