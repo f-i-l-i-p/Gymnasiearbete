@@ -55,9 +55,6 @@ namespace Gymnasiearbete.Pathfinding
             }
         }
 
-        // BFS, Dijkstras, A*: https://www.redblobgames.com/pathfinding/a-star/introduction.html
-        // Array vs List vs LinkedList: https://i.stack.imgur.com/iBz6V.png
-
         /// <summary>
         /// Searches the graph with the Breadth First Search algorithm to find the shortest path from the source node to the destination node.
         /// </summary>
@@ -115,7 +112,7 @@ namespace Gymnasiearbete.Pathfinding
 
             var priorityQueue = new FastPriorityQueue<FastQueueNode>(Graph.Nodes.Count);
             var parent = new Node[Graph.Nodes.Count];
-            var cost = new float?[Graph.Nodes.Count];
+            var gScore = new float?[Graph.Nodes.Count];
 
             // Adds a node to the priorityQueue
             void Enqueue(Node node, float priority)
@@ -126,7 +123,7 @@ namespace Gymnasiearbete.Pathfinding
             // Add Source to the queue & set Source parent & set Source cost
             Enqueue(Source, 0);
             parent[Source.Id] = Source;
-            cost[Source.Id] = 0;
+            gScore[Source.Id] = 0;
 
             // While there are nodes in the queue
             while (priorityQueue.Any())
@@ -139,21 +136,19 @@ namespace Gymnasiearbete.Pathfinding
                 if (u == Destination)
                     return ConstructPathFromParents(parent);
 
-                // Add all unvisited neighbors to the queue & assign their parent as the current node if it is unvisited or will give it a lower cost:
+                // Add all unvisited neighbors to the queue, assign their parent, and set their gScore, if it is unvisited or will give it a lower cost:
                 // For each neighbor (v) of the current node (u)
                 foreach (var v in u.Adjacents)
                 {
-                    // newCost is the total cost from the source to the neighbor node.
-                    // its value will be the current nodes cost + the edge weight from the current node to the neighbor
-                    var newCost = cost[u.Id] + v.Weight;
+                    // gNeighbor is the total cost to travel the current path from the source, through u, to the neighbor node.
+                    var gNeighbor = gScore[u.Id] + v.Weight;
 
-                    var neighborCost = cost[v.Id];
-                    // If v is unvisited (i.e. v has no assigned cost) or has a higher cost than newCost
-                    if (neighborCost == null || neighborCost > newCost)
+                    // If v is unvisited (i.e. v has no assigned cost) or has a higher gScore than the new g score
+                    if (gScore[v.Id] == null || gScore[v.Id] > gNeighbor)
                     {
                         parent[v.Id] = u;
-                        cost[v.Id] = newCost;
-                        Enqueue(Graph.Nodes[v.Id], newCost.Value);
+                        gScore[v.Id] = gNeighbor;
+                        Enqueue(Graph.Nodes[v.Id], gNeighbor.Value);
                     }
                 }
             }
@@ -204,20 +199,18 @@ namespace Gymnasiearbete.Pathfinding
                 if (u.Id == Destination.Id)
                     return ConstructPathFromParents(parent);
 
-                // Add all unvisited neighbors to the queue & assign their parent as the current node if it is unvisited or will give it a lower cost:
+                // Add all unvisited neighbors to the queue, assign their parent, and set their gScore, if it is unvisited or will give it a lower cost:
                 // For each neighbor (v) of the current node (u)
                 foreach (var v in u.Adjacents)
                 {
-                    // newCost is the total cost from the source to the neighbor node.
-                    // its value will be the current nodes cost + the edge weight from the current node to the neighbor
-                    var newCost = gScore[u.Id] + v.Weight;
+                    // gNeighbor is the total cost to travel the current path from the source, through u, to the neighbor node.
+                    var gNeighbor = gScore[u.Id] + v.Weight;
 
-                    var VGScore = gScore[v.Id];
-                    // If v is unvisited (i.e. v has no assigned parent) or has a higher cost than newCost
-                    if (VGScore == null || VGScore > newCost)
+                    // If v is unvisited (i.e. v has no assigned cost) or has a higher cost than the new g score 
+                    if (gScore[v.Id] == null || gScore[v.Id] > gNeighbor)
                     {
                         parent[v.Id] = u;
-                        gScore[v.Id] = newCost;
+                        gScore[v.Id] = gNeighbor;
                         Enqueue(Graph.Nodes[v.Id], gScore[v.Id].Value + hScore(Graph.Nodes[v.Id]));
                     }
                 }
@@ -236,31 +229,16 @@ namespace Gymnasiearbete.Pathfinding
         {
             var path = new List<Node>();
 
-            var currentNode = Destination;
-            var nextNode = parent[Destination.Id];
+            Node currentNode = Destination;
+            Node nextNode;
 
-            while(currentNode.Id != nextNode.Id)
+            while(currentNode.Id != (nextNode = parent[Destination.Id]).Id)
             {
                 path.Add(currentNode);
 
                 currentNode = nextNode;
-                nextNode = parent[currentNode.Id];
             }
             return path;
-        }
-
-        /// <summary>
-        /// Populates an array with a value.
-        /// </summary>
-        /// <param name="arr">The array to be populated.</param>
-        /// <param name="value">Value to populate the array with.</param>
-        public static void Populate<T>(T[] arr, T value)
-        {
-            int arrayLength = arr.Length;
-            for (int i = 0; i < arrayLength; ++i)
-            {
-                arr[i] = value;
-            }
         }
     }
 }
