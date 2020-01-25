@@ -20,10 +20,6 @@ namespace Gymnasiearbete.MazeGeneration
         {
             var graph = GeneratePerfectMaze(side);
 
-            // If complexity == 1, then no extra edges will be added
-            if (complexity >= 1)
-                return graph;
-
             ReduceComplexity(graph, complexity);
 
             return graph;
@@ -49,9 +45,9 @@ namespace Gymnasiearbete.MazeGeneration
             //
             //   12  13  14  15
             //
-            for (int x = 0; x < side; x++)
+            for (int y = 0; y < side; y++)
             {
-                for (int y = 0; y < side; y++)
+                for (int x = 0; x < side; x++)
                 {
                     maze.AddNode(new Position
                     {
@@ -108,6 +104,7 @@ namespace Gymnasiearbete.MazeGeneration
 
         /// <summary>
         /// Reduces the complexity of a maze by adding random edges between nodes.
+        /// Complexity is set with a value between 0 and 1.
         /// If complexity == 0, then all nodes will be connected.
         /// If complexity == 1, then no extra nodes will be connected.
         /// </summary>
@@ -117,6 +114,9 @@ namespace Gymnasiearbete.MazeGeneration
         {
             if (maze?.Nodes?.Count < 1)
                 throw new ArgumentException("Maze does not contain any nodes.", "maze");
+
+            if (complexity < 0 || complexity > 1)
+                throw new ArgumentException("Complexity must be between 0 and 1.", "complexity");
 
             // Return if no edges will be added
             if (complexity == 1)
@@ -133,24 +133,30 @@ namespace Gymnasiearbete.MazeGeneration
             //   12--13--14--15
             //
 
-            // Loop through every second node (Every second node needs to be skipped to not
-            // double the change of creating an edge between two neighbors.)
-            for (var node = maze.Nodes[0]; node.Id < maze.Nodes.Count - 2; node = maze.Nodes[node.Id + 2])
+            int side = (int)Math.Sqrt(maze.Nodes.Count);
+            // Loop through nodes in a checkerboard pattern (For example nodes: 0, 2, 5, 7, 8, 10, 13, 15)
+            bool startEven = true;
+            for (int y = 0; y < side; y++)
             {
-                // get all neighbors around the node
-                var nbs = GetNeighbors(maze, node);
-
-                // for each neighbor
-                foreach (var neighbor in nbs)
+                for (var x = (startEven = !startEven) ? 1 : 0; x < side; x += 2)
                 {
-                    // If already connected to node, do nothing
-                    if (node.Adjacents.Exists(x => x.Id == neighbor.Id))
-                        continue;
+                    var node = maze.Nodes[x + y * side];
 
-                    // Probability that it connects with the node: (1 - complexity)
-                    if (random.NextDouble() >= complexity)
-                        // connect node and neighbor
-                        maze.AddEdge(node, neighbor);
+                    // get all neighbors around the node
+                    var nbs = GetNeighbors(maze, node);
+
+                    // for each neighbor
+                    foreach (var neighbor in nbs)
+                    {
+                        // If already connected to node, do nothing
+                        if (node.Adjacents.Exists(n => n.Id == neighbor.Id))
+                            continue;
+
+                        // Probability that it connects with the node: (1 - complexity)
+                        if (random.NextDouble() >= complexity)
+                            // connect node and neighbor
+                            maze.AddEdge(node, neighbor);
+                    }
                 }
             }
         }
@@ -181,7 +187,7 @@ namespace Gymnasiearbete.MazeGeneration
             // for each possible neighbor position
             foreach (var position in possitions)
             {
-                // If neighbor is outside graph
+                // Skipp if position is outside graph
                 if (position.X < 0 || position.X >= side || position.Y < 0 || position.Y >= side)
                     continue;
 
