@@ -114,9 +114,15 @@ namespace Gymnasiearbete.Test
                                 case OptimizationType.None:
                                     optimizationTime = 0;
                                     break;
-                                case OptimizationType.JumpPoints:
+                                case OptimizationType.IntersectionJumps:
                                     optimizationTimer.Restart();
-                                    GraphOptimization.JumpPoints(graph, new Node[] { sourceNode, destinationNode });
+                                    GraphOptimization.IntersectionJumps(graph, new Node[] { sourceNode, destinationNode });
+                                    optimizationTimer.Stop();
+                                    optimizationTime = optimizationTimer.Elapsed.TotalSeconds;
+                                    break;
+                                case OptimizationType.CornerJumps:
+                                    optimizationTimer.Restart();
+                                    GraphOptimization.CornerJumps(graph, new Node[] { sourceNode, destinationNode });
                                     optimizationTimer.Stop();
                                     optimizationTime = optimizationTimer.Elapsed.TotalSeconds;
                                     break;
