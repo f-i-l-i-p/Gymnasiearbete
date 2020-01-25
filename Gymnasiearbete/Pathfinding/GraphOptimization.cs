@@ -92,9 +92,9 @@ namespace Gymnasiearbete.Pathfinding
                 var pos0 = graph.Nodes[node.Adjacents[0].Id].Position;
                 var pos1 = graph.Nodes[node.Adjacents[1].Id].Position;
 
-                // If vertical or horizontal neighbors
-                if (pos0.X == pos1.X || pos0.Y == pos1.Y)
-                    return false;
+                // If not vertical or horizontal neighbors
+                if (pos0.X != pos1.X && pos0.Y != pos1.Y)
+                    return true;
             }
 
             // no neighbors
