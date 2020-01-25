@@ -40,13 +40,16 @@ namespace Gymnasiearbete.Pathfinding
         /// <param name="avoid">Nodes that will not be removed.</param>
         public static void CornerJumps(Graph graph, IEnumerable<Node> avoid)
         {
+            if (graph.Nodes.Count == 0)
+                return;
+
             // For each node in the graph, check if it is a corner.
             // If it is a corner (and is not in {avoid}), remove the node and connect the neighbors
 
             // Loop through all nodes in the graph
-            foreach (var node in graph.Nodes)
+            for (var node = graph.Nodes[0]; node.Id + 1 < graph.Nodes.Count; node = graph.Nodes[node.Id + 1])
             {
-                if (node.Adjacents.Count == 2 && !avoid.Contains(node) && IsCorner(node, graph))
+                if (node.Adjacents.Count == 2 && !avoid.Contains(node) && !IsCorner(node, graph))
                     JumpOver(node, graph);
             }
         }
@@ -97,7 +100,6 @@ namespace Gymnasiearbete.Pathfinding
                     return true;
             }
 
-            // no neighbors
             return false;
         }
     }
