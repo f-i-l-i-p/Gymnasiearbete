@@ -68,7 +68,7 @@ namespace Gymnasiearbete.Pathfinding
             var queue = new Queue<Node>();
             var parent = new Node[Graph.Nodes.Count];
 
-            // Add Source to queue & set Source parent
+            // Add Source as a start node
             queue.Enqueue(Source);
             parent[Source.Id] = Source;
 
@@ -96,7 +96,7 @@ namespace Gymnasiearbete.Pathfinding
                 }
             }
 
-            // No solution found
+            // no solution found
             return null;
         }
 
@@ -120,7 +120,7 @@ namespace Gymnasiearbete.Pathfinding
                 priorityQueue.Enqueue(new FastQueueNode(node), priority);
             }
 
-            // Add Source to the queue & set Source parent & set Source cost
+            // Add Source as a start node
             Enqueue(Source, 0);
             parent[Source.Id] = Source;
             gScore[Source.Id] = 0;
@@ -140,20 +140,20 @@ namespace Gymnasiearbete.Pathfinding
                 // For each neighbor (v) of the current node (u)
                 foreach (var v in u.Adjacents)
                 {
-                    // gNeighbor is the total cost to travel the current path from the source, through u, to the neighbor node.
-                    var gNeighbor = gScore[u.Id] + v.Weight;
+                    // gNew is the total cost to travel the current path from Source, through u, to v.
+                    var gNew = gScore[u.Id] + v.Weight;
 
                     // If v is unvisited (i.e. v has no assigned cost) or has a higher gScore than the new g score
-                    if (gScore[v.Id] == null || gScore[v.Id] > gNeighbor)
+                    if (gScore[v.Id] == null || gScore[v.Id] > gNew)
                     {
+                        gScore[v.Id] = gNew;
                         parent[v.Id] = u;
-                        gScore[v.Id] = gNeighbor;
-                        Enqueue(Graph.Nodes[v.Id], gNeighbor.Value);
+                        Enqueue(Graph.Nodes[v.Id], gNew.Value);
                     }
                 }
             }
 
-            // No solution found
+            // no solution found
             return null;
         }
 
@@ -177,13 +177,16 @@ namespace Gymnasiearbete.Pathfinding
                 priorityQueue.Enqueue(new FastQueueNode(node), priority);
             }
 
+            // factor for hScore
+            float hScale = 1f / Graph.Nodes.Count;
+
             // Returns the distance from a node to the Destination node
             float hScore(Node node)
             {
-                return 1.00001f * (Math.Abs(Destination.Position.X - node.Position.X) + Math.Abs(Destination.Position.Y - node.Position.Y));
+                return hScale * (Math.Abs(Destination.Position.X - node.Position.X) + Math.Abs(Destination.Position.Y - node.Position.Y));
             }
 
-            // Add Source to the queue & set Source parent & set Source gScore
+            // Add Source as a start node
             Enqueue(Source, 0);
             parent[Source.Id] = Source;
             gScore[Source.Id] = 0;
@@ -203,20 +206,20 @@ namespace Gymnasiearbete.Pathfinding
                 // For each neighbor (v) of the current node (u)
                 foreach (var v in u.Adjacents)
                 {
-                    // gNeighbor is the total cost to travel the current path from the source, through u, to the neighbor node.
-                    var gNeighbor = gScore[u.Id] + v.Weight;
+                    // gNew is the total cost to travel the current path from Source, through u, to v.
+                    var gNew = gScore[u.Id] + v.Weight;
 
                     // If v is unvisited (i.e. v has no assigned cost) or has a higher cost than the new g score 
-                    if (gScore[v.Id] == null || gScore[v.Id] > gNeighbor)
+                    if (gScore[v.Id] == null || gScore[v.Id] > gNew)
                     {
+                        gScore[v.Id] = gNew;
                         parent[v.Id] = u;
-                        gScore[v.Id] = gNeighbor;
                         Enqueue(Graph.Nodes[v.Id], gScore[v.Id].Value + hScore(Graph.Nodes[v.Id]));
                     }
                 }
             }
 
-            // No solution found
+            // no solution found
             return null;
         }
 
