@@ -12,36 +12,36 @@ namespace Gymnasiearbete.Test
 {
     static class ResultSetup
     {
-        public static TestResult SetupTestResult()
+        public static TestResult SetupTestResult(IEnumerable<OptimizationType> optimizationTypes, IEnumerable<SearchType> searchTypes)
         {
             var testResult = new TestResult
             {
-                GraphOptimizationResults = SetupGraphOptimizationResults(),
+                GraphOptimizationResults = SetupGraphOptimizationResults(optimizationTypes, searchTypes),
             };
 
             return testResult;
         }
 
-        private static List<GraphOptimizationResult> SetupGraphOptimizationResults()
+        private static List<GraphOptimizationResult> SetupGraphOptimizationResults(IEnumerable<OptimizationType> optimizationTypes, IEnumerable<SearchType> searchTypes)
         {
             var graphOptimizationResults = new List<GraphOptimizationResult>();
 
-            foreach (OptimizationType optimizationType in Enum.GetValues(typeof(OptimizationType)))
+            foreach (var optimizationType in optimizationTypes)
             {
                 graphOptimizationResults.Add(new GraphOptimizationResult
                 {
                     OptimizationType = optimizationType,
-                    SearchTypeResults = SetupSearchTypeResults(),
+                    SearchTypeResults = SetupSearchTypeResults(searchTypes),
                 });
             }
             return graphOptimizationResults;
         }
 
-        private static List<SearchTypeResult> SetupSearchTypeResults()
+        private static List<SearchTypeResult> SetupSearchTypeResults(IEnumerable<SearchType> searchTypes)
         {
             var searchTypeResults = new List<SearchTypeResult>();
 
-            foreach (SearchType searchType in Enum.GetValues(typeof(SearchType)))
+            foreach (SearchType searchType in searchTypes)
             {
                 searchTypeResults.Add(new SearchTypeResult
                 {
@@ -66,11 +66,14 @@ namespace Gymnasiearbete.Test
         {
             Console.WriteLine("Running test...");
 
+            // OptimizationTypes and SearchTypes to test.
+            var optimizationTypes = new List<OptimizationType> { OptimizationType.None, OptimizationType.CornerJumps };
+            var searchTypes = new List<SearchType> { SearchType.BFS, SearchType.Dijkstras, SearchType.AStar };
 
-            var testResult = ResultSetup.SetupTestResult();
+            // setup an empty test result
+            var testResult = ResultSetup.SetupTestResult(optimizationTypes, searchTypes);
 
             var optimizationTimer = new Stopwatch();
-
 
             // For each graph complexity directory
             var complexityDirectories = Directory.GetDirectories(GraphManager.saveLocation);
