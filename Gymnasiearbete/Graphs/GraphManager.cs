@@ -1,5 +1,7 @@
 ﻿using Gymnasiearbete.MazeGeneration;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Gymnasiearbete.Graphs
 {
@@ -7,32 +9,37 @@ namespace Gymnasiearbete.Graphs
     {
         public static readonly string saveLocation = Path.GetFullPath(@"..\..\..\SavedGraphs");
 
-        public static void RegenerateGraphs()
+        public static void RegenerateGraphs(IEnumerable<double> complexities, IEnumerable<int> sizes, int sizeRepeat)
         {
             // Remove old graph directory
             if (Directory.Exists(saveLocation))
                 Directory.Delete(saveLocation, true);
 
-            // For each graph complexity
-            for (double complexity = 0; complexity <= 1; complexity += 0.1d)
-            {
-                System.Console.WriteLine($"{complexity}");
+            var totalGraphsCount = complexities.Count() * sizes.Count() * sizeRepeat;
+            var addedGraphsCount = 0;
 
+            // For each graph complexity
+            foreach (var complexity in complexities)
+            {
                 // For each graph side size
-                // graph sizes: 64, 144, 256, 400, 576, 784, 1024, 1296, 1600, 1936, 2304, 2704, 3136, 3600, 4096.
-                for (int side = 8; side <= 64; side += 4)
+                foreach (var size in sizes)
                 {
+                    // print progress
+                    System.Console.WriteLine($"{string.Format("{0:0.00}", 100 * (double)addedGraphsCount / totalGraphsCount)}%");
+
                     // For each graph size repeat
-                    for (int repeat = 0; repeat < 5; repeat++)
+                    for (int repeat = 0; repeat < sizeRepeat; repeat++)
                     {
                         // generate maze
-                        var maze = MazeGenerator.GenerateMaze(side, complexity);
+                        var maze = MazeGenerator.GenerateMaze(size, complexity);
 
                         // folder path to save graph
-                        string folderPath = $"{saveLocation}/{complexity}/{side}";
+                        string folderPath = $"{saveLocation}/{complexity}/{size}";
 
                         // saves as {saveLocaation}/{complexity}/{size}/{repeat}.json
                         Save(maze, folderPath, repeat.ToString());
+
+                        addedGraphsCount++;
                     }
                 }
             }

@@ -1,5 +1,8 @@
 ﻿using Gymnasiearbete.Graphs;
+using System.Collections.Generic;
 using System.IO;
+using static Gymnasiearbete.Pathfinding.GraphOptimization;
+using static Gymnasiearbete.Pathfinding.Pathfinder;
 
 namespace Gymnasiearbete.Test
 {
@@ -8,9 +11,9 @@ namespace Gymnasiearbete.Test
         /// <summary>
         /// Runs tests on all graphs and saves the result.
         /// </summary>
-        public static void RunTests()
+        public static void RunTests(IEnumerable<OptimizationType> optimizationTypes, IEnumerable<SearchType> searchTypes, int searchRepeat)
         {
-            var results = Test.RunTests();
+            var results = Test.RunTests(optimizationTypes, searchTypes, searchRepeat);
 
             SaveResult(results);
         }

@@ -56,33 +56,29 @@ namespace Gymnasiearbete.Test
 
     static class Test
     {
-        private static readonly int searchRepeat = 3;
+        private static int searchRepeat;
 
         /// <summary>
         /// Tests all path-finding algorithms on all graphs and returns the result.
         /// </summary>
         /// <returns>The test result.</returns>
-        public static TestResult RunTests()
+        public static TestResult RunTests(IEnumerable<OptimizationType> optimizationTypes, IEnumerable<SearchType> searchTypes, int _searchRepeat)
         {
-            Console.WriteLine("Running test...");
-
-            // OptimizationTypes and SearchTypes to test.
-            var optimizationTypes = new List<OptimizationType> { OptimizationType.None, OptimizationType.CornerJumps };
-            var searchTypes = new List<SearchType> { SearchType.BFS, SearchType.Dijkstras, SearchType.AStar };
+            searchRepeat = _searchRepeat;
 
             // setup an empty test result
             var testResult = ResultSetup.SetupTestResult(optimizationTypes, searchTypes);
 
             var optimizationTimer = new Stopwatch();
 
+            var totalSearchCount = Directory.GetFiles(GraphManager.saveLocation, "*.json", SearchOption.AllDirectories).Length;
+            int searchCount = 0;
+
             // For each graph complexity directory
             var complexityDirectories = Directory.GetDirectories(GraphManager.saveLocation);
             int ODIndex = 0;
             foreach (var complexityDirectory in complexityDirectories)
             {
-                // print progress
-                Console.WriteLine($"{ODIndex + 1}/{complexityDirectories.Length}");
-
                 // parse complexity
                 double.TryParse(Path.GetFileName(complexityDirectory), out double graphComplexity);
 
@@ -90,6 +86,9 @@ namespace Gymnasiearbete.Test
                 var sizeDirectories = SortByGraphSize(Directory.GetDirectories(complexityDirectory));
                 foreach (var sizeDirectory in sizeDirectories)
                 {
+                    // print progress
+                    Console.WriteLine($"{string.Format("{0:0.00}", 100 * (double)searchCount / totalSearchCount)}%");
+
                     // parse size
                     int.TryParse(Path.GetFileName(sizeDirectory), out int graphSize);
 
@@ -153,6 +152,7 @@ namespace Gymnasiearbete.Test
                                 sizeResult.AverageGraphOpimizationTime = agot;
                             }
                         }
+                        searchCount++;
                     }
                 }
                 ODIndex++;

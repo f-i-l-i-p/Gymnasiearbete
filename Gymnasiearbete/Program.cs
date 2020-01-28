@@ -1,4 +1,7 @@
 ﻿using Gymnasiearbete.Graphs;
+using System.Linq;
+using static Gymnasiearbete.Pathfinding.GraphOptimization;
+using static Gymnasiearbete.Pathfinding.Pathfinder;
 
 namespace Gymnasiearbete
 {
@@ -13,10 +16,16 @@ namespace Gymnasiearbete
                 switch (selected)
                 {
                     case 0: // Run Tests
-                        Test.TestManager.RunTests();
+                        Test.TestManager.RunTests(
+                            new OptimizationType[] {OptimizationType.None, OptimizationType.CornerJumps }, 
+                            new SearchType[] { SearchType.BFS, SearchType.Dijkstras, SearchType.AStar },
+                            10);
                         break;
                     case 1: // Regenerate Graphs
-                        GraphManager.RegenerateGraphs();
+                        GraphManager.RegenerateGraphs(
+                            new double[11].Select((val, index) => index * 0.1),
+                            new int[10].Select((val, index) => (index + 1) * 8),
+                            1);
                         break;
                     case 2:
                         System.Console.WriteLine(0);
