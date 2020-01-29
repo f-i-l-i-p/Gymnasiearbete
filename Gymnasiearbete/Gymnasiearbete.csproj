@@ -72,6 +72,7 @@
     <Compile Include="Graphs\GraphManager.cs" />
     <Compile Include="Graphs\Node.cs" />
     <Compile Include="Graphs\Position.cs" />
+    <Compile Include="Helpers\RandomHelper.cs" />
     <Compile Include="MazeGeneration\MazeGenerator.cs" />
     <Compile Include="Menu.cs" />
     <Compile Include="Pathfinding\GraphOptimization.cs" />

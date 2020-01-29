@@ -45,6 +45,7 @@ namespace Gymnasiearbete.MazeGeneration
             //
             //   12  13  14  15
             //
+
             for (int y = 0; y < side; y++)
             {
                 for (int x = 0; x < side; x++)
@@ -103,13 +104,13 @@ namespace Gymnasiearbete.MazeGeneration
         }
 
         /// <summary>
-        /// Reduces the complexity of a maze by adding random edges between nodes.
-        /// Complexity is set with a value between 0 and 1.
+        /// Reduces the complexity of a maze by adding edges at random places between nodes.
+        /// complexity is the percentage of edges that will not be added, and is a value between 0 and 1.
         /// If complexity == 0, then all nodes will be connected.
         /// If complexity == 1, then no extra nodes will be connected.
         /// </summary>
         /// <param name="maze">Maze to reduce complexity in.</param>
-        /// <param name="complexity">Target complexity. Value between: 0 and 1.</param>
+        /// <param name="complexity">Percentage of edges that will not be added. The complexity must be more ore equal to 0, and less or equal to 1.</param>
         private static void ReduceComplexity(Graph maze, double complexity)
         {
             if (maze?.Nodes?.Count < 1)
@@ -122,6 +123,8 @@ namespace Gymnasiearbete.MazeGeneration
             if (complexity == 1)
                 return;
 
+            int side = (int)Math.Sqrt(maze.Nodes.Count);
+
             // Add extra edges:
             //
             //   0---1   2---3
@@ -133,8 +136,11 @@ namespace Gymnasiearbete.MazeGeneration
             //   12--13--14--15
             //
 
-            int side = (int)Math.Sqrt(maze.Nodes.Count);
-            // Loop through nodes in a checkerboard pattern (For example nodes: 0, 2, 5, 7, 8, 10, 13, 15)
+            /// 1. Create a list of all non existing edges
+            var nonEdges = new List<Node[]>();
+
+            // Loops through nodes in a checkerboard pattern (For example nodes: 0, 2, 5, 7, 8, 10, 13, 15)
+            // to find non existing edges
             bool startEven = true;
             for (int y = 0; y < side; y++)
             {
@@ -142,22 +148,30 @@ namespace Gymnasiearbete.MazeGeneration
                 {
                     var node = maze.Nodes[x + y * side];
 
-                    // get all neighbors around the node
-                    var nbs = GetNeighbors(maze, node);
+                    // get all neighbors around this node that are not connected to this node
+                    var nonNbs = GetNeighbors(maze, node).Where(nb => !nb.Adjacents.Any(adj => adj.Id == node.Id));
 
-                    // for each neighbor
-                    foreach (var neighbor in nbs)
+                    // Save non existing edges
+                    foreach (var nonNb in nonNbs)
                     {
-                        // If already connected to node, do nothing
-                        if (node.Adjacents.Exists(n => n.Id == neighbor.Id))
-                            continue;
-
-                        // Probability that it connects with the node: (1 - complexity)
-                        if (random.NextDouble() >= complexity)
-                            // connect node and neighbor
-                            maze.AddEdge(node, neighbor);
+                        nonEdges.Add(new Node[] { node, nonNb });
                     }
                 }
+            }
+
+            /// 2. Calculate number of edges to add
+            int maxEdges = (int)(Math.Pow(side - 1, 2) * 2 + (side - 1) * 2);
+            int curEdges = maze.Nodes.Count - 1;
+            int toAddCount = Convert.ToInt32((1 - complexity) * (maxEdges - curEdges));
+
+            /// 3. Randomly choose which edges to add
+            var toAddIndexes = Helpers.RandomHelper.UniqueRandoms(toAddCount, 0, nonEdges.Count);
+
+            /// 4. Add edges to maze
+            foreach (var toAddIndex in toAddIndexes)
+            {
+                var edge = nonEdges[toAddIndex];
+                maze.AddEdge(edge[0], edge[1]);
             }
         }
 
