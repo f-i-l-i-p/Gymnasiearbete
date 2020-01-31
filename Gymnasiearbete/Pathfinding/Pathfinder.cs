@@ -178,7 +178,7 @@ namespace Gymnasiearbete.Pathfinding
             }
 
             // factor for hScore
-            float hScale = 1f / Graph.Nodes.Count;
+            float hScale = 1f / Graph.Nodes.Count + 1;
 
             // Returns the distance from a node to the Destination node
             float hScore(Node node)
