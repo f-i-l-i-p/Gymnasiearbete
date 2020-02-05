@@ -63,8 +63,6 @@ namespace Gymnasiearbete.Pathfinding
         /// If no path is found, null is returned.</returns>
         public List<Node> BFS(out int visitedNodes)
         {
-            visitedNodes = 0;
-
             var queue = new Queue<Node>();
             var parent = new Node[Graph.Nodes.Count];
 
@@ -77,11 +75,13 @@ namespace Gymnasiearbete.Pathfinding
             {
                 // dequeue the first node in the queue
                 var current = queue.Dequeue();
-                visitedNodes++;
 
                 // Check if it is the destination node
                 if (current.Id == Destination.Id)
+                {
+                    visitedNodes = CountVisitedNodes(parent);
                     return ConstructPathFromParents(parent);
+                }
 
                 // Loop through all neighbors
                 foreach (var adjacent in current.Adjacents)
@@ -95,7 +95,8 @@ namespace Gymnasiearbete.Pathfinding
                 }
             }
 
-            // no solution found
+            // No solution found
+            visitedNodes = CountVisitedNodes(parent);
             return null;
         }
 
@@ -107,8 +108,6 @@ namespace Gymnasiearbete.Pathfinding
         /// If no path is found, null is returned.</returns>
         public List<Node> Dijkstras(out int visitedNodes)
         {
-            visitedNodes = 0;
-
             var priorityQueue = new FastPriorityQueue<FastQueueNode>(Graph.Nodes.Count);
             var parent = new Node[Graph.Nodes.Count];
             var gScore = new float?[Graph.Nodes.Count];
@@ -129,11 +128,13 @@ namespace Gymnasiearbete.Pathfinding
             {
                 // dequeue the node with the lowest priority
                 var current = priorityQueue.Dequeue().Value;
-                visitedNodes++;
 
                 // Check if it is the destination node
                 if (current == Destination)
+                {
+                    visitedNodes = CountVisitedNodes(parent);
                     return ConstructPathFromParents(parent);
+                }
 
                 // Loop through all neighbors
                 foreach (var adjacent in current.Adjacents)
@@ -151,7 +152,8 @@ namespace Gymnasiearbete.Pathfinding
                 }
             }
 
-            // no solution found
+            // No solution found
+            visitedNodes = CountVisitedNodes(parent);
             return null;
         }
 
@@ -163,8 +165,6 @@ namespace Gymnasiearbete.Pathfinding
         /// If no path is found, null is returned.</returns>
         public List<Node> AStar(out int visitedNodes)
         {
-            visitedNodes = 0;
-
             var priorityQueue = new FastPriorityQueue<FastQueueNode>(Graph.Nodes.Count);
             var parent = new Node[Graph.Nodes.Count];
             var gScore = new float?[Graph.Nodes.Count];
@@ -194,11 +194,13 @@ namespace Gymnasiearbete.Pathfinding
             {
                 // dequeue the node with the lowest priority
                 var current = priorityQueue.Dequeue().Value;
-                visitedNodes++;
 
                 // Check if it is the destination node
                 if (current.Id == Destination.Id)
+                {
+                    visitedNodes = CountVisitedNodes(parent);
                     return ConstructPathFromParents(parent);
+                }
 
                 // Loop trough all neighbors
                 foreach (var adjacent in current.Adjacents)
@@ -216,29 +218,46 @@ namespace Gymnasiearbete.Pathfinding
                 }
             }
 
-            // no solution found
+            // No solution found
+            visitedNodes = CountVisitedNodes(parent);
             return null;
         }
 
         /// <summary>
         /// Constructs a list on node id's from the destination node to the source node. 
         /// </summary>
-        /// <param name="parent">Array that contains all necessary nodes parents</param>
+        /// <param name="parents">Array that contains all necessary nodes parents.</param>
         /// <returns>A list on node id's from the destination node to the source node.</returns>
-        private List<Node> ConstructPathFromParents(Node[] parent)
+        private List<Node> ConstructPathFromParents(Node[] parents)
         {
             var path = new List<Node>();
 
             Node currentNode = Destination;
             Node nextNode;
 
-            while(currentNode.Id != (nextNode = parent[Destination.Id]).Id)
+            while(currentNode.Id != (nextNode = parents[Destination.Id]).Id)
             {
                 path.Add(currentNode);
-
                 currentNode = nextNode;
             }
             return path;
+        }
+
+        /// <summary>
+        /// Counts all visited nodes from array of parents.
+        /// </summary>
+        /// <param name="parents">Array that contain all visited nodes parents.</param>
+        /// <returns>Number of visited nodes.</returns>
+        private int CountVisitedNodes(Node[] parents)
+        {
+            int n = 0;
+
+            foreach (var parent in parents)
+            {
+                if (parent != null)
+                    n++;
+            }
+            return n;
         }
     }
 }
