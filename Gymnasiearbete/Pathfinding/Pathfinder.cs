@@ -39,7 +39,7 @@ namespace Gymnasiearbete.Pathfinding
         /// </summary>
         /// <param name="searchType">Search algorithm to use.</param>
         /// <returns>A list of steps to take to travel from the source node to the destination node.
-        ///          If no path is found, null is returned.</returns>
+        /// If no path is found, null is returned.</returns>
         public List<Node> FindPath(SearchType searchType, out int visitedNodes)
         {
             switch (searchType)
@@ -60,7 +60,7 @@ namespace Gymnasiearbete.Pathfinding
         /// </summary>
         /// <param name="visitedNodes">The total number of nodes visited.</param>
         /// <returns>A list of steps to take to travel from the source node to the destination node.
-        ///          If no path is found, null is returned.</returns>
+        /// If no path is found, null is returned.</returns>
         public List<Node> BFS(out int visitedNodes)
         {
             visitedNodes = 0;
@@ -76,22 +76,21 @@ namespace Gymnasiearbete.Pathfinding
             while (queue.Count > 0)
             {
                 // dequeue the first node in the queue
-                var u = queue.Dequeue();
+                var current = queue.Dequeue();
                 visitedNodes++;
 
                 // Check if it is the destination node
-                if (u.Id == Destination.Id)
+                if (current.Id == Destination.Id)
                     return ConstructPathFromParents(parent);
 
-                // Add all unvisited neighbors to the queue & assign their parent as the current node:
-                // For each neighbor (v) of the current node (u)
-                foreach (var v in u.Adjacents)
+                // Loop through all neighbors
+                foreach (var adjacent in current.Adjacents)
                 {
-                    // If v is unvisited (i.e. v has no assigned parent)
-                    if (parent[v.Id] == null)
+                    // If this adjacent node is unvisited (i.e. it has no assigned parent)
+                    if (parent[adjacent.Id] == null)
                     {
-                        parent[v.Id] = u;
-                        queue.Enqueue(Graph.Nodes[v.Id]);
+                        parent[adjacent.Id] = current;
+                        queue.Enqueue(Graph.Nodes[adjacent.Id]);
                     }
                 }
             }
@@ -105,7 +104,7 @@ namespace Gymnasiearbete.Pathfinding
         /// </summary>
         /// <param name="visitedNodes">The total number of nodes visited.</param>
         /// <returns>A list of steps to take to travel from the source node to the destination node.
-        ///          If no path is found, null is returned.</returns>
+        /// If no path is found, null is returned.</returns>
         public List<Node> Dijkstras(out int visitedNodes)
         {
             visitedNodes = 0;
@@ -129,26 +128,25 @@ namespace Gymnasiearbete.Pathfinding
             while (priorityQueue.Any())
             {
                 // dequeue the node with the lowest priority
-                var u = priorityQueue.Dequeue().Value;
+                var current = priorityQueue.Dequeue().Value;
                 visitedNodes++;
 
                 // Check if it is the destination node
-                if (u == Destination)
+                if (current == Destination)
                     return ConstructPathFromParents(parent);
 
-                // Add all unvisited neighbors to the queue, assign their parent, and set their gScore, if it is unvisited or will give it a lower cost:
-                // For each neighbor (v) of the current node (u)
-                foreach (var v in u.Adjacents)
+                // Loop through all neighbors
+                foreach (var adjacent in current.Adjacents)
                 {
-                    // gNew is the total cost to travel the current path from Source, through u, to v.
-                    var gNew = gScore[u.Id] + v.Weight;
+                    // gNew is the total cost to travel the current path from Source to this adjacent node
+                    var gNew = gScore[current.Id] + adjacent.Weight;
 
-                    // If v is unvisited (i.e. v has no assigned cost) or has a higher gScore than the new g score
-                    if (gScore[v.Id] == null || gScore[v.Id] > gNew)
+                    // If this adjacent node is unvisited (i.e. it has no assigned g-score) or already has a g-score higher than the new g-score
+                    if (gScore[adjacent.Id] == null || gScore[adjacent.Id] > gNew)
                     {
-                        gScore[v.Id] = gNew;
-                        parent[v.Id] = u;
-                        Enqueue(Graph.Nodes[v.Id], gNew.Value);
+                        gScore[adjacent.Id] = gNew;
+                        parent[adjacent.Id] = current;
+                        Enqueue(Graph.Nodes[adjacent.Id], gNew.Value);
                     }
                 }
             }
@@ -162,7 +160,7 @@ namespace Gymnasiearbete.Pathfinding
         /// </summary>
         /// <param name="visitedNodes">The total number of nodes visited.</param>
         /// <returns>A list of steps to take to travel from the source node to the destination node.
-        ///          If no path is found, null is returned.</returns>
+        /// If no path is found, null is returned.</returns>
         public List<Node> AStar(out int visitedNodes)
         {
             visitedNodes = 0;
@@ -180,7 +178,7 @@ namespace Gymnasiearbete.Pathfinding
             // factor for hScore
             float hScale = 1f / Graph.Nodes.Count + 1;
 
-            // Returns the distance from a node to the Destination node
+            // Returns the h-score for a node
             float hScore(Node node)
             {
                 return hScale * (Math.Abs(Destination.Position.X - node.Position.X) + Math.Abs(Destination.Position.Y - node.Position.Y));
@@ -195,26 +193,25 @@ namespace Gymnasiearbete.Pathfinding
             while (priorityQueue.Any())
             {
                 // dequeue the node with the lowest priority
-                var u = priorityQueue.Dequeue().Value;
+                var current = priorityQueue.Dequeue().Value;
                 visitedNodes++;
 
                 // Check if it is the destination node
-                if (u.Id == Destination.Id)
+                if (current.Id == Destination.Id)
                     return ConstructPathFromParents(parent);
 
-                // Add all unvisited neighbors to the queue, assign their parent, and set their gScore, if it is unvisited or will give it a lower cost:
-                // For each neighbor (v) of the current node (u)
-                foreach (var v in u.Adjacents)
+                // Loop trough all neighbors
+                foreach (var adjacent in current.Adjacents)
                 {
-                    // gNew is the total cost to travel the current path from Source, through u, to v.
-                    var gNew = gScore[u.Id] + v.Weight;
+                    // gNew is the total cost to travel the current path from Source to this adjacent node
+                    var gNew = gScore[current.Id] + adjacent.Weight;
 
-                    // If v is unvisited (i.e. v has no assigned cost) or has a higher cost than the new g score 
-                    if (gScore[v.Id] == null || gScore[v.Id] > gNew)
+                    // If this adjacent node is unvisited (i.e. it has no assigned g-score) or already has a g-score higher than the new g-score
+                    if (gScore[adjacent.Id] == null || gScore[adjacent.Id] > gNew)
                     {
-                        gScore[v.Id] = gNew;
-                        parent[v.Id] = u;
-                        Enqueue(Graph.Nodes[v.Id], gScore[v.Id].Value + hScore(Graph.Nodes[v.Id]));
+                        gScore[adjacent.Id] = gNew;
+                        parent[adjacent.Id] = current;
+                        Enqueue(Graph.Nodes[adjacent.Id], gScore[adjacent.Id].Value + hScore(Graph.Nodes[adjacent.Id]));
                     }
                 }
             }
