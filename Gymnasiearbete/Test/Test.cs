@@ -91,15 +91,15 @@ namespace Gymnasiearbete.Test
                             var pathfinder = new Pathfinder(graph, sourceNode, destinationNode);
 
                             // For each PathfindingAlgorithmResult in current GraphPruningResult
-                            foreach (PathfindingAlgorithmResult searchTypeResult in graphPruningResult.PathfindingAlgorithmResults)
+                            foreach (PathfindingAlgorithmResult pathfindingAlgorithmResult in graphPruningResult.PathfindingAlgorithmResults)
                             {
-                                // Find the SizeRepeatResult for the current graph in this searchTypeResult
-                                var complexityResult = GetComplexityResult(graphComplexity, searchTypeResult);
+                                // Find the SizeRepeatResult for the current graph in this pathfindingAlgorithmResult
+                                var complexityResult = GetComplexityResult(graphComplexity, pathfindingAlgorithmResult);
                                 var sizeResult = GetSizeResult(graphSize, complexityResult);
                                 var sizeRepeatResult = GetSizeRepeatResult(graphRepeat, sizeResult);
 
                                 // test pathfinder and save results
-                                sizeRepeatResult.SearchResults = GetSearchResults(pathfinder, searchTypeResult.PathfindingAlgorithm);
+                                sizeRepeatResult.SearchResults = GetSearchResults(pathfinder, pathfindingAlgorithmResult.PathfindingAlgorithm);
                                 // set pruning time
                                 sizeRepeatResult.GraphPruningTime = pruningTime;
                                 
@@ -137,27 +137,27 @@ namespace Gymnasiearbete.Test
 
         /// <summary>
         /// Returns the ComplexityResult with a specific complexity.
-        /// If the SearchTypeResult does not contain a ComplexityResult with the matching complexity,
+        /// If the PathfindingAlgorithmResult does not contain a ComplexityResult with the matching complexity,
         /// a new ComplexityResult with that complexity will be added and returned.
         /// </summary>
         /// <param name="complexity">Complexity to match.</param>
-        /// <param name="searchTypeResult">SearchTypeResult containing the ComplexityResults.</param>
+        /// <param name="pathfindingAlgorithmResult">PathfindingAlgorithmResult containing the ComplexityResults.</param>
         /// <returns>The ComplexityResult with matching complexity.</returns>
-        private static ComplexityResult GetComplexityResult(double complexity, PathfindingAlgorithmResult searchTypeResult)
+        private static ComplexityResult GetComplexityResult(double complexity, PathfindingAlgorithmResult pathfindingAlgorithmResult)
         {
-            if (searchTypeResult.ComplexityResults == null)
-                searchTypeResult.ComplexityResults = new List<ComplexityResult>();
+            if (pathfindingAlgorithmResult.ComplexityResults == null)
+                pathfindingAlgorithmResult.ComplexityResults = new List<ComplexityResult>();
             
 
-            int index = searchTypeResult.ComplexityResults.FindIndex(x => x.Complexity == complexity);
+            int index = pathfindingAlgorithmResult.ComplexityResults.FindIndex(x => x.Complexity == complexity);
 
             if (index == -1)
             {
-                searchTypeResult.ComplexityResults.Add(new ComplexityResult{ Complexity = complexity });
-                return searchTypeResult.ComplexityResults.Last();
+                pathfindingAlgorithmResult.ComplexityResults.Add(new ComplexityResult{ Complexity = complexity });
+                return pathfindingAlgorithmResult.ComplexityResults.Last();
             }
             else
-                return searchTypeResult.ComplexityResults[index];
+                return pathfindingAlgorithmResult.ComplexityResults[index];
         }
 
         /// <summary>
@@ -313,35 +313,35 @@ namespace Gymnasiearbete.Test
 
 
         /// <summary>
-        /// Tests a graph with the given searchType multiple times and returns the results.
+        /// Tests a graph with the given pathfindingAlgorithm multiple times and returns the results.
         /// </summary>
         /// <returns></returns>
-        private static List<SearchResult> GetSearchResults(Pathfinder pathfinder, PathfindingAlgorithm searchType)
+        private static List<SearchResult> GetSearchResults(Pathfinder pathfinder, PathfindingAlgorithm pathfindingAlgorithm)
         {
             var searchResults = new List<SearchResult>();
 
             for (int i = 0; i < searchRepeat; i++)
             {
-                searchResults.Add(GetSearchResult(pathfinder, searchType));
+                searchResults.Add(GetSearchResult(pathfinder, pathfindingAlgorithm));
             }
 
             return searchResults;
         }
 
         /// <summary>
-        /// Tests a graph with the given searchType and returns the result.
+        /// Tests a graph with the given pathfindingAlgorithm and returns the result.
         /// </summary>
         /// <param name="pathfinder"></param>
-        /// <param name="searchType"></param>
+        /// <param name="pathfindingAlgorithm"></param>
         /// <returns></returns>
-        private static SearchResult GetSearchResult(Pathfinder pathfinder, PathfindingAlgorithm searchType)
+        private static SearchResult GetSearchResult(Pathfinder pathfinder, PathfindingAlgorithm pathfindingAlgorithm)
         {
             var stopwatch = new Stopwatch(); // TODO: don't create new stopwatch each time
 
             // start timer
             stopwatch.Restart();
             // run pathfinder
-            var path = pathfinder.FindPath(searchType, out var visitedNodes);
+            var path = pathfinder.FindPath(pathfindingAlgorithm, out var visitedNodes);
             // stop timer
             stopwatch.Stop();
 
