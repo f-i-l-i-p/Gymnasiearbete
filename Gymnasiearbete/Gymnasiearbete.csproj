@@ -64,7 +64,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Draw.cs" />
     <Compile Include="Excel.cs" />
     <Compile Include="GenerateExcel.cs" />
     <Compile Include="Graphs\Adjacent.cs" />
@@ -75,7 +74,6 @@
     <Compile Include="Helpers\RandomHelper.cs" />
     <Compile Include="Helpers\StringCompression.cs" />
     <Compile Include="MazeGeneration\MazeGenerator.cs" />
-    <Compile Include="Menu.cs" />
     <Compile Include="Pathfinding\GraphPruning.cs" />
     <Compile Include="Pathfinding\Pathfinder.cs" />
     <Compile Include="Pathfinding\QueueNodes\FastQueueNode.cs" />
@@ -86,6 +84,11 @@
     <Compile Include="Test\ResultSetup.cs" />
     <Compile Include="Test\Test.cs" />
     <Compile Include="Test\TestManager.cs" />
+    <Compile Include="UI\Draw.cs" />
+    <Compile Include="UI\Menu.cs" />
+    <Compile Include="UI\Progres.cs" />
+    <Compile Include="UI\ProgressCounter.cs" />
+    <Compile Include="UI\ProgressWriter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

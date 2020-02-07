@@ -29,6 +29,7 @@ namespace Gymnasiearbete.Test
 
             var totalSearchCount = GraphManager.CountSavedGraphs();
             int searchCount = 0;
+            var progressWriter = new UI.ProgressWriter();
 
             // For each graph complexity directory
             var complexityDirectories = Directory.GetDirectories(GraphManager.saveLocation);
@@ -42,9 +43,6 @@ namespace Gymnasiearbete.Test
                 var sizeDirectories = SortByGraphSize(Directory.GetDirectories(complexityDirectory));
                 foreach (var sizeDirectory in sizeDirectories)
                 {
-                    // print progress
-                    Console.WriteLine($"{string.Format("{0:0.00}", 100 * (double)searchCount / totalSearchCount)}%");
-
                     // parse size
                     int.TryParse(Path.GetFileName(sizeDirectory), out int graphSize);
 
@@ -109,6 +107,7 @@ namespace Gymnasiearbete.Test
                             }
                         }
                         searchCount++;
+                        progressWriter.Update((double)searchCount / totalSearchCount);
                     }
                 }
                 ODIndex++;

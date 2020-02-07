@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Gymnasiearbete
+namespace Gymnasiearbete.UI
 {
     static class Menu
     {

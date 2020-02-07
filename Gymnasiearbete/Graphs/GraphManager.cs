@@ -18,6 +18,7 @@ namespace Gymnasiearbete.Graphs
 
             var totalGraphsCount = complexities.Count() * sizes.Count() * sizeRepeat;
             var addedGraphsCount = 0;
+            var progressWriter = new UI.ProgressWriter();
 
             // For each graph complexity
             foreach (var complexity in complexities)
@@ -25,9 +26,6 @@ namespace Gymnasiearbete.Graphs
                 // For each graph side size
                 foreach (var size in sizes)
                 {
-                    // print progress
-                    System.Console.WriteLine($"{string.Format("{0:0.00}", 100 * (double)addedGraphsCount / totalGraphsCount)}%");
-
                     // For each graph size repeat
                     for (int repeat = 0; repeat < sizeRepeat; repeat++)
                     {
@@ -41,6 +39,7 @@ namespace Gymnasiearbete.Graphs
                         Save(maze, folderPath, repeat.ToString());
 
                         addedGraphsCount++;
+                        progressWriter.Update((double)addedGraphsCount / totalGraphsCount);
                     }
                 }
             }
