@@ -1,4 +1,5 @@
-﻿using Gymnasiearbete.MazeGeneration;
+﻿using Gymnasiearbete.Helpers;
+using Gymnasiearbete.MazeGeneration;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -45,28 +46,48 @@ namespace Gymnasiearbete.Graphs
             }
         }
 
-        // Saves a Graph
-        public static void Save(Graph graph, string folderPath, string name)
+        /// <summary>
+        /// Counts all the saved graphs in saveLocation.
+        /// </summary>
+        /// <returns>The number of saved graphs.</returns>
+        public static int CountSavedGraphs()
         {
-            // creates a new directory if the directory does not already exist
-            Directory.CreateDirectory(folderPath);
-
-            // convert graph to json
-            var str = Newtonsoft.Json.JsonConvert.SerializeObject(graph);
-            // save
-            File.WriteAllText($"{folderPath}//{name}.json", str);
+            return Directory.GetFiles(saveLocation, "*.graph", SearchOption.AllDirectories).Length;
         }
 
-        // Loads a Graph
+        /// <summary>
+        /// Saves a graph to the disk.
+        /// </summary>
+        /// <param name="graph">Graph to be saved.</param>
+        /// <param name="directory">Directory to save in.</param>
+        /// <param name="name">Filename without extension.</param>
+        public static void Save(Graph graph, string directory, string name)
+        {
+            // creates a new directory if the directory does not already exist
+            Directory.CreateDirectory(directory);
+
+            // convert graph to json and compress
+            var graphStr = StringCompression.Compress(Newtonsoft.Json.JsonConvert.SerializeObject(graph));
+
+            // save
+            File.WriteAllText($"{directory}//{name}.graph", graphStr);
+        }
+
+        /// <summary>
+        /// Loads a graph from the disk.
+        /// </summary>
+        /// <param name="path">Full path to the graph file.</param>
+        /// <returns>A graph loaded from the specified path.</returns>
         public static Graph Load(string path)
         {
             if (!File.Exists(path))
                 throw new System.ArgumentException($"The path \"{path}\" does not exist", "path");
 
-            var obj = File.ReadAllText(path);
+            // read and decompress
+            var graphStr = StringCompression.Decompress(File.ReadAllText(path));
 
             // TODO: error handling
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<Graph>(obj);
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<Graph>(graphStr);
         }
     }
 }

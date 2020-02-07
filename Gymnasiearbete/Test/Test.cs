@@ -71,7 +71,7 @@ namespace Gymnasiearbete.Test
 
             var optimizationTimer = new Stopwatch();
 
-            var totalSearchCount = Directory.GetFiles(GraphManager.saveLocation, "*.json", SearchOption.AllDirectories).Length;
+            var totalSearchCount = GraphManager.CountSavedGraphs();
             int searchCount = 0;
 
             // For each graph complexity directory
