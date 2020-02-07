@@ -10,9 +10,9 @@ namespace Gymnasiearbete.Pathfinding
     class Pathfinder
     {
         /// <summary>
-        /// All path-finding algorithms that can be used in this class.
+        /// All path-finding algorithms that are implemented.
         /// </summary>
-        public enum SearchType { BFS, Dijkstras, AStar };
+        public enum PathfindingAlgorithm { BFS, Dijkstras, AStar };
 
         /// <summary>
         /// Graph to search through.
@@ -35,23 +35,23 @@ namespace Gymnasiearbete.Pathfinding
         }
 
         /// <summary>
-        /// Searches the graph with the specified searchType algorithm to find the shortest path from the source node to the destination node.
+        /// Searches the graph with the specified path-finding algorithm to find the shortest path from the source node to the destination node.
         /// </summary>
-        /// <param name="searchType">Search algorithm to use.</param>
+        /// <param name="pathfindingAlgorithm">Path-finding algorithm to use.</param>
         /// <returns>A list of steps to take to travel from the source node to the destination node.
         /// If no path is found, null is returned.</returns>
-        public List<Node> FindPath(SearchType searchType, out int visitedNodes)
+        public List<Node> FindPath(PathfindingAlgorithm pathfindingAlgorithm, out int visitedNodes)
         {
-            switch (searchType)
+            switch (pathfindingAlgorithm)
             {
-                case SearchType.BFS:
+                case PathfindingAlgorithm.BFS:
                     return BFS(out visitedNodes);
-                case SearchType.Dijkstras:
+                case PathfindingAlgorithm.Dijkstras:
                     return Dijkstras(out visitedNodes);
-                case SearchType.AStar:
+                case PathfindingAlgorithm.AStar:
                     return AStar(out visitedNodes);
                 default:
-                    throw new NotImplementedException($"{searchType.ToString()} is not implemented");
+                    throw new NotImplementedException($"{pathfindingAlgorithm.ToString()} is not implemented");
             }
         }
 

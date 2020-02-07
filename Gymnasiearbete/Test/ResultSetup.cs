@@ -1,50 +1,50 @@
 ﻿using System.Collections.Generic;
-using static Gymnasiearbete.Pathfinding.GraphOptimization;
+using static Gymnasiearbete.Pathfinding.GraphPruning;
 using static Gymnasiearbete.Pathfinding.Pathfinder;
 
 namespace Gymnasiearbete.Test
 {
     static class ResultSetup
     {
-        public static TestResult SetupTestResult(IEnumerable<OptimizationType> optimizationTypes, IEnumerable<SearchType> searchTypes)
+        public static TestResult SetupTestResult(IEnumerable<PruningAlgorithm> pruningAlgorithms, IEnumerable<PathfindingAlgorithm> pathfindingAlgorithms)
         {
             var testResult = new TestResult
             {
-                GraphOptimizationResults = SetupGraphOptimizationResults(optimizationTypes, searchTypes),
+                GraphPruningResults = SetupGraphPruningResults(pruningAlgorithms, pathfindingAlgorithms),
             };
 
             return testResult;
         }
 
-        private static List<GraphOptimizationResult> SetupGraphOptimizationResults(IEnumerable<OptimizationType> optimizationTypes, IEnumerable<SearchType> searchTypes)
+        private static List<GraphPruningResult> SetupGraphPruningResults(IEnumerable<PruningAlgorithm> pruningAlgorithms, IEnumerable<PathfindingAlgorithm> pathfindingAlgorithms)
         {
-            var graphOptimizationResults = new List<GraphOptimizationResult>();
+            var graphPruningResults = new List<GraphPruningResult>();
 
-            foreach (var optimizationType in optimizationTypes)
+            foreach (var pruningAlgorithm in pruningAlgorithms)
             {
-                graphOptimizationResults.Add(new GraphOptimizationResult
+                graphPruningResults.Add(new GraphPruningResult
                 {
-                    OptimizationType = optimizationType,
-                    SearchTypeResults = SetupSearchTypeResults(searchTypes),
+                    PruningAlgorithm = pruningAlgorithm,
+                    PathfindingAlgorithmResults = SetupPathfindingAlgorithmResults(pathfindingAlgorithms),
                 });
             }
-            return graphOptimizationResults;
+            return graphPruningResults;
         }
 
-        private static List<SearchTypeResult> SetupSearchTypeResults(IEnumerable<SearchType> searchTypes)
+        private static List<PathfindingAlgorithmResult> SetupPathfindingAlgorithmResults(IEnumerable<PathfindingAlgorithm> pathfindingAlgorithms)
         {
-            var searchTypeResults = new List<SearchTypeResult>();
+            var pathfindingAlgorithmResults = new List<PathfindingAlgorithmResult>();
 
-            foreach (SearchType searchType in searchTypes)
+            foreach (PathfindingAlgorithm pathfindingAlgorithm in pathfindingAlgorithms)
             {
-                searchTypeResults.Add(new SearchTypeResult
+                pathfindingAlgorithmResults.Add(new PathfindingAlgorithmResult
                 {
-                    SearchType = searchType,
+                    PathfindingAlgorithm = pathfindingAlgorithm,
                     ComplexityResults = new List<ComplexityResult>(),
                 });
             }
 
-            return searchTypeResults;
+            return pathfindingAlgorithmResults;
         }
     }
 }

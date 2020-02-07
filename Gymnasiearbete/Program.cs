@@ -1,6 +1,6 @@
 ﻿using Gymnasiearbete.Graphs;
 using System.Linq;
-using static Gymnasiearbete.Pathfinding.GraphOptimization;
+using static Gymnasiearbete.Pathfinding.GraphPruning;
 using static Gymnasiearbete.Pathfinding.Pathfinder;
 
 namespace Gymnasiearbete

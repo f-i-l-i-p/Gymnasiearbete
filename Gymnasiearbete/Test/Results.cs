@@ -1,24 +1,24 @@
 ﻿using System.Collections.Generic;
-using static Gymnasiearbete.Pathfinding.GraphOptimization;
+using static Gymnasiearbete.Pathfinding.GraphPruning;
 using static Gymnasiearbete.Pathfinding.Pathfinder;
 
 namespace Gymnasiearbete.Test
 {
     class TestResult
     {   
-        public List<GraphOptimizationResult> GraphOptimizationResults { get; set; }
+        public List<GraphPruningResult> GraphPruningResults { get; set; }
     }
 
-    class GraphOptimizationResult
+    class GraphPruningResult
     {
-        public OptimizationType OptimizationType { get; set; }
+        public PruningAlgorithm PruningAlgorithm { get; set; }
 
-        public List<SearchTypeResult> SearchTypeResults { get; set; }
+        public List<PathfindingAlgorithmResult> PathfindingAlgorithmResults { get; set; }
     }
 
-    class SearchTypeResult
+    class PathfindingAlgorithmResult
     {
-        public SearchType SearchType { get; set; }
+        public PathfindingAlgorithm PathfindingAlgorithm { get; set; }
         public List<ComplexityResult> ComplexityResults { get; set; }
     }
 
@@ -32,7 +32,7 @@ namespace Gymnasiearbete.Test
     {
         public int GraphSize { get; set; }
         public AverageSearchResult AverageSearchResult { get; set; }
-        public AverageGraphOpimizationTime AverageGraphOpimizationTime { get; set; }
+        public AverageGraphPruningTime AverageGraphPruningTime { get; set; }
         public List<SizeRepeatResult> SizeRepeatResults { get; set;}
     }
 
@@ -40,7 +40,7 @@ namespace Gymnasiearbete.Test
     {
         public int GraphSizeRepet { get; set; }
         public List<SearchResult> SearchResults { get; set; }
-        public double GraphOptimizationTime { get; set; }
+        public double GraphPruningTime { get; set; }
     }
 
     class AverageSearchResult
@@ -56,9 +56,9 @@ namespace Gymnasiearbete.Test
         public double ExploredRatio { get; set; }
     }
 
-    class AverageGraphOpimizationTime
+    class AverageGraphPruningTime
     {
-        public double MeanOptimizationTime { get; set; }
-        public double MedianOpimizatonTime { get; set; }
+        public double MeanPruningTime { get; set; }
+        public double MedianPruningTime { get; set; }
     }
 }

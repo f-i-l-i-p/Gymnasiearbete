@@ -76,13 +76,14 @@
     <Compile Include="Helpers\StringCompression.cs" />
     <Compile Include="MazeGeneration\MazeGenerator.cs" />
     <Compile Include="Menu.cs" />
-    <Compile Include="Pathfinding\GraphOptimization.cs" />
+    <Compile Include="Pathfinding\GraphPruning.cs" />
     <Compile Include="Pathfinding\Pathfinder.cs" />
     <Compile Include="Pathfinding\QueueNodes\FastQueueNode.cs" />
     <Compile Include="Pathfinding\QueueNodes\StableQueueNode.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Test\Results.cs" />
+    <Compile Include="Test\ResultSetup.cs" />
     <Compile Include="Test\Test.cs" />
     <Compile Include="Test\TestManager.cs" />
   </ItemGroup>

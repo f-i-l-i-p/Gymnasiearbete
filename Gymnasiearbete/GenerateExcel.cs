@@ -7,7 +7,7 @@ namespace Gymnasiearbete
 {
     static class GenerateExcel
     {
-        private enum ResultType { MeanSearchTime, MedianSearchTime, MeanExploredNodes, MedianExploredNodes, MeanExploredRatio, MedianExploredRatio, MeanGraphOptimizationTime, MedianGraphOptimizationTime }
+        private enum ResultType { MeanSearchTime, MedianSearchTime, MeanExploredNodes, MedianExploredNodes, MeanExploredRatio, MedianExploredRatio, MeanGraphPruningTime, MedianGraphPruningTime }
 
         /// <summary>
         /// Returns a search result value from a AverageSearchResult.
@@ -31,12 +31,12 @@ namespace Gymnasiearbete
                     return sizeResult.AverageSearchResult.MeanSearchResult.ExploredRatio;
                 case ResultType.MedianExploredRatio:
                     return sizeResult.AverageSearchResult.MedianSearchResult.ExploredRatio;
-                case ResultType.MeanGraphOptimizationTime:
-                    return sizeResult.AverageGraphOpimizationTime.MeanOptimizationTime;
-                case ResultType.MedianGraphOptimizationTime:
-                    return sizeResult.AverageGraphOpimizationTime.MedianOpimizatonTime;
+                case ResultType.MeanGraphPruningTime:
+                    return sizeResult.AverageGraphPruningTime.MeanPruningTime;
+                case ResultType.MedianGraphPruningTime:
+                    return sizeResult.AverageGraphPruningTime.MedianPruningTime;
                 default:
-                    throw new ArgumentException($"{resultType.ToString()} is not a supported ResultType type", "resultType");
+                    throw new NotImplementedException($"{resultType.ToString()} is not implemented");
             }
         }
 
@@ -125,21 +125,21 @@ namespace Gymnasiearbete
                 FillForegroundColor = NPOI.HSSF.Util.HSSFColor.Yellow.Index,
                 FillPattern = FillPattern.SolidForeground,
             });
-            var OptimizeTopBarStyle = excel.CreateStyle(new SimpleCellStyle
+            var PruningTopBarStyle = excel.CreateStyle(new SimpleCellStyle
             {
                 BorderBottom = BorderStyle.Thin,
                 BorderTop = BorderStyle.Thick,
                 FillForegroundColor = NPOI.HSSF.Util.HSSFColor.CornflowerBlue.Index,
                 FillPattern = FillPattern.SolidForeground,
             });
-            var OptimizeSideBarStyle = excel.CreateStyle(new SimpleCellStyle
+            var PruningSideBarStyle = excel.CreateStyle(new SimpleCellStyle
             {
                 BorderRight = BorderStyle.Thin,
                 BorderLeft = BorderStyle.Medium,
                 FillForegroundColor = NPOI.HSSF.Util.HSSFColor.CornflowerBlue.Index,
                 FillPattern = FillPattern.SolidForeground,
             });
-            var OptimizeTitleStyle = excel.CreateStyle(new SimpleCellStyle
+            var PruningTitleStyle = excel.CreateStyle(new SimpleCellStyle
             {
                 BorderBottom = BorderStyle.Thin,
                 BorderTop = BorderStyle.Thick,
@@ -156,35 +156,35 @@ namespace Gymnasiearbete
             int currentRow = 0;
             int currentColumn = 0;
 
-            int dataHeight = testResult.GraphOptimizationResults[0].SearchTypeResults[0].ComplexityResults.Count + 1;
-            int dataWidth = testResult.GraphOptimizationResults[0].SearchTypeResults[0].ComplexityResults[0].SizeResults.Count + 1;
+            int dataHeight = testResult.GraphPruningResults[0].PathfindingAlgorithmResults[0].ComplexityResults.Count + 1;
+            int dataWidth = testResult.GraphPruningResults[0].PathfindingAlgorithmResults[0].ComplexityResults[0].SizeResults.Count + 1;
 
-            // For each GraphOptimizationResult
-            foreach (var graphOptimizationResult in testResult.GraphOptimizationResults)
+            // For each GraphPruningResult
+            foreach (var graphPruningResult in testResult.GraphPruningResults)
             {
-                // Optimization time
-                excel.SetCell(currentColumn, currentRow, $"Graph optimization: {graphOptimizationResult.OptimizationType}", titleStyle);
+                // Pruning time
+                excel.SetCell(currentColumn, currentRow, $"Graph pruning: {graphPruningResult.PruningAlgorithm}", titleStyle);
                 currentColumn++;
-                WriteDataChunk(excel, currentColumn            , currentRow, ResultType.MeanGraphOptimizationTime  , graphOptimizationResult.SearchTypeResults[0].ComplexityResults, OptimizeTitleStyle, OptimizeTopBarStyle, OptimizeSideBarStyle);
-                WriteDataChunk(excel, currentColumn + dataWidth, currentRow, ResultType.MedianGraphOptimizationTime, graphOptimizationResult.SearchTypeResults[0].ComplexityResults, OptimizeTitleStyle, OptimizeTopBarStyle, OptimizeSideBarStyle);
+                WriteDataChunk(excel, currentColumn            , currentRow, ResultType.MeanGraphPruningTime  , graphPruningResult.PathfindingAlgorithmResults[0].ComplexityResults, PruningTitleStyle, PruningTopBarStyle, PruningSideBarStyle);
+                WriteDataChunk(excel, currentColumn + dataWidth, currentRow, ResultType.MedianGraphPruningTime, graphPruningResult.PathfindingAlgorithmResults[0].ComplexityResults, PruningTitleStyle, PruningTopBarStyle, PruningSideBarStyle);
                 currentRow += dataHeight;
 
                 currentColumn = 0;
 
-                // For each SearchTypeResult in current GraphOptimizationResult
-                foreach (var searchTypeResult in graphOptimizationResult.SearchTypeResults)
+                // For each PathfindingAlgorithmResult in current GraphPruningResult
+                foreach (var pathfindingAlgorithmResult in graphPruningResult.PathfindingAlgorithmResults)
                 {
-                    // write SearchType
-                    excel.SetCell(currentColumn, currentRow, $"Path-finding: {searchTypeResult.SearchType.ToString()}, Graph optimization: {graphOptimizationResult.OptimizationType}", titleStyle);
+                    // write PathfindingAlgorithm
+                    excel.SetCell(currentColumn, currentRow, $"Path-finding: {pathfindingAlgorithmResult.PathfindingAlgorithm.ToString()}, Graph pruning: {graphPruningResult.PruningAlgorithm}", titleStyle);
                     currentColumn++;
 
-                    // Write all SearchType data
+                    // Write all PathfindingAlgorithm data
                     foreach (ResultType resultType in Enum.GetValues(typeof(ResultType)))
                     {
-                        if (resultType == ResultType.MeanGraphOptimizationTime || resultType == ResultType.MedianGraphOptimizationTime)
+                        if (resultType == ResultType.MeanGraphPruningTime || resultType == ResultType.MedianGraphPruningTime)
                             continue;
 
-                        WriteDataChunk(excel, currentColumn, currentRow, resultType, searchTypeResult.ComplexityResults, PathfindingTitleStyle, PathfindingTopBarStyle, PathfindingSideBarStyle);
+                        WriteDataChunk(excel, currentColumn, currentRow, resultType, pathfindingAlgorithmResult.ComplexityResults, PathfindingTitleStyle, PathfindingTopBarStyle, PathfindingSideBarStyle);
                         currentColumn += dataWidth;
                     }
 

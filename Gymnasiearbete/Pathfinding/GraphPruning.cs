@@ -4,9 +4,9 @@ using System.Linq;
 
 namespace Gymnasiearbete.Pathfinding
 {
-    static class GraphOptimization
+    static class GraphPruning
     {
-        public enum OptimizationType { None, IntersectionJumps, CornerJumps }
+        public enum PruningAlgorithm { None, IntersectionJumps, CornerJumps }
 
         /// <summary>
         /// Removes all nodes with two neighbors and instead connects the neighbors.

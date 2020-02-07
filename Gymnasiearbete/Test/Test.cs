@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using static Gymnasiearbete.Pathfinding.GraphOptimization;
+using static Gymnasiearbete.Pathfinding.GraphPruning;
 using static Gymnasiearbete.Pathfinding.Pathfinder;
 
 namespace Gymnasiearbete.Test
@@ -15,17 +15,17 @@ namespace Gymnasiearbete.Test
         private static int searchRepeat;
 
         /// <summary>
-        /// Tests all path-finding algorithms on all graphs and returns the result.
+        /// Tests path-finding and pruning-algorithms on all saved graphs.
         /// </summary>
         /// <returns>The test result.</returns>
-        public static TestResult RunTests(IEnumerable<OptimizationType> optimizationTypes, IEnumerable<SearchType> searchTypes, int _searchRepeat)
+        public static TestResult RunTests(IEnumerable<PruningAlgorithm> pruningAlgorithms, IEnumerable<PathfindingAlgorithm> pathfindingAlgorithms, int _searchRepeat)
         {
             searchRepeat = _searchRepeat;
 
             // setup an empty test result
-            var testResult = ResultSetup.SetupTestResult(optimizationTypes, searchTypes);
+            var testResult = ResultSetup.SetupTestResult(pruningAlgorithms, pathfindingAlgorithms);
 
-            var optimizationTimer = new Stopwatch();
+            var pruningTimer = new Stopwatch();
 
             var totalSearchCount = GraphManager.CountSavedGraphs();
             int searchCount = 0;
@@ -55,8 +55,8 @@ namespace Gymnasiearbete.Test
                         // parse repeat
                         int.TryParse(Path.GetFileNameWithoutExtension(graphFile), out int graphRepeat);
 
-                        // For each GraphOptimizationResult
-                        foreach (var graphOptimizationResult in testResult.GraphOptimizationResults)
+                        // For each GraphPruningResult
+                        foreach (var graphPruningResult in testResult.GraphPruningResults)
                         {
                             // load graph
                             var graph = GraphManager.Load(graphFile);
@@ -64,34 +64,34 @@ namespace Gymnasiearbete.Test
                             var sourceNode = graph.Nodes[0];
                             var destinationNode = graph.Nodes[graph.Nodes.Count - 1];
 
-                            double optimizationTime;
+                            double pruningTime;
 
-                            // Optimize graph
-                            switch (graphOptimizationResult.OptimizationType)
+                            // Graph pruning
+                            switch (graphPruningResult.PruningAlgorithm)
                             {
-                                case OptimizationType.None:
-                                    optimizationTime = 0;
+                                case PruningAlgorithm.None:
+                                    pruningTime = 0;
                                     break;
-                                case OptimizationType.IntersectionJumps:
-                                    optimizationTimer.Restart();
-                                    GraphOptimization.IntersectionJumps(graph, new Node[] { sourceNode, destinationNode });
-                                    optimizationTimer.Stop();
-                                    optimizationTime = optimizationTimer.Elapsed.TotalSeconds;
+                                case PruningAlgorithm.IntersectionJumps:
+                                    pruningTimer.Restart();
+                                    GraphPruning.IntersectionJumps(graph, new Node[] { sourceNode, destinationNode });
+                                    pruningTimer.Stop();
+                                    pruningTime = pruningTimer.Elapsed.TotalSeconds;
                                     break;
-                                case OptimizationType.CornerJumps:
-                                    optimizationTimer.Restart();
-                                    GraphOptimization.CornerJumps(graph, new Node[] { sourceNode, destinationNode });
-                                    optimizationTimer.Stop();
-                                    optimizationTime = optimizationTimer.Elapsed.TotalSeconds;
+                                case PruningAlgorithm.CornerJumps:
+                                    pruningTimer.Restart();
+                                    GraphPruning.CornerJumps(graph, new Node[] { sourceNode, destinationNode });
+                                    pruningTimer.Stop();
+                                    pruningTime = pruningTimer.Elapsed.TotalSeconds;
                                     break;
                                 default:
-                                    throw new NotImplementedException($"{graphOptimizationResult.OptimizationType.ToString()} is not implemented");
+                                    throw new NotImplementedException($"{graphPruningResult.PruningAlgorithm.ToString()} is not implemented");
                             }
 
                             var pathfinder = new Pathfinder(graph, sourceNode, destinationNode);
 
-                            // For each SerchTypeResult in current GraphOptimizationResult
-                            foreach (SearchTypeResult searchTypeResult in graphOptimizationResult.SearchTypeResults)
+                            // For each PathfindingAlgorithmResult in current GraphPruningResult
+                            foreach (PathfindingAlgorithmResult searchTypeResult in graphPruningResult.PathfindingAlgorithmResults)
                             {
                                 // Find the SizeRepeatResult for the current graph in this searchTypeResult
                                 var complexityResult = GetComplexityResult(graphComplexity, searchTypeResult);
@@ -99,13 +99,13 @@ namespace Gymnasiearbete.Test
                                 var sizeRepeatResult = GetSizeRepeatResult(graphRepeat, sizeResult);
 
                                 // test pathfinder and save results
-                                sizeRepeatResult.SearchResults = GetSearchResults(pathfinder, searchTypeResult.SearchType);
-                                // set optimization time
-                                sizeRepeatResult.GraphOptimizationTime = optimizationTime;
+                                sizeRepeatResult.SearchResults = GetSearchResults(pathfinder, searchTypeResult.PathfindingAlgorithm);
+                                // set pruning time
+                                sizeRepeatResult.GraphPruningTime = pruningTime;
                                 
                                 // set average result 
                                 sizeResult.AverageSearchResult = CalculateAverageSearchResult(sizeResult.SizeRepeatResults, out var agot);
-                                sizeResult.AverageGraphOpimizationTime = agot;
+                                sizeResult.AverageGraphPruningTime = agot;
                             }
                         }
                         searchCount++;
@@ -143,7 +143,7 @@ namespace Gymnasiearbete.Test
         /// <param name="complexity">Complexity to match.</param>
         /// <param name="searchTypeResult">SearchTypeResult containing the ComplexityResults.</param>
         /// <returns>The ComplexityResult with matching complexity.</returns>
-        private static ComplexityResult GetComplexityResult(double complexity, SearchTypeResult searchTypeResult)
+        private static ComplexityResult GetComplexityResult(double complexity, PathfindingAlgorithmResult searchTypeResult)
         {
             if (searchTypeResult.ComplexityResults == null)
                 searchTypeResult.ComplexityResults = new List<ComplexityResult>();
@@ -221,7 +221,7 @@ namespace Gymnasiearbete.Test
         /// <param name="sizeRepeatResults">SizeRepeatResults to calculate the AverageSearchResult from.</param>
         /// <param name="averageGraphOpimizationTime">The AverageGraphOpimizationTime.</param>
         /// <returns>The AverageSearchResult.</returns>
-        private static AverageSearchResult CalculateAverageSearchResult(List<SizeRepeatResult> sizeRepeatResults, out AverageGraphOpimizationTime averageGraphOpimizationTime)
+        private static AverageSearchResult CalculateAverageSearchResult(List<SizeRepeatResult> sizeRepeatResults, out AverageGraphPruningTime averageGraphOpimizationTime)
         {
             // the sum of all search results
             var searchResSum = new SearchResult
@@ -230,7 +230,7 @@ namespace Gymnasiearbete.Test
                 ExplordedNodes = 0,
                 ExploredRatio = 0,
             };
-            double graphOptimizationTimeSum = 0;
+            double graphPruningTimeSum = 0;
 
             var allSearchTimes = new List<double>();
             var allExploredNodes = new List<int>();
@@ -243,8 +243,8 @@ namespace Gymnasiearbete.Test
             // Set searchResSum and searchResCount
             foreach (var sizeRepeatResult in sizeRepeatResults)
             {
-                allGraphOpimizationTimes.Add(sizeRepeatResult.GraphOptimizationTime);
-                graphOptimizationTimeSum += sizeRepeatResult.GraphOptimizationTime;
+                allGraphOpimizationTimes.Add(sizeRepeatResult.GraphPruningTime);
+                graphPruningTimeSum += sizeRepeatResult.GraphPruningTime;
 
                 foreach (var searchResult in sizeRepeatResult.SearchResults)
                 {
@@ -259,10 +259,10 @@ namespace Gymnasiearbete.Test
                 searchResCount += sizeRepeatResult.SearchResults.Count;
             }
 
-            averageGraphOpimizationTime = new AverageGraphOpimizationTime
+            averageGraphOpimizationTime = new AverageGraphPruningTime
             {
-                MeanOptimizationTime = graphOptimizationTimeSum / sizeRepeatResults.Count,
-                MedianOpimizatonTime = GetCenterValue(allGraphOpimizationTimes),
+                MeanPruningTime = graphPruningTimeSum / sizeRepeatResults.Count,
+                MedianPruningTime = GetCenterValue(allGraphOpimizationTimes),
             };
 
             return new AverageSearchResult
@@ -316,7 +316,7 @@ namespace Gymnasiearbete.Test
         /// Tests a graph with the given searchType multiple times and returns the results.
         /// </summary>
         /// <returns></returns>
-        private static List<SearchResult> GetSearchResults(Pathfinder pathfinder, SearchType searchType)
+        private static List<SearchResult> GetSearchResults(Pathfinder pathfinder, PathfindingAlgorithm searchType)
         {
             var searchResults = new List<SearchResult>();
 
@@ -334,7 +334,7 @@ namespace Gymnasiearbete.Test
         /// <param name="pathfinder"></param>
         /// <param name="searchType"></param>
         /// <returns></returns>
-        private static SearchResult GetSearchResult(Pathfinder pathfinder, SearchType searchType)
+        private static SearchResult GetSearchResult(Pathfinder pathfinder, PathfindingAlgorithm searchType)
         {
             var stopwatch = new Stopwatch(); // TODO: don't create new stopwatch each time
 
