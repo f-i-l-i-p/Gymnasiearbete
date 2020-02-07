@@ -4,35 +4,35 @@ namespace Gymnasiearbete.UI
 {
     class ProgressWriter
     {
-        private string Name { get; }
-        private string Format { get; }
-        private string LastPrint { get; set; }
-
-        public ProgressWriter() : this(null) { }
-
-        /// <param name="name">Progress name.</param>
-        public ProgressWriter(string name) : this(name, "{0:0.00}") { }
-
-        /// <param name="name">Progress name.</param>
-        /// <param name="format">Format for displaying progress percentage.</param>
-        public ProgressWriter(string name, string format)
-        {
-            Name = string.IsNullOrWhiteSpace(name) ? "" : $"{name}: ";
-            Format = format;
-        }
+        private DateTime StartTime { get; set; }
+        private string LastProgressStr { get; set; }
 
         /// <summary>
         /// Prints the progress to the console if it has changed enough to be displayed differently.
         /// </summary>
-        /// <param name="progress">The progress as a double between 0 and 1.</param>
+        /// <param name="progress">The progress as a double-precision floating-point number between 0 and 1.</param>
         public void Update(double progress)
         {
-            string str = string.Format(Format, progress * 100);
+            // Set start time if not set
+            if (StartTime == DateTime.MinValue)
+                StartTime = DateTime.UtcNow;
 
-            if (str != LastPrint)
+            // progress to write
+            string progressStr = string.Format("{0:000.00}", progress * 100);
+
+            // Write progress if it has changed enough
+            if (progressStr != LastProgressStr)
             {
-                Console.WriteLine($"{Name}{str}%");
-                LastPrint = str;
+                // elapsed time
+                var timeDiff = DateTime.UtcNow - StartTime;
+
+                // time left
+                double secondsPerProgress = timeDiff.TotalSeconds / progress;
+                var timeLeft = TimeSpan.FromSeconds((1 - progress) * secondsPerProgress);
+
+                // write
+                Console.WriteLine($"Progress: {progressStr}%   Elapsed time: {timeDiff.ToString("hh':'mm':'ss")}   Estimated remaining time: {timeLeft.ToString("hh':'mm':'ss")}");
+                LastProgressStr = progressStr;
             }
         }
     }

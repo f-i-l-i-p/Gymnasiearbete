@@ -86,8 +86,6 @@
     <Compile Include="Test\TestManager.cs" />
     <Compile Include="UI\Draw.cs" />
     <Compile Include="UI\Menu.cs" />
-    <Compile Include="UI\Progres.cs" />
-    <Compile Include="UI\ProgressCounter.cs" />
     <Compile Include="UI\ProgressWriter.cs" />
   </ItemGroup>
   <ItemGroup>
