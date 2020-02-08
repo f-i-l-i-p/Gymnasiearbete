@@ -102,8 +102,8 @@ namespace Gymnasiearbete.Test
                                 sizeRepeatResult.GraphPruningTime = pruningTime;
                                 
                                 // set average result 
-                                sizeResult.AverageSearchResult = CalculateAverageSearchResult(sizeResult.SizeRepeatResults, out var agot);
-                                sizeResult.AverageGraphPruningTime = agot;
+                                sizeResult.AverageSearchResult = CalculateAverageSearchResult(sizeResult.SizeRepeatResults, out var averageGraphPruningTime);
+                                sizeResult.AverageGraphPruningTime = averageGraphPruningTime;
                             }
                         }
                         searchCount++;
@@ -215,12 +215,12 @@ namespace Gymnasiearbete.Test
         }
 
         /// <summary>
-        /// Returns the AverageSearchResult from a list of SizeRepeatResults. out AverageGraphOpimizationTime.
+        /// Returns the AverageSearchResult from a list of SizeRepeatResults. out AverageGraphPruningTime.
         /// </summary>
         /// <param name="sizeRepeatResults">SizeRepeatResults to calculate the AverageSearchResult from.</param>
-        /// <param name="averageGraphOpimizationTime">The AverageGraphOpimizationTime.</param>
+        /// <param name="averageGraphPruningTime">The AverageGraphPruningTime.</param>
         /// <returns>The AverageSearchResult.</returns>
-        private static AverageSearchResult CalculateAverageSearchResult(List<SizeRepeatResult> sizeRepeatResults, out AverageGraphPruningTime averageGraphOpimizationTime)
+        private static AverageSearchResult CalculateAverageSearchResult(List<SizeRepeatResult> sizeRepeatResults, out AverageGraphPruningTime averageGraphPruningTime)
         {
             // the sum of all search results
             var searchResSum = new SearchResult
@@ -234,7 +234,7 @@ namespace Gymnasiearbete.Test
             var allSearchTimes = new List<double>();
             var allExploredNodes = new List<int>();
             var allExploredRatios = new List<double>();
-            var allGraphOpimizationTimes = new List<double>();
+            var allGraphPruningTimes = new List<double>();
 
             // the total amount of search results
             var searchResCount = 0;
@@ -242,7 +242,7 @@ namespace Gymnasiearbete.Test
             // Set searchResSum and searchResCount
             foreach (var sizeRepeatResult in sizeRepeatResults)
             {
-                allGraphOpimizationTimes.Add(sizeRepeatResult.GraphPruningTime);
+                AddSorted(allGraphPruningTimes, sizeRepeatResult.GraphPruningTime);
                 graphPruningTimeSum += sizeRepeatResult.GraphPruningTime;
 
                 foreach (var searchResult in sizeRepeatResult.SearchResults)
@@ -258,10 +258,10 @@ namespace Gymnasiearbete.Test
                 searchResCount += sizeRepeatResult.SearchResults.Count;
             }
 
-            averageGraphOpimizationTime = new AverageGraphPruningTime
+            averageGraphPruningTime = new AverageGraphPruningTime
             {
                 MeanPruningTime = graphPruningTimeSum / sizeRepeatResults.Count,
-                MedianPruningTime = GetCenterValue(allGraphOpimizationTimes),
+                MedianPruningTime = GetCenterValue(allGraphPruningTimes),
             };
 
             return new AverageSearchResult

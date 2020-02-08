@@ -45,7 +45,7 @@ namespace Gymnasiearbete
         /// </summary>
         /// <param name="excel">Excel to write data to.</param>
         /// <param name="xStart">X coordinate to start from.</param>
-        /// <param name="yStart">Ý coordinate to start from.</param>
+        /// <param name="yStart">Y coordinate to start from.</param>
         /// <param name="resultType">Result type to write.</param>
         /// <param name="complexityResults">Complexity results containing all data to be written.</param>
         private static void WriteDataChunk(Excel excel, int xStart, int yStart, ResultType resultType, List<ComplexityResult> complexityResults, ICellStyle titleStyle, ICellStyle topBarStyle, ICellStyle sideBarStyle)
@@ -65,7 +65,7 @@ namespace Gymnasiearbete
             foreach (var sizeResult in complexityResults[0].SizeResults)
             {
                 // write data
-                excel.SetCell(column, yStart, sizeResult.GraphSize, topBarStyle);
+                excel.SetCell(column, yStart, $"{sizeResult.GraphSize}x{sizeResult.GraphSize}", topBarStyle);
                 column++;
             }
 
@@ -81,7 +81,7 @@ namespace Gymnasiearbete
                 column = 0;
                 foreach (var sizeResult in complexityResult.SizeResults)
                 {
-                    // write mean search time
+                    // write search time
                     excel.SetCell(xStart + column + 1, row, GetDataFromDataType(resultType, sizeResult));
                     column++;
                 }
