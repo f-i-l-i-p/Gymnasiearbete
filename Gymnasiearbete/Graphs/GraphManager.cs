@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Gymnasiearbete.Graphs
 {
-    static class GraphManager
+    public static class GraphManager
     {
         public static readonly string saveLocation = Path.GetFullPath(@"..\..\..\SavedGraphs");
 

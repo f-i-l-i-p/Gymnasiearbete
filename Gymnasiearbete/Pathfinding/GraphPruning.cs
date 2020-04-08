@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Gymnasiearbete.Pathfinding
 {
-    static class GraphPruning
+    public static class GraphPruning
     {
         public enum PruningAlgorithm { None, IntersectionJumps, CornerJumps }
 

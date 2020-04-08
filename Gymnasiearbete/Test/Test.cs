@@ -10,7 +10,7 @@ using static Gymnasiearbete.Pathfinding.Pathfinder;
 
 namespace Gymnasiearbete.Test
 {
-    static class Test
+    public static class Test
     {
         private static int searchRepeat;
 

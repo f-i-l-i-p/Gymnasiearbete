@@ -7,7 +7,7 @@ using Priority_Queue;
 
 namespace Gymnasiearbete.Pathfinding
 {
-    class Pathfinder
+    public class Pathfinder
     {
         /// <summary>
         /// All path-finding algorithms that are implemented.
@@ -230,15 +230,15 @@ namespace Gymnasiearbete.Pathfinding
         /// <returns>A list on node id's from the destination node to the source node.</returns>
         private List<Node> ConstructPathFromParents(Node[] parents)
         {
-            var path = new List<Node>();
-
             Node currentNode = Destination;
             Node nextNode;
 
-            while(currentNode.Id != (nextNode = parents[Destination.Id]).Id)
+            var path = new List<Node> { currentNode };
+
+            while(currentNode.Id != (nextNode = parents[currentNode.Id]).Id)
             {
-                path.Add(currentNode);
                 currentNode = nextNode;
+                path.Add(currentNode);
             }
             return path;
         }
