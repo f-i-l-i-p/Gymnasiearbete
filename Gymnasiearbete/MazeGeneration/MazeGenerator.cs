@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Gymnasiearbete.MazeGeneration
 {
-    static class MazeGenerator
+    public static class MazeGenerator
     {
         private static readonly Random random = new Random();
 

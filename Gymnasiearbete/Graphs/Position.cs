@@ -1,6 +1,6 @@
 ﻿namespace Gymnasiearbete.Graphs
 {
-    class Position
+    public class Position
     {
         /// <summary>
         /// Horizontal coordinate
