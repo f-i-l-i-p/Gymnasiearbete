@@ -2,7 +2,7 @@
 
 namespace Gymnasiearbete.Graphs
 {
-    class Graph
+    public class Graph
     {
         /// <summary>
         /// All nodes in the graph.

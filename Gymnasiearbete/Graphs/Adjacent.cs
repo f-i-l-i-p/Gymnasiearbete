@@ -1,6 +1,6 @@
 ﻿namespace Gymnasiearbete.Graphs
 {
-    class Adjacent
+    public class Adjacent
     {
         /// <summary>
         /// Id of the adjacent node

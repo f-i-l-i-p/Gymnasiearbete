@@ -2,7 +2,7 @@
 
 namespace Gymnasiearbete.Graphs
 {
-    class Node
+    public class Node
     {
         /// <summary>
         /// This node's id (Its index in the Nodes list in the Graph class).
